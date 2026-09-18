@@ -1485,15 +1485,14 @@
         "options": [
           {
             "value": "overlay",
-            "label": "Overlay (floats over page, no layout shift)"
+            "label": "Overlay"
           },
           {
             "value": "push",
-            "label": "Push (squeezes page content)"
+            "label": "Push"
           }
         ],
         "default": "overlay",
-        "info": "Overlay prevents layout shifts by opening the drawer over the page with a backdrop.",
         "visible_if": "{{ settings.cart_type == 'drawer' }}"
       },
       {
