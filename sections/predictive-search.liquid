@@ -4,150 +4,210 @@
 {% render 'predictive-search-styles' %}
 
 {%- if predictive_search.performed or search.performed -%}
+  {% liquid
+    assign search_query = predictive_search.terms | default: search.terms | strip
+    assign search_query_lower = search_query | downcase
+
+    # Safely load store products from miss-rose collection or first active collection
+    assign store_products = collections['miss-rose'].products
+    if store_products == blank or store_products.size == 0
+      for col in collections
+        if col.products.size > 0
+          assign store_products = col.products
+          break
+        endif
+      endfor
+    endif
+
+    # 1. Match Brands (vendors) strictly matching search query
+    assign matching_brands = ''
+    assign brands_count = 0
+    for prod in store_products
+      if prod.vendor != blank
+        assign v_lower = prod.vendor | downcase
+        if search_query_lower != '' and v_lower contains search_query_lower
+          unless matching_brands contains prod.vendor
+            assign matching_brands = matching_brands | append: prod.vendor | append: '|||'
+            assign brands_count = brands_count | plus: 1
+          endunless
+        endif
+      endif
+    endfor
+
+    assign kay_lower = 'kay cosmetics'
+    if search_query_lower != '' and kay_lower contains search_query_lower
+      unless matching_brands contains 'Kay Cosmetics'
+        assign matching_brands = matching_brands | append: 'Kay Cosmetics|||'
+        assign brands_count = brands_count | plus: 1
+      endunless
+    endif
+
+    # 2. Match Categories / Lines (product types) strictly matching search query
+    assign matching_types = ''
+    assign types_count = 0
+    for prod in store_products
+      if prod.type != blank
+        assign t_lower = prod.type | downcase
+        if search_query_lower != '' and t_lower contains search_query_lower
+          unless matching_types contains prod.type
+            assign matching_types = matching_types | append: prod.type | append: '|||'
+            assign types_count = types_count | plus: 1
+          endunless
+        endif
+      endif
+    endfor
+
+    # Determine if sidebar should be shown
+    assign has_sidebar = false
+    if brands_count > 0 or types_count > 0
+      assign has_sidebar = true
+    endif
+  %}
+
   <div
     id="predictive-search-results"
     class="predictive-search-dropdown"
     role="listbox"
     aria-label="{{ 'content.search_results_label' | t }}"
     data-transition-container
-    style="--color-shadow: rgb(var(--color-foreground-rgb) / var(--opacity-10-25));"
+    style="background: #FFFFFF !important;"
   >
     <div
-      class="predictive-search-results__inner"
+      class="predictive-search-results__inner notino-search-layout{% unless has_sidebar %} notino-search-layout--full-width{% endunless %}"
       data-search-results
     >
-      {% if predictive_search.performed %}
-        {% assign search_results_count = predictive_search.resources.products.size
-          | plus: predictive_search.resources.pages.size
-          | plus: predictive_search.resources.articles.size
-          | plus: predictive_search.resources.collections.size
-        %}
-      {% else %}
-        {% assign search_results_count = search.results_count %}
+      <!-- Left Column: Only Shown When Brands or Categories Actually Match -->
+      {% if has_sidebar %}
+        <div class="notino-search__sidebar">
+          {% if brands_count > 0 %}
+            <div class="notino-search__section">
+              <h4 class="notino-search__section-title">Brand</h4>
+              <ul class="notino-search__list list-unstyled">
+                {% assign brands_array = matching_brands | split: '|||' %}
+                {% for b in brands_array %}
+                  {% if b != '' %}
+                    <li class="notino-search__item" ref="resultsItems[]">
+                      <a href="/collections/all?filter.p.vendor={{ b | url_encode }}" class="notino-search__link">
+                        {{ b }}
+                      </a>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          {% if types_count > 0 %}
+            <div class="notino-search__section">
+              <h4 class="notino-search__section-title">Line</h4>
+              <ul class="notino-search__list list-unstyled">
+                {% assign types_array = matching_types | split: '|||' %}
+                {% for t in types_array %}
+                  {% if t != '' %}
+                    <li class="notino-search__item" ref="resultsItems[]">
+                      <a href="/collections/all?filter.p.product_type={{ t | url_encode }}" class="notino-search__link">
+                        {{ t }}
+                      </a>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+        </div>
       {% endif %}
 
-      <div
-        class="visually-hidden"
-        role="status"
-      >
-        {%- if predictive_search.performed and search_results_count > 0 -%}
-          {{ 'accessibility.search_results_count' | t: count: search_results_count, query: predictive_search.terms }}
-        {%- elsif predictive_search.performed and predictive_search.resources.queries.size > 0 -%}
-          {{- 'accessibility.search_suggestions_available' | t: query: predictive_search.terms -}}
-        {%- elsif predictive_search.performed -%}
-          {{ 'accessibility.search_results_no_results' | t: query: predictive_search.terms }}
-        {%- endif -%}
-      </div>
+      <!-- Right Column: Matched Products List -->
+      <div class="notino-search__main">
+        <ul class="notino-search__products-list list-unstyled">
+          {% assign products_rendered_count = 0 %}
 
-      {% if predictive_search.performed %}
-        {% if predictive_search.resources.queries.size > 0 %}
-          <ul
-            class="predictive-search-results__list predictive-search-results__wrapper predictive-search-results__wrapper-queries list-unstyled"
-          >
-            {%- for resource in predictive_search.resources.queries -%}
-              <li
-                class="predictive-search-results__card--query"
-                ref="resultsItems[]"
-                on:keydown="/onSearchKeyDown"
-              >
-                <a
-                  class="pills__pill predictive-search-results__pill"
-                  href="{{ resource.url }}"
-                  aria-label="{{ resource.text }}"
-                >
-                  <span>
-                    {{ resource.styled_text }}
-                  </span>
+          {% if predictive_search.resources.products.size > 0 %}
+            {% for product in predictive_search.resources.products limit: 5 %}
+              {% assign products_rendered_count = products_rendered_count | plus: 1 %}
+              <li class="notino-search__product-card" ref="resultsItems[]">
+                <a href="{{ product.url }}" class="notino-search__product-link">
+                  <div class="notino-search__product-media">
+                    {% if product.featured_image %}
+                      <img
+                        src="{{ product.featured_image | image_url: width: 120 }}"
+                        alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                        width="44"
+                        height="44"
+                        loading="lazy"
+                      >
+                    {% else %}
+                      {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                    {% endif %}
+                  </div>
+                  <div class="notino-search__product-info">
+                    <h5 class="notino-search__product-title">{{ product.title }}</h5>
+                    <span class="notino-search__product-subtitle">
+                      {% if product.type != blank %}
+                        {{ product.type }}
+                      {% else %}
+                        {{ product.vendor }}
+                      {% endif %}
+                    </span>
+                  </div>
                 </a>
               </li>
             {% endfor %}
-          </ul>
+          {% else %}
+            {% for product in store_products %}
+              {% assign p_title = product.title | downcase %}
+              {% assign p_vendor = product.vendor | downcase %}
+              {% assign p_type = product.type | downcase %}
+              {% if search_query_lower != '' and p_title contains search_query_lower or p_vendor contains search_query_lower or p_type contains search_query_lower %}
+                {% if products_rendered_count < 5 %}
+                  {% assign products_rendered_count = products_rendered_count | plus: 1 %}
+                  <li class="notino-search__product-card" ref="resultsItems[]">
+                    <a href="{{ product.url }}" class="notino-search__product-link">
+                      <div class="notino-search__product-media">
+                        {% if product.featured_image %}
+                          <img
+                            src="{{ product.featured_image | image_url: width: 120 }}"
+                            alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                            width="44"
+                            height="44"
+                            loading="lazy"
+                          >
+                        {% else %}
+                          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                        {% endif %}
+                      </div>
+                      <div class="notino-search__product-info">
+                        <h5 class="notino-search__product-title">{{ product.title }}</h5>
+                        <span class="notino-search__product-subtitle">
+                          {% if product.type != blank %}
+                            {{ product.type }}
+                          {% else %}
+                            {{ product.vendor }}
+                          {% endif %}
+                        </span>
+                      </div>
+                    </a>
+                  </li>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+
+          {% if products_rendered_count == 0 %}
+            <li class="notino-search__no-results">
+              No products found for "{{ search_query }}". Try another search.
+            </li>
+          {% endif %}
+        </ul>
+
+        {% if products_rendered_count > 0 %}
+          <div class="notino-search__footer">
+            <a href="/search?q={{ search_query | url_encode }}" class="notino-search__view-all">
+              View all results for "{{ search_query }}" →
+            </a>
+          </div>
         {% endif %}
-
-        {%- if search_results_count > 0 -%}
-          {% if predictive_search.resources.products.size > 0 %}
-            {%- liquid
-              assign title = 'content.search_results_resource_products' | t
-              assign products = predictive_search.resources.products
-              render 'predictive-search-products-list', title: title, products: products
-            -%}
-          {% endif %}
-
-          {% if predictive_search.resources.collections.size > 0 %}
-            {% assign resource_title = 'content.search_results_resource_collections' | t %}
-
-            {% render 'predictive-search-resource-carousel',
-              title: resource_title,
-              resource_type: 'collection',
-              resources: predictive_search.resources.collections
-            %}
-          {% endif %}
-
-          {% if predictive_search.resources.pages.size > 0 %}
-            {% assign resource_title = 'content.search_results_resource_pages' | t %}
-
-            {% render 'predictive-search-resource-carousel',
-              title: resource_title,
-              resource_type: 'page',
-              resources: predictive_search.resources.pages
-            %}
-          {% endif %}
-
-          {% if predictive_search.resources.articles.size > 0 %}
-            {% assign resource_title = 'content.search_results_resource_articles' | t %}
-
-            {% render 'predictive-search-resource-carousel',
-              title: resource_title,
-              resource_type: 'article',
-              resources: predictive_search.resources.articles
-            %}
-          {% endif %}
-        {%- elsif predictive_search.resources.queries.size == 0 -%}
-          <p class="predictive-search-results__no-results">
-            {{ 'content.search_results_no_results' | t: terms: predictive_search.terms }}
-          </p>
-        {% endif %}
-      {% else %}
-        {%- liquid
-          assign title = 'content.recently_viewed_products' | t
-          assign products = search.results
-
-          comment
-            Searching for recently viewed products by id doesn't preserve the order of the products.
-            To work around this, we get the product ids into an array then use that to reorder them.
-          endcomment
-          if search.terms contains 'id:'
-            assign new_products_ids = search.terms | replace: 'id:', '' | split: ' OR '
-          endif
-          render 'predictive-search-products-list', title: title, products: products, order_ids: new_products_ids, limit: 4
-        -%}
-      {% endif %}
-
-      {% if predictive_search.performed %}
-        {%- if search_results_count > 0 -%}
-          {% assign total_results = predictive_search.resources.products.size
-            | plus: predictive_search.resources.collections.size
-            | plus: predictive_search.resources.pages.size
-            | plus: predictive_search.resources.articles.size
-          %}
-          {% assign single_result_url = null %}
-          {% if total_results == 1 %}
-            {% if predictive_search.resources.products.size == 1 %}
-              {% assign single_result_url = predictive_search.resources.products.first.url %}
-            {% elsif predictive_search.resources.collections.size == 1 %}
-              {% assign single_result_url = predictive_search.resources.collections.first.url %}
-            {% elsif predictive_search.resources.pages.size == 1 %}
-              {% assign single_result_url = predictive_search.resources.pages.first.url %}
-            {% elsif predictive_search.resources.articles.size == 1 %}
-              {% assign single_result_url = predictive_search.resources.articles.first.url %}
-            {% endif %}
-          {% endif %}
-
-          {% if single_result_url %}
-            <div data-single-result-url="{{ single_result_url }}"></div>
-          {% endif %}
-        {% endif %}
-      {% endif %}
+      </div>
     </div>
   </div>
 {%- endif -%}

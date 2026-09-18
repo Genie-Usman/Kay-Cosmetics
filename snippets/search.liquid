@@ -10,24 +10,116 @@
 {%- enddoc -%}
 
 {% unless style == 'none' %}
-  <search-button
-    class="search-action{% if display_style == 'text' %} search-action--text{% endif %}{% if class != blank %} {{ class | strip }}{% endif %}"
+  {% assign is_drawer_search = false %}
+  {% if class contains 'search-action--hidden-on-menu' %}
+    {% assign is_drawer_search = true %}
+  {% endif %}
+
+  <div
+    class="search-action{% unless is_drawer_search %} header-search-bar{% endunless %}{% if display_style == 'text' %} search-action--text{% endif %}{% if class != blank %} {{ class | strip }}{% endif %}"
   >
+    {% unless is_drawer_search %}
+      <script
+        src="{{ 'predictive-search.js' | asset_url }}"
+        type="module"
+        fetchpriority="low"
+      ></script>
+
+      <!-- Desktop Beauty Search Bar with Notino-Style Inline Predictive Dropdown -->
+      <predictive-search-component
+        class="predictive-search header-predictive-search"
+        data-section-id="predictive-search"
+        role="search"
+        aria-label="{{ 'content.search_input_label' | t }}"
+      >
+        <form
+          action="{{ routes.search_url }}"
+          method="get"
+          role="search"
+          class="header-search-bar__form predictive-search-form"
+          ref="form"
+          on:keydown="/onSearchKeyDown"
+        >
+          <div class="header-search-bar__pill">
+            <input
+              id="HeaderSearchInput-Desktop"
+              class="search-input header-search-bar__input"
+              type="search"
+              name="q"
+              value="{{ search.terms | escape }}"
+              role="combobox"
+              aria-expanded="false"
+              aria-owns="predictive-search-results-desktop"
+              aria-controls="predictive-search-results-desktop"
+              aria-haspopup="listbox"
+              aria-autocomplete="list"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="Search for makeup, skincare, fragrances, brands..."
+              ref="searchInput"
+              on:input="/search"
+              on:keydown="/onSearchKeyDown"
+              aria-label="{{ 'content.search_input_label' | t }}"
+            >
+            <input name="options[prefix]" type="hidden" value="last">
+
+            <!-- Clear / Reset Button (shows when typing) -->
+            <button
+              type="button"
+              class="button-unstyled header-search-bar__clear predictive-search__reset-button"
+              ref="resetButton"
+              hidden
+              on:click="/resetSearch"
+              aria-label="{{ 'actions.clear' | t }}"
+            >
+              <span class="svg-wrapper">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </span>
+            </button>
+
+            <!-- Submit Button (Notino Minimal Outline Icon) -->
+            <button
+              type="submit"
+              class="button-unstyled header-search-bar__submit"
+              aria-label="{{ 'content.search' | t }}"
+            >
+              <span class="svg-wrapper">
+                {{ 'icon-search.svg' | inline_asset_content }}
+              </span>
+            </button>
+          </div>
+
+          <!-- Inline Dropdown attached directly beneath the search bar (Notino Reference) -->
+          <div class="header-search-bar__dropdown-wrapper">
+            <div
+              id="predictive-search-results-desktop"
+              class="header-search-bar__dropdown"
+              ref="predictiveSearchResults"
+            >
+            </div>
+          </div>
+        </form>
+      </predictive-search-component>
+    {% endunless %}
+
+    <!-- Mobile / Compact Search Icon Button (Opens Search Modal on Mobile Only) -->
     <button
       on:click="#search-modal/showDialog"
-      class="button-unstyled header-actions__action{% if display_style == 'text' %} header-actions__text-style{% endif %}"
+      type="button"
+      class="button-unstyled header-actions__action{% unless is_drawer_search %} header-search-bar__mobile-btn{% endunless %}"
       aria-label="{{ 'content.search_input_label' | t }}"
       aria-haspopup="dialog"
     >
-      <span class="{% if display_style == 'icon' %}hidden{% else %}mobile:hidden{% endif %}">
-        {{ 'content.search' | t }}
-      </span>
-
-      <span class="svg-wrapper {% if display_style != 'icon' %}desktop:hidden{% endif %}">
+      <span class="svg-wrapper">
         {{ 'icon-search.svg' | inline_asset_content }}
       </span>
     </button>
-  </search-button>
+  </div>
 {% endunless %}
 
 {% stylesheet %}

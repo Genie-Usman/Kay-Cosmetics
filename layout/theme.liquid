@@ -141,10 +141,11 @@
         (function setHeaderMenuStyle() {
           const headerComponent = document.querySelector('#header-component');
           if (headerComponent) {
-            const isTouchDevice = 'ontouchstart' in window && navigator.maxTouchPoints > 0;
+            const isMobile = window.matchMedia('(max-width: 749px)').matches;
+            const isTouch = ('ontouchstart' in window || navigator.maxTouchPoints > 0) && isMobile;
             const overflowList = headerComponent.querySelector('overflow-list');
             const hasReachedMinimum = overflowList && overflowList.hasAttribute('minimum-reached');
-            headerComponent.dataset.menuStyle = isTouchDevice || hasReachedMinimum ? 'drawer' : 'menu';
+            headerComponent.dataset.menuStyle = isTouch || hasReachedMinimum ? 'drawer' : 'menu';
           }
         })();
       </script>

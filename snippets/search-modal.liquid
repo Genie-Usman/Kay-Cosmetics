@@ -302,8 +302,8 @@
     }
   }
 
-  /* Add new rule to apply bottom padding only when search button exists */
-  .predictive-search-form__content-wrapper:has([data-search-results]):not(:has(.predictive-search-results__no-results))
+  /* Add new rule to apply bottom padding only when search button exists in search modal */
+  .dialog-modal .predictive-search-form__content-wrapper:has([data-search-results]):not(:has(.predictive-search-results__no-results))
     > .predictive-search-form__content {
     padding-block-end: var(--padding-6xl);
   }
