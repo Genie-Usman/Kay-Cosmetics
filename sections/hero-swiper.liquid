@@ -1,16 +1,7 @@
 {%- comment -%}
-  Kay Cosmetics - Premium Hero Swiper Section
-  Features:
-  - 100% Full-bleed edge-to-edge layout (zero side margins, zero dead whitespace)
-  - True 50/50 split layout on desktop (Left: Centered editorial text | Right: Full-bleed studio photography)
-  - Right media column goes edge-to-edge: NO card frame, NO rounded corners, NO border, NO outer padding
-  - Uses Theme Settings typography tokens (no duplicate external font imports)
-  - Configurable heading weight and font styling (no hardcoded heavy weights)
-  - Brand color palette buttons (Rosewood #BD7385 & Deep Plum #2C1E26, rounded corners)
-  - Flush edge navigation tabs at viewport borders
-  - Zero pause/play button
-  - Full mobile responsiveness: stacked layout with full-width media and legible typography
-  - Comprehensive Shopify Theme Customizer controls for every single aspect
+  Kay Cosmetics - Hero Slider (Swiper)
+  Fully customizable edge-to-edge split hero slider.
+  Inherits theme typography, respects store color palette, fully responsive.
 {%- endcomment -%}
 
 {{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
@@ -89,7 +80,7 @@
     box-sizing: border-box;
   }
 
-  /* Full Bleed Container: Zero Side Margins or Inset Padding */
+  /* Container */
   .hero-swiper-container {
     position: relative;
     width: 100%;
@@ -130,7 +121,7 @@
     }
   }
 
-  /* 50/50 Full Bleed Split Layout */
+  /* 50/50 Split Layout */
   .hero-slide--split_image_right {
     display: flex;
     flex-direction: column-reverse;
@@ -162,7 +153,7 @@
     }
   }
 
-  /* Content Column (Left 50%) */
+  /* Content Column */
   .hero-slide__content-col {
     width: 100%;
     display: flex;
@@ -191,6 +182,13 @@
     }
   }
 
+  .hero-slide__inner {
+    width: 100%;
+    max-width: 540px;
+    box-sizing: border-box;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+  }
+
   /* Content Alignment Variations */
   .hero-slide__content-col--center {
     align-items: center;
@@ -199,6 +197,21 @@
   .hero-slide__content-col--center .hero-slide__inner {
     margin: 0 auto;
     text-align: center;
+  }
+  .hero-slide__content-col--center .hero-slide__eyebrow {
+    text-align: center;
+  }
+  .hero-slide__content-col--center .hero-slide__heading {
+    text-align: center;
+  }
+  .hero-slide__content-col--center .hero-slide__subheading {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+  .hero-slide__content-col--center .hero-slide__subheading p {
+    text-align: center;
+    margin: 0 auto;
   }
   .hero-slide__content-col--center .hero-slide__btn-group {
     justify-content: center;
@@ -211,6 +224,20 @@
   .hero-slide__content-col--left .hero-slide__inner {
     margin-left: 0;
     margin-right: auto;
+    text-align: left;
+  }
+  .hero-slide__content-col--left .hero-slide__eyebrow {
+    text-align: left;
+  }
+  .hero-slide__content-col--left .hero-slide__heading {
+    text-align: left;
+  }
+  .hero-slide__content-col--left .hero-slide__subheading {
+    margin-left: 0;
+    margin-right: auto;
+    text-align: left;
+  }
+  .hero-slide__content-col--left .hero-slide__subheading p {
     text-align: left;
   }
   .hero-slide__content-col--left .hero-slide__btn-group {
@@ -226,17 +253,25 @@
     margin-right: 0;
     text-align: right;
   }
+  .hero-slide__content-col--right .hero-slide__eyebrow {
+    text-align: right;
+  }
+  .hero-slide__content-col--right .hero-slide__heading {
+    text-align: right;
+  }
+  .hero-slide__content-col--right .hero-slide__subheading {
+    margin-left: auto;
+    margin-right: 0;
+    text-align: right;
+  }
+  .hero-slide__content-col--right .hero-slide__subheading p {
+    text-align: right;
+  }
   .hero-slide__content-col--right .hero-slide__btn-group {
     justify-content: flex-end;
   }
 
-  .hero-slide__inner {
-    width: 100%;
-    max-width: 540px;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
-  }
-
-  /* Media Column (Right 50% Full-Bleed - No Card, No Border, Edge-to-Edge) */
+  /* Media Column (Right 50% Full-Bleed Edge-to-Edge) */
   .hero-slide__media-col {
     width: 100%;
     position: relative;
@@ -298,7 +333,7 @@
     transform: scale(1.02);
   }
 
-  /* Overlay Full-Bleed Layout */
+  /* Overlay Layout */
   .hero-slide--overlay {
     position: relative;
     display: flex;
@@ -331,7 +366,7 @@
     z-index: 2;
   }
 
-  /* Editorial Eyebrow Typography (Uses Theme Accent/Heading font tokens) */
+  /* Eyebrow Typography (Uses Theme Accent / Heading Font) */
   .hero-slide__eyebrow {
     display: inline-block;
     margin-bottom: 12px;
@@ -384,20 +419,22 @@
     text-transform: uppercase;
   }
 
-  /* Subheading */
+  /* Description / Subheading - Centered and Clean */
   .hero-slide__subheading {
-    margin: 0 0 28px 0;
+    margin: 0 auto 28px;
     font-family: var(--font-body--family, inherit);
     line-height: 1.6;
     font-weight: var(--font-body--weight, 400);
-    max-width: 48ch;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .hero-slide__subheading p {
     margin: 0;
+    text-align: inherit;
   }
 
-  /* CTA Buttons (Brand palette: Rosewood & Deep Plum, a bit rounder) */
+  /* CTA Buttons */
   .hero-slide__btn-group {
     display: flex;
     flex-wrap: wrap;
@@ -431,7 +468,7 @@
     transform: scale(0.98);
   }
 
-  /* Button Corner Radius ("a bit rounder") */
+  /* Button Corner Radius */
   .hero-btn--shape-rounded {
     border-radius: 6px;
   }
@@ -748,8 +785,8 @@
             assign heading_weight = block.settings.heading_weight | default: 'inherit'
             assign heading_case = block.settings.heading_case | default: 'uppercase'
             assign heading_color = block.settings.heading_color | default: '#2C1E26'
-            assign heading_size_desktop = block.settings.heading_size_desktop | default: 40
-            assign heading_size_mobile = block.settings.heading_size_mobile | default: 26
+            assign heading_size_desktop = block.settings.heading_size_desktop | default: 38
+            assign heading_size_mobile = block.settings.heading_size_mobile | default: 24
 
             assign subheading = block.settings.subheading
             assign subheading_color = block.settings.subheading_color | default: '#574A52'
@@ -790,7 +827,7 @@
             {{ block.shopify_attributes }}
             data-slide-index="{{ forloop.index0 }}"
           >
-            {%- comment -%} Content Column (Left 50%) {%- endcomment -%}
+            {%- comment -%} Content Column {%- endcomment -%}
             <div class="hero-slide__content-col hero-slide__content-col--{{ text_align }}">
               <div
                 class="hero-slide__inner"
@@ -850,7 +887,7 @@
               </div>
             </div>
 
-            {%- comment -%} Media Column (Right 50% Full-Bleed - Exactly like Reference) {%- endcomment -%}
+            {%- comment -%} Media Column {%- endcomment -%}
             <div class="hero-slide__media-col">
               <div class="hero-slide__image-wrap">
                 {%- if block.settings.image != blank -%}
@@ -1041,31 +1078,31 @@
 
 {% schema %}
 {
-  "name": "Hero Slider (Swiper)",
+  "name": "Hero Slider",
   "tag": "section",
   "class": "section-hero-swiper",
   "settings": [
     {
       "type": "header",
-      "content": "Layout & Dimensions"
+      "content": "Layout"
     },
     {
       "type": "checkbox",
       "id": "full_width",
-      "label": "Full width layout",
+      "label": "Full width",
       "default": true
     },
     {
       "type": "select",
       "id": "section_height_desktop",
-      "label": "Desktop section height",
+      "label": "Desktop height",
       "options": [
         { "value": "adapt", "label": "Adapt to content" },
         { "value": "small", "label": "Small (480px)" },
-        { "value": "medium", "label": "Medium (580px - Recommended)" },
+        { "value": "medium", "label": "Medium (580px)" },
         { "value": "large", "label": "Large (680px)" },
-        { "value": "fullscreen", "label": "Full screen (100vh)" },
-        { "value": "custom", "label": "Custom height" }
+        { "value": "fullscreen", "label": "Full screen" },
+        { "value": "custom", "label": "Custom" }
       ],
       "default": "medium"
     },
@@ -1082,14 +1119,14 @@
     {
       "type": "select",
       "id": "section_height_mobile",
-      "label": "Mobile section height",
+      "label": "Mobile height",
       "options": [
         { "value": "adapt", "label": "Adapt to content" },
         { "value": "small", "label": "Small (440px)" },
         { "value": "medium", "label": "Medium (520px)" },
         { "value": "large", "label": "Large (620px)" },
-        { "value": "fullscreen", "label": "Full screen (100vh)" },
-        { "value": "custom", "label": "Custom height" }
+        { "value": "fullscreen", "label": "Full screen" },
+        { "value": "custom", "label": "Custom" }
       ],
       "default": "adapt"
     },
@@ -1106,7 +1143,7 @@
     {
       "type": "color",
       "id": "section_bg_color",
-      "label": "Section background color",
+      "label": "Background color",
       "default": "#FAF5F2"
     },
     {
@@ -1131,7 +1168,7 @@
     },
     {
       "type": "header",
-      "content": "Slider & Transitions"
+      "content": "Slider settings"
     },
     {
       "type": "select",
@@ -1156,7 +1193,7 @@
     {
       "type": "checkbox",
       "id": "autoplay_enabled",
-      "label": "Enable autoplay",
+      "label": "Auto-rotate slides",
       "default": true
     },
     {
@@ -1166,13 +1203,13 @@
       "max": 12,
       "step": 1,
       "unit": "s",
-      "label": "Autoplay slide duration",
+      "label": "Change slides every",
       "default": 5
     },
     {
       "type": "checkbox",
       "id": "pause_on_hover",
-      "label": "Pause autoplay on hover",
+      "label": "Pause on hover",
       "default": true
     },
     {
@@ -1183,28 +1220,28 @@
     },
     {
       "type": "header",
-      "content": "Navigation Arrows"
+      "content": "Navigation arrows"
     },
     {
       "type": "checkbox",
       "id": "show_arrows",
-      "label": "Show navigation arrows",
+      "label": "Show arrows",
       "default": true
     },
     {
       "type": "select",
       "id": "arrow_style",
-      "label": "Navigation arrow style",
+      "label": "Arrow style",
       "options": [
-        { "value": "edge_tab", "label": "Flush Edge Tabs" },
-        { "value": "floating_circle", "label": "Floating Frosted Circles" }
+        { "value": "edge_tab", "label": "Edge tabs" },
+        { "value": "floating_circle", "label": "Floating circles" }
       ],
       "default": "edge_tab"
     },
     {
       "type": "checkbox",
       "id": "arrows_desktop_only",
-      "label": "Show arrows only on desktop",
+      "label": "Desktop only",
       "default": false
     },
     {
@@ -1216,7 +1253,7 @@
     {
       "type": "color",
       "id": "arrow_bg_color",
-      "label": "Arrow button background",
+      "label": "Arrow background",
       "default": "#FFFFFF"
     },
     {
@@ -1233,12 +1270,12 @@
     },
     {
       "type": "header",
-      "content": "Pagination"
+      "content": "Pagination dots"
     },
     {
       "type": "checkbox",
       "id": "show_pagination",
-      "label": "Show pagination",
+      "label": "Show dots",
       "default": true
     },
     {
@@ -1257,32 +1294,32 @@
   "blocks": [
     {
       "type": "slide",
-      "name": "Hero Slide",
+      "name": "Slide",
       "settings": [
         {
           "type": "header",
-          "content": "Slide Layout"
+          "content": "Layout"
         },
         {
           "type": "select",
           "id": "layout_type",
-          "label": "Layout type",
+          "label": "Layout",
           "options": [
-            { "value": "split_image_right", "label": "Split (Text left, Image right)" },
-            { "value": "split_image_left", "label": "Split (Image left, Text right)" },
-            { "value": "overlay", "label": "Full-bleed background overlay" }
+            { "value": "split_image_right", "label": "Split (Image right)" },
+            { "value": "split_image_left", "label": "Split (Image left)" },
+            { "value": "overlay", "label": "Full banner overlay" }
           ],
           "default": "split_image_right"
         },
         {
           "type": "color",
           "id": "slide_bg_color",
-          "label": "Slide background color",
+          "label": "Background color",
           "default": "#FAF5F2"
         },
         {
           "type": "header",
-          "content": "Images"
+          "content": "Media"
         },
         {
           "type": "image_picker",
@@ -1299,7 +1336,7 @@
           "id": "image_fit",
           "label": "Image fit",
           "options": [
-            { "value": "cover", "label": "Cover (Full bleed edge-to-edge)" },
+            { "value": "cover", "label": "Cover" },
             { "value": "contain", "label": "Contain" }
           ],
           "default": "cover"
@@ -1320,13 +1357,13 @@
         {
           "type": "checkbox",
           "id": "show_overlay",
-          "label": "Enable image overlay tint",
+          "label": "Enable overlay tint",
           "default": false
         },
         {
           "type": "color",
           "id": "overlay_color",
-          "label": "Overlay tint color",
+          "label": "Overlay color",
           "default": "#2C1E26"
         },
         {
@@ -1341,7 +1378,7 @@
         },
         {
           "type": "header",
-          "content": "Eyebrow / Accent"
+          "content": "Eyebrow"
         },
         {
           "type": "text",
@@ -1354,9 +1391,9 @@
           "id": "eyebrow_style",
           "label": "Eyebrow style",
           "options": [
-            { "value": "serif_italic", "label": "Editorial serif italic (Theme Accent Font)" },
-            { "value": "badge", "label": "Subtle badge pill" },
-            { "value": "sans", "label": "Clean sans-serif uppercase" }
+            { "value": "serif_italic", "label": "Italic serif" },
+            { "value": "badge", "label": "Pill badge" },
+            { "value": "sans", "label": "Uppercase sans-serif" }
           ],
           "default": "serif_italic"
         },
@@ -1373,7 +1410,7 @@
           "max": 42,
           "step": 1,
           "unit": "px",
-          "label": "Eyebrow font size",
+          "label": "Eyebrow size",
           "default": 30
         },
         {
@@ -1389,9 +1426,9 @@
         {
           "type": "select",
           "id": "heading_weight",
-          "label": "Heading font weight",
+          "label": "Font weight",
           "options": [
-            { "value": "inherit", "label": "Theme default (Settings)" },
+            { "value": "inherit", "label": "Theme default" },
             { "value": "400", "label": "Regular (400)" },
             { "value": "500", "label": "Medium (500)" },
             { "value": "600", "label": "Semi-bold (600)" },
@@ -1402,7 +1439,7 @@
         {
           "type": "select",
           "id": "heading_tag",
-          "label": "Heading HTML tag",
+          "label": "HTML tag",
           "options": [
             { "value": "h1", "label": "H1" },
             { "value": "h2", "label": "H2" }
@@ -1412,10 +1449,10 @@
         {
           "type": "select",
           "id": "heading_case",
-          "label": "Heading letter case",
+          "label": "Text case",
           "options": [
             { "value": "uppercase", "label": "UPPERCASE" },
-            { "value": "none", "label": "Standard title case" }
+            { "value": "none", "label": "Normal case" }
           ],
           "default": "uppercase"
         },
@@ -1432,7 +1469,7 @@
           "max": 64,
           "step": 2,
           "unit": "px",
-          "label": "Desktop heading font size",
+          "label": "Desktop size",
           "default": 38
         },
         {
@@ -1442,23 +1479,23 @@
           "max": 38,
           "step": 1,
           "unit": "px",
-          "label": "Mobile heading font size",
+          "label": "Mobile size",
           "default": 24
         },
         {
           "type": "header",
-          "content": "Subheading / Body"
+          "content": "Description"
         },
         {
           "type": "richtext",
           "id": "subheading",
-          "label": "Subheading",
+          "label": "Description",
           "default": "<p>Discover makeup, skincare, and fragrances from authentic brand partners. Sourced through established wholesale channels and delivered nationwide across Pakistan.</p>"
         },
         {
           "type": "color",
           "id": "subheading_color",
-          "label": "Subheading color",
+          "label": "Description color",
           "default": "#574A52"
         },
         {
@@ -1468,7 +1505,7 @@
           "max": 22,
           "step": 1,
           "unit": "px",
-          "label": "Subheading font size",
+          "label": "Description size",
           "default": 15
         },
         {
@@ -1478,7 +1515,7 @@
           "max": 800,
           "step": 20,
           "unit": "px",
-          "label": "Content max width",
+          "label": "Content width",
           "default": 540
         },
         {
@@ -1494,29 +1531,29 @@
         },
         {
           "type": "header",
-          "content": "Primary Button"
+          "content": "Primary button"
         },
         {
           "type": "text",
           "id": "button_1_label",
-          "label": "Primary button label",
+          "label": "Button label",
           "default": "Shop Now"
         },
         {
           "type": "url",
           "id": "button_1_link",
-          "label": "Primary button link"
+          "label": "Button link"
         },
         {
           "type": "select",
           "id": "button_1_style",
-          "label": "Primary button style",
+          "label": "Button style",
           "options": [
-            { "value": "primary-rosewood", "label": "Rosewood Accent (#BD7385)" },
-            { "value": "deep-plum", "label": "Deep Plum (#2C1E26)" },
-            { "value": "outline", "label": "Deep Plum Outline" },
-            { "value": "outline-rosewood", "label": "Rosewood Outline" },
-            { "value": "white", "label": "Pure White" },
+            { "value": "primary-rosewood", "label": "Rosewood (Primary)" },
+            { "value": "deep-plum", "label": "Deep Plum (Secondary)" },
+            { "value": "outline", "label": "Deep Plum outline" },
+            { "value": "outline-rosewood", "label": "Rosewood outline" },
+            { "value": "white", "label": "White" },
             { "value": "custom-1", "label": "Custom colors" }
           ],
           "default": "primary-rosewood"
@@ -1524,46 +1561,46 @@
         {
           "type": "color",
           "id": "button_1_bg_color",
-          "label": "Custom primary background",
+          "label": "Custom background",
           "default": "#BD7385"
         },
         {
           "type": "color",
           "id": "button_1_text_color",
-          "label": "Custom primary text color",
+          "label": "Custom text color",
           "default": "#FFFFFF"
         },
         {
           "type": "color",
           "id": "button_1_border_color",
-          "label": "Custom primary border color",
+          "label": "Custom border color",
           "default": "#BD7385"
         },
         {
           "type": "header",
-          "content": "Secondary Button"
+          "content": "Secondary button"
         },
         {
           "type": "text",
           "id": "button_2_label",
-          "label": "Secondary button label",
+          "label": "Button label",
           "default": "Explore Brands"
         },
         {
           "type": "url",
           "id": "button_2_link",
-          "label": "Secondary button link"
+          "label": "Button link"
         },
         {
           "type": "select",
           "id": "button_2_style",
-          "label": "Secondary button style",
+          "label": "Button style",
           "options": [
-            { "value": "deep-plum", "label": "Deep Plum (#2C1E26)" },
-            { "value": "primary-rosewood", "label": "Rosewood Accent (#BD7385)" },
-            { "value": "outline", "label": "Deep Plum Outline" },
-            { "value": "outline-rosewood", "label": "Rosewood Outline" },
-            { "value": "white", "label": "Pure White" },
+            { "value": "deep-plum", "label": "Deep Plum (Secondary)" },
+            { "value": "primary-rosewood", "label": "Rosewood (Primary)" },
+            { "value": "outline", "label": "Deep Plum outline" },
+            { "value": "outline-rosewood", "label": "Rosewood outline" },
+            { "value": "white", "label": "White" },
             { "value": "custom-2", "label": "Custom colors" }
           ],
           "default": "deep-plum"
@@ -1571,54 +1608,54 @@
         {
           "type": "color",
           "id": "button_2_bg_color",
-          "label": "Custom secondary background",
+          "label": "Custom background",
           "default": "#2C1E26"
         },
         {
           "type": "color",
           "id": "button_2_text_color",
-          "label": "Custom secondary text color",
+          "label": "Custom text color",
           "default": "#FFFFFF"
         },
         {
           "type": "color",
           "id": "button_2_border_color",
-          "label": "Custom secondary border color",
+          "label": "Custom border color",
           "default": "#2C1E26"
         },
         {
           "type": "header",
-          "content": "Button Layout & Optional Link"
+          "content": "Button shape & links"
         },
         {
           "type": "select",
           "id": "buttons_shape",
-          "label": "Buttons corner radius",
+          "label": "Button shape",
           "options": [
-            { "value": "rounded", "label": "Rounded (6px - Recommended)" },
-            { "value": "soft", "label": "Soft (10px)" },
-            { "value": "pill", "label": "Refined Pill" },
-            { "value": "sharp", "label": "Sharp (0px)" }
+            { "value": "rounded", "label": "Rounded" },
+            { "value": "soft", "label": "Soft rounded" },
+            { "value": "pill", "label": "Pill" },
+            { "value": "sharp", "label": "Square" }
           ],
           "default": "rounded"
         },
         {
           "type": "checkbox",
           "id": "buttons_stack_mobile",
-          "label": "Stack buttons vertically on mobile",
+          "label": "Stack buttons on mobile",
           "default": false
         },
         {
           "type": "url",
           "id": "slide_link",
-          "label": "Optional full-slide link (used if no buttons)"
+          "label": "Slide link (when no buttons)"
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Hero Slider (Swiper)",
+      "name": "Hero Slider",
       "blocks": [
         {
           "type": "slide",
