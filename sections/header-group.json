@@ -51,9 +51,9 @@
       "settings": {
         "speed": 5,
         "section_width": "page-width",
-        "background_color": "#181716",
+        "background_color": "#C38091",
         "divider_width": 1,
-        "divider_color": "#2E2B28",
+        "divider_color": "#D493A3",
         "padding-block-start": 8,
         "padding-block-end": 8
       }

@@ -1,12 +1,42 @@
 /* ==========================================================================
    Kay Cosmetics — Refined Beauty-Commerce Styling
-   Production-ready styling built on native Horizon theme tokens
+   Palette Inspired by Yozo Beauty: Warm Porcelain, Dusty Rosewood & Deep Plum
    ========================================================================== */
+
+:root {
+  /* Yozo Core Beauty Palette */
+  --yozo-canvas: #FAF5F2;
+  --yozo-card-bg: #FFFFFF;
+  --yozo-plum-dark: #2C1E26;
+  --yozo-plum-deep: #33252E;
+  --yozo-text-body: #574A52;
+  --yozo-text-muted: #6B5C65;
+  --yozo-text-subdued: #94848D;
+  --yozo-rosewood: #BD7385;
+  --yozo-rosewood-hover: #A75D6F;
+  --yozo-rose-ribbon: #F3C9D2;
+  --yozo-rose-dark: #4A2E36;
+  --yozo-lilac: #CDBBE6;
+  --yozo-border-subtle: #EFE6E8;
+  --yozo-border-medium: #DECED2;
+
+  /* Pastel Category Tints */
+  --yozo-pastel-peach: #FBF1ED;
+  --yozo-pastel-blue: #EBF3F8;
+  --yozo-pastel-lilac: #F5F0FB;
+  --yozo-pastel-pink: #FDF2F4;
+  --yozo-pastel-mint: #F0FBF0;
+
+  /* Backward-compatible accent variable */
+  --kc-accent-rosewood: var(--yozo-rosewood);
+}
 
 /* --------------------------------------------------------------------------
    Cohesive Typography & Spacing Rhythm
    -------------------------------------------------------------------------- */
 body {
+  background-color: var(--yozo-canvas);
+  color: var(--yozo-text-body);
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -23,7 +53,7 @@ body {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--kc-accent-rosewood, #944C57);
+  color: var(--yozo-rosewood);
   margin-bottom: 6px;
 }
 
@@ -33,13 +63,13 @@ body {
   font-weight: var(--font-heading--weight, 600);
   letter-spacing: -0.02em;
   line-height: 1.2;
-  color: var(--color-foreground, #181716);
+  color: var(--yozo-plum-dark);
   margin: 0 0 8px 0;
 }
 
 .section-subtitle {
   font-size: 0.9375rem;
-  color: var(--color-foreground-muted, #57534E);
+  color: var(--yozo-text-muted);
   line-height: 1.55;
   max-width: 560px;
   margin: 0;
@@ -49,16 +79,17 @@ body {
    Announcement Bar & Header Polish
    -------------------------------------------------------------------------- */
 .announcement-bar {
-  background-color: #181716;
-  color: #FAF9F6;
-  border-block-end: 1px solid #2B2826;
+  background-color: #C38091 !important;
+  color: #FFFFFF !important;
+  border-block-end: 1px solid #D493A3 !important;
 }
 
-.announcement-bar__text {
+.announcement-bar__text,
+.announcement-bar a {
   font-size: 0.75rem;
   letter-spacing: 0.02em;
   font-weight: 500;
-  color: #FAF9F6;
+  color: #FFFFFF !important;
 }
 
 .header__logo-text {
@@ -118,16 +149,16 @@ body {
   flex-direction: column;
   border-radius: 4px;
   overflow: hidden;
-  background-color: var(--color-background, #FAF9F6);
-  border: 1px solid var(--color-border, #E5E0D8);
+  background-color: var(--yozo-card-bg, #FFFFFF);
+  border: 1px solid var(--yozo-border-subtle, #EFE6E8);
   text-decoration: none;
   transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .category-card:hover {
   transform: translateY(-3px);
-  border-color: var(--color-foreground, #181716);
-  box-shadow: 0 8px 18px rgba(24, 23, 22, 0.05);
+  border-color: var(--yozo-rosewood, #BD7385);
+  box-shadow: 0 10px 24px -6px rgba(189, 115, 133, 0.12);
 }
 
 .category-card__media {
@@ -135,7 +166,23 @@ body {
   width: 100%;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  background-color: #F0EDE6;
+  background-color: var(--yozo-pastel-peach, #FBF1ED);
+}
+
+.category-card:nth-child(2) .category-card__media {
+  background-color: var(--yozo-pastel-blue, #EBF3F8);
+}
+
+.category-card:nth-child(3) .category-card__media {
+  background-color: var(--yozo-pastel-lilac, #F5F0FB);
+}
+
+.category-card:nth-child(4) .category-card__media {
+  background-color: var(--yozo-pastel-pink, #FDF2F4);
+}
+
+.category-card:nth-child(5) .category-card__media {
+  background-color: var(--yozo-pastel-mint, #F0FBF0);
 }
 
 .category-card__image {
@@ -154,12 +201,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  background-color: #FFFFFF;
 }
 
 .category-card__title {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--color-foreground, #181716);
+  color: var(--yozo-plum-dark, #2C1E26);
   margin: 0;
   display: flex;
   align-items: center;
@@ -168,20 +216,20 @@ body {
 
 .category-card__tagline {
   font-size: 0.75rem;
-  color: var(--color-foreground-muted, #57534E);
+  color: var(--yozo-text-muted, #6B5C65);
   line-height: 1.35;
   margin: 0;
 }
 
 .category-card__arrow {
   font-size: 11px;
-  color: var(--color-foreground-muted, #57534E);
+  color: var(--yozo-rosewood, #BD7385);
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .category-card:hover .category-card__arrow {
   transform: translateX(3px);
-  color: var(--color-foreground, #181716);
+  color: var(--yozo-rosewood-hover, #A75D6F);
 }
 
 /* --------------------------------------------------------------------------
@@ -208,17 +256,18 @@ body {
   align-items: center;
   text-align: center;
   padding: 24px 16px;
-  background: var(--color-background, #FAF9F6);
-  border: 1px solid var(--color-border, #E5E0D8);
+  background: var(--yozo-card-bg, #FFFFFF);
+  border: 1px solid var(--yozo-border-subtle, #EFE6E8);
   border-radius: 4px;
   text-decoration: none;
-  transition: transform 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   min-height: 100px;
 }
 
 .brand-card:hover {
-  border-color: var(--color-foreground, #181716);
+  border-color: var(--yozo-rosewood, #BD7385);
   transform: translateY(-2px);
+  box-shadow: 0 8px 20px -4px rgba(189, 115, 133, 0.12);
 }
 
 .brand-card__name {
@@ -226,13 +275,13 @@ body {
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--color-foreground, #181716);
+  color: var(--yozo-plum-dark, #2C1E26);
   margin: 0;
 }
 
 .brand-card__tagline {
   font-size: 0.75rem;
-  color: var(--color-foreground-muted, #57534E);
+  color: var(--yozo-text-muted, #6B5C65);
   margin: 4px 0 0 0;
 }
 
@@ -257,8 +306,9 @@ body {
   border-radius: 4px;
   overflow: hidden;
   aspect-ratio: 4 / 3;
-  background-color: #F0EDE6;
-  border: 1px solid var(--color-border, #E5E0D8);
+  background-color: var(--yozo-pastel-peach, #FBF1ED);
+  border: 1px solid var(--yozo-border-subtle, #EFE6E8);
+  box-shadow: 0 12px 30px -8px rgba(44, 30, 38, 0.08);
 }
 
 .editorial-image-frame img {
@@ -279,7 +329,7 @@ body {
   gap: 12px;
   margin-top: 10px;
   padding-top: 16px;
-  border-top: 1px solid var(--color-border, #E5E0D8);
+  border-top: 1px solid var(--yozo-border-subtle, #EFE6E8);
 }
 
 .editorial-point {
@@ -291,20 +341,26 @@ body {
 .editorial-point__title {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-foreground, #181716);
+  color: var(--yozo-plum-dark, #2C1E26);
   margin: 0;
 }
 
 .editorial-point__text {
   font-size: 0.8125rem;
-  color: var(--color-foreground-muted, #57534E);
+  color: var(--yozo-text-muted, #6B5C65);
   line-height: 1.45;
   margin: 0;
 }
 
 /* --------------------------------------------------------------------------
-   Trust Features ("Why Kay Cosmetics")
+   Trust Features ("Why Kay Cosmetics" — Yozo Warm Ribbon Treatment)
    -------------------------------------------------------------------------- */
+.trust-features-section {
+  background: linear-gradient(180deg, #FBF2F4 0%, #FAF5F2 100%);
+  border-top: 1px solid var(--yozo-border-subtle, #EFE6E8);
+  border-bottom: 1px solid var(--yozo-border-subtle, #EFE6E8);
+}
+
 .trust-features-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -329,39 +385,40 @@ body {
   flex-direction: column;
   gap: 8px;
   padding: 18px 16px;
-  background: var(--color-background, #FAF9F6);
-  border: 1px solid var(--color-border, #E5E0D8);
+  background: var(--yozo-card-bg, #FFFFFF);
+  border: 1px solid var(--yozo-border-subtle, #EFE6E8);
   border-radius: 4px;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .trust-feature-card:hover {
-  border-color: var(--color-foreground, #181716);
+  border-color: var(--yozo-rosewood, #BD7385);
   transform: translateY(-2px);
+  box-shadow: 0 8px 20px -4px rgba(189, 115, 133, 0.12);
 }
 
 .trust-feature-icon {
   width: 36px;
   height: 36px;
   border-radius: 4px;
-  background: #FFFFFF;
-  border: 1px solid var(--color-border, #E5E0D8);
+  background: var(--yozo-pastel-pink, #FDF2F4);
+  border: 1px solid var(--yozo-border-subtle, #EFE6E8);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--kc-accent-rosewood, #944C57);
+  color: var(--yozo-rosewood, #BD7385);
 }
 
 .trust-feature-title {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-foreground, #181716);
+  color: var(--yozo-plum-dark, #2C1E26);
   margin: 0;
 }
 
 .trust-feature-desc {
   font-size: 0.8125rem;
-  color: var(--color-foreground-muted, #57534E);
+  color: var(--yozo-text-muted, #6B5C65);
   line-height: 1.45;
   margin: 0;
 }
@@ -385,24 +442,33 @@ body {
 .guide-card {
   display: flex;
   flex-direction: column;
-  background: var(--color-background, #FAF9F6);
-  border: 1px solid var(--color-border, #E5E0D8);
+  background: var(--yozo-card-bg, #FFFFFF);
+  border: 1px solid var(--yozo-border-subtle, #EFE6E8);
   border-radius: 4px;
   overflow: hidden;
   text-decoration: none;
-  transition: transform 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .guide-card:hover {
-  border-color: var(--color-foreground, #181716);
+  border-color: var(--yozo-rosewood, #BD7385);
   transform: translateY(-3px);
+  box-shadow: 0 8px 20px -4px rgba(189, 115, 133, 0.12);
 }
 
 .guide-card__media {
   width: 100%;
   aspect-ratio: 16 / 10;
-  background-color: #F0EDE6;
+  background-color: var(--yozo-pastel-peach, #FBF1ED);
   overflow: hidden;
+}
+
+.guide-card:nth-child(2) .guide-card__media {
+  background-color: var(--yozo-pastel-lilac, #F5F0FB);
+}
+
+.guide-card:nth-child(3) .guide-card__media {
+  background-color: var(--yozo-pastel-blue, #EBF3F8);
 }
 
 .guide-card__media img {
@@ -429,20 +495,20 @@ body {
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--kc-accent-rosewood, #944C57);
+  color: var(--yozo-rosewood, #BD7385);
 }
 
 .guide-card__title {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-foreground, #181716);
+  color: var(--yozo-plum-dark, #2C1E26);
   line-height: 1.35;
   margin: 0;
 }
 
 .guide-card__summary {
   font-size: 0.8125rem;
-  color: var(--color-foreground-muted, #57534E);
+  color: var(--yozo-text-muted, #6B5C65);
   line-height: 1.5;
   margin: 0;
   flex-grow: 1;
@@ -454,12 +520,18 @@ body {
   gap: 4px;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--color-foreground, #181716);
+  color: var(--yozo-rosewood, #BD7385);
   margin-top: 6px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.guide-card:hover .guide-card__read-more {
+  color: var(--yozo-rosewood-hover, #A75D6F);
+  transform: translateX(2px);
 }
 
 /* --------------------------------------------------------------------------
-   Customer Care & Updates (WhatsApp & Email)
+   Customer Care & Updates (WhatsApp & Yozo Wisteria Lilac Frame)
    -------------------------------------------------------------------------- */
 .whatsapp-card-frame {
   display: grid;
@@ -467,9 +539,10 @@ body {
   gap: clamp(24px, 4vw, 48px);
   align-items: center;
   padding: clamp(28px, 4vw, 44px);
-  background: var(--color-background, #FAF9F6);
-  border: 1px solid var(--color-border, #E5E0D8);
+  background: linear-gradient(135deg, #FDF4F6 0%, #F5ECF8 50%, #ECE4F7 100%);
+  border: 1px solid #E5DCF2;
   border-radius: 4px;
+  box-shadow: 0 14px 34px -10px rgba(189, 115, 133, 0.08);
 }
 
 @media screen and (max-width: 860px) {
@@ -500,18 +573,19 @@ body {
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .whatsapp-direct-btn:hover {
   background-color: #0B6B5F;
+  transform: translateY(-1px);
 }
 
 .vip-divider {
   display: flex;
   align-items: center;
   text-align: center;
-  color: var(--color-foreground-muted, #57534E);
+  color: var(--yozo-text-muted, #6B5C65);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -521,7 +595,7 @@ body {
 .vip-divider::after {
   content: '';
   flex: 1;
-  border-bottom: 1px solid var(--color-border, #E5E0D8);
+  border-bottom: 1px solid #DCCFE0;
 }
 
 .vip-divider:not(:empty)::before {
@@ -547,36 +621,52 @@ body {
   flex: 1;
   min-height: 44px;
   padding: 10px 14px;
-  border: 1px solid var(--color-border, #E5E0D8);
+  border: 1px solid #DECEDF;
   border-radius: 4px;
   font-size: 0.875rem;
-  color: var(--color-foreground, #181716);
+  color: var(--yozo-plum-dark, #2C1E26);
   background: #FFFFFF;
   outline: none;
   transition: border-color 0.2s ease;
 }
 
 .vip-email-input:focus {
-  border-color: var(--color-foreground, #181716);
+  border-color: var(--yozo-rosewood, #BD7385);
+}
+
+.vip-email-form button {
+  background-color: var(--yozo-rosewood, #BD7385) !important;
+  color: #FFFFFF !important;
+  border-color: var(--yozo-rosewood, #BD7385) !important;
+  transition: background-color 0.2s ease;
+}
+
+.vip-email-form button:hover {
+  background-color: var(--yozo-rosewood-hover, #A75D6F) !important;
 }
 
 /* --------------------------------------------------------------------------
-   Footer Polish
+   Footer Polish (Yozo Deep Plum Chocolate Treatment)
    -------------------------------------------------------------------------- */
 footer {
-  background-color: #141312;
-  color: #FAF9F6;
-  border-top: 1px solid #262422;
+  background-color: #33252E !important;
+  color: #FAF5F2 !important;
+  border-top: 1px solid #493744 !important;
+}
+
+footer h3,
+footer h4 {
+  color: #FFFFFF !important;
 }
 
 footer a {
-  color: #C2BEB7;
+  color: #D8C7D1 !important;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 footer a:hover {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -587,9 +677,9 @@ footer a:hover {
   font-size: 0.6875rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #78716C;
+  color: var(--yozo-rosewood, #BD7385);
   margin-bottom: 3px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.2;
 }
 
