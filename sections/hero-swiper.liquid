@@ -607,6 +607,8 @@
     border: none;
     padding: 0;
     outline: none;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   .hero-swiper__nav::after {
@@ -1003,7 +1005,7 @@
       }
 
       const effect = el.dataset.effect || 'slide';
-      const speed = parseInt(el.dataset.speed, 10) || 700;
+      const speed = parseInt(el.dataset.speed, 10) || 500;
       const autoplayEnabled = el.dataset.autoplay === 'true';
       const autoplayDelay = parseInt(el.dataset.autoplayDelay, 10) || 5000;
       const pauseOnHover = el.dataset.pauseOnHover === 'true';
@@ -1013,6 +1015,8 @@
         effect: effect,
         speed: speed,
         loop: loop,
+        loopPreventsSliding: false,
+        preventInteractionOnTransition: false,
         grabCursor: true,
         watchSlidesProgress: true,
         navigation: {
@@ -1188,7 +1192,7 @@
       "step": 100,
       "unit": "ms",
       "label": "Transition speed",
-      "default": 800
+      "default": 500
     },
     {
       "type": "checkbox",

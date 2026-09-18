@@ -113,7 +113,7 @@
         "padding_top": 0,
         "padding_bottom": 0,
         "transition_effect": "fade",
-        "transition_speed": 800,
+        "transition_speed": 500,
         "autoplay_enabled": true,
         "autoplay_delay": 5,
         "pause_on_hover": true,
