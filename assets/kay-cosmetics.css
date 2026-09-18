@@ -803,20 +803,7 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
    Tooltip-Style Editorial Mega Menu Dropdown (Allure Beauty Inspired)
    ========================================================================== */
 
-/* Remove any shadow from header elements */
-#header-component,
-.header,
-.header-section,
-.header__row,
-.header__row--bottom,
-.header__underlay,
-.header__underlay-open,
-.header__underlay-open::after,
-.header__underlay-closed {
-  box-shadow: none !important;
-}
-
-/* Bottom Header Row Full-Height & Horizontal Centering */
+/* Bottom Header Row Full-Height, Horizontal Centering & Subtle Elevation Shadow */
 .header__row--bottom {
   min-height: 48px !important;
   height: 48px !important;
@@ -826,7 +813,9 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   justify-content: center !important;
   position: relative !important;
   width: 100% !important;
-  box-shadow: none !important;
+  box-shadow: 0 4px 18px -2px rgba(44, 30, 38, 0.07), 0 2px 6px rgba(44, 30, 38, 0.03) !important;
+  border-bottom: 1px solid rgba(44, 30, 38, 0.07) !important;
+  z-index: 10 !important;
 }
 
 .header__row--bottom .header__columns {
@@ -956,7 +945,7 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   fill: currentColor !important;
   opacity: 0.65 !important;
   transform: rotate(0deg) !important;
-  transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.18s ease, color 0.18s ease !important;
+  transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.35s ease, color 0.3s ease !important;
 }
 
 .menu-list__list-item:hover .menu-list__disclosure-icon,
@@ -966,13 +955,13 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   color: var(--yozo-rosewood, #BD7385) !important;
 }
 
-/* Tooltip Triangle Pointer (▲) - Smooth entry & exit, flush with dropdown, no shadow */
+/* Tooltip Triangle Pointer (▲) - Silky smooth, synchronous glide */
 .menu-list__trigger::after {
   content: '' !important;
   position: absolute !important;
   bottom: -1px !important;
   left: 50% !important;
-  transform: translateX(-50%) translateY(4px) !important;
+  transform: translateX(-50%) translateY(-10px) !important;
   width: 0 !important;
   height: 0 !important;
   border-left: 9px solid transparent !important;
@@ -981,16 +970,16 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   z-index: calc(var(--layer-header-menu, 100) + 30) !important;
   pointer-events: none !important;
   opacity: 0 !important;
-  filter: none !important;
-  transition: opacity 0.26s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.26s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  filter: drop-shadow(0 -2px 2px rgba(44, 30, 38, 0.04)) !important;
+  transition: opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) 0.1s,
+              transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) 0.1s !important;
 }
 
 .menu-list__list-item:where(:has([aria-expanded='true']), :hover):has(.menu-list__submenu) .menu-list__trigger::after {
   opacity: 1 !important;
   transform: translateX(-50%) translateY(0) !important;
-  transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.32s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: opacity 0.85s cubic-bezier(0.25, 0.1, 0.25, 1) 0.05s,
+              transform 0.85s cubic-bezier(0.25, 0.1, 0.25, 1) 0.05s !important;
 }
 
 /* Underlay override so bottom row stays pink and megamenu floats as a tooltip card */
@@ -1004,7 +993,7 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   box-shadow: none !important;
 }
 
-/* Floating Tooltip Submenu Container - Silky Smooth 60fps Open & Close */
+/* Floating Tooltip Submenu Container - Slow, Buttery Luxury Glide (0.85s open, 0.6s close) */
 .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu {
   position: absolute !important;
   top: 100% !important;
@@ -1018,11 +1007,11 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   z-index: calc(var(--layer-header-menu, 100) + 20) !important;
   visibility: hidden !important;
   opacity: 0 !important;
-  transform: translateY(-8px) !important;
+  transform: translateY(-16px) !important;
   pointer-events: none !important;
-  transition: opacity 0.26s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.26s cubic-bezier(0.16, 1, 0.3, 1),
-              visibility 0s linear 0.26s !important;
+  transition: opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) 0.1s,
+              transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) 0.1s,
+              visibility 0s linear 0.72s !important;
   will-change: opacity, transform !important;
 }
 
@@ -1033,22 +1022,23 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   opacity: 1 !important;
   transform: translateY(0) !important;
   pointer-events: auto !important;
-  transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+  transition: opacity 0.85s cubic-bezier(0.25, 0.1, 0.25, 1) 0.05s,
+              transform 0.85s cubic-bezier(0.25, 0.1, 0.25, 1) 0.05s,
               visibility 0s linear 0s !important;
 }
 
-/* Submenu Inner Card - Clean crisp edge, no drop shadow beneath */
+/* Submenu Inner Card - Locked flush to header row with subtle shadow */
 .menu-list__submenu-inner {
   background: #FFFFFF !important;
   background-color: #FFFFFF !important;
   width: 100% !important;
   box-sizing: border-box !important;
   border-bottom: 1px solid rgba(44, 30, 38, 0.08) !important;
-  box-shadow: none !important;
+  box-shadow: 0 16px 36px -6px rgba(44, 30, 38, 0.08), 0 4px 12px -2px rgba(44, 30, 38, 0.03) !important;
   padding: 36px max(40px, calc((100vw - 1280px) / 2 + 40px)) 44px !important;
   transform: none !important;
   opacity: 1 !important;
+  transition: none !important;
   max-height: calc(85vh - var(--header-height, 120px)) !important;
   overflow-y: auto !important;
 }
