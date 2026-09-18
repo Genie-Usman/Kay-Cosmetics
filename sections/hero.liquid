@@ -327,7 +327,15 @@
   {{ media_slot_2 }}
 
   {% if media_count == 0 %}
-    {{ 'hero-apparel-1' | placeholder_svg_tag: 'hero__media' }}
+    <img
+      src="{{ 'hero-beauty.jpg' | asset_url }}"
+      alt="{{ shop.name }}"
+      class="hero__media"
+      loading="eager"
+      width="1920"
+      height="1080"
+      fetchpriority="high"
+    >
   {%- endif -%}
 {% endcapture %}
 

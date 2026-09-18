@@ -1,0 +1,224 @@
+{% doc %}
+  About / Wholesale Heritage section for Kay Cosmetics.
+  Shares the business background honestly without fabricated statistics.
+{% enddoc %}
+
+<div
+  class="section section--{{ section.settings.section_width }} editorial-wholesale-section spacing-style"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <div class="editorial-card-wrapper">
+    <div class="editorial-image-frame">
+      {% if section.settings.image != blank %}
+        {{
+          section.settings.image
+          | image_url: width: 1200
+          | image_tag:
+            widths: '500, 800, 1200',
+            class: 'editorial-img',
+            alt: section.settings.title,
+            loading: 'lazy'
+        }}
+      {% elsif section.settings.fallback_asset != blank %}
+        <img
+          src="{{ section.settings.fallback_asset | asset_url }}"
+          alt="{{ section.settings.title }}"
+          class="editorial-img"
+          loading="lazy"
+          width="800"
+          height="600"
+        >
+      {% else %}
+        {{ 'lifestyle-2' | placeholder_svg_tag: 'editorial-img' }}
+      {% endif %}
+    </div>
+
+    <div class="editorial-content">
+      {% if section.settings.eyebrow != blank %}
+        <span class="section-eyebrow">{{ section.settings.eyebrow }}</span>
+      {% endif %}
+      {% if section.settings.title != blank %}
+        <h2 class="section-title">{{ section.settings.title }}</h2>
+      {% endif %}
+      {% if section.settings.body != blank %}
+        <div class="section-subtitle" style="max-width: 100%;">
+          {{ section.settings.body }}
+        </div>
+      {% endif %}
+
+      <div class="editorial-points-list">
+        {% if section.settings.point_1_title != blank %}
+          <div class="editorial-point">
+            <h3 class="editorial-point__title">{{ section.settings.point_1_title }}</h3>
+            <p class="editorial-point__text">{{ section.settings.point_1_text }}</p>
+          </div>
+        {% endif %}
+        {% if section.settings.point_2_title != blank %}
+          <div class="editorial-point">
+            <h3 class="editorial-point__title">{{ section.settings.point_2_title }}</h3>
+            <p class="editorial-point__text">{{ section.settings.point_2_text }}</p>
+          </div>
+        {% endif %}
+        {% if section.settings.point_3_title != blank %}
+          <div class="editorial-point">
+            <h3 class="editorial-point__title">{{ section.settings.point_3_title }}</h3>
+            <p class="editorial-point__text">{{ section.settings.point_3_text }}</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="hero-cta-group" style="margin-top: 20px;">
+        {% if section.settings.button_1_label != blank %}
+          <a href="{{ section.settings.button_1_link | default: '/collections/all' }}" class="button">
+            {{ section.settings.button_1_label }}
+          </a>
+        {% endif %}
+        {% if section.settings.button_2_label != blank %}
+          <a href="{{ section.settings.button_2_link | default: '/pages/contact' }}" class="button button--secondary">
+            {{ section.settings.button_2_label }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "About Wholesale Heritage",
+  "tag": "section",
+  "class": "section-editorial-wholesale",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "About Kay Cosmetics"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "From Wholesale to Your Doorstep"
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body text",
+      "default": "<p>Kay Cosmetics has operated in cosmetics wholesale across Pakistan, supplying retailers and beauty businesses. We are now expanding online to give customers direct access to an authentic multi-brand cosmetics collection, supported by nationwide delivery.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "fallback_asset",
+      "label": "Fallback Asset Filename",
+      "default": "editorial-wholesale.jpg"
+    },
+    {
+      "type": "header",
+      "content": "Core Values"
+    },
+    {
+      "type": "text",
+      "id": "point_1_title",
+      "label": "Point 1 Title",
+      "default": "Wholesale Sourcing"
+    },
+    {
+      "type": "text",
+      "id": "point_1_text",
+      "label": "Point 1 Text",
+      "default": "Products sourced through established wholesale channels with careful inventory handling."
+    },
+    {
+      "type": "text",
+      "id": "point_2_title",
+      "label": "Point 2 Title",
+      "default": "Direct-to-Consumer"
+    },
+    {
+      "type": "text",
+      "id": "point_2_text",
+      "label": "Point 2 Text",
+      "default": "Enjoy accessible retail pricing on multi-brand beauty products without middleman markups."
+    },
+    {
+      "type": "text",
+      "id": "point_3_title",
+      "label": "Point 3 Title",
+      "default": "Nationwide Reach"
+    },
+    {
+      "type": "text",
+      "id": "point_3_text",
+      "label": "Point 3 Text",
+      "default": "Orders delivered across Pakistan with Cash on Delivery available for peace of mind."
+    },
+    {
+      "type": "header",
+      "content": "Call to Actions"
+    },
+    {
+      "type": "text",
+      "id": "button_1_label",
+      "label": "Primary Button Label",
+      "default": "Shop All Products"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Primary Button Link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "Secondary Button Label",
+      "default": "Wholesale Inquiries"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Secondary Button Link"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section width",
+      "options": [
+        { "value": "page-width", "label": "Page width" },
+        { "value": "full-width", "label": "Full width" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "About Wholesale Heritage"
+    }
+  ]
+}
+{% endschema %}

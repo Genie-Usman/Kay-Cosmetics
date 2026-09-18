@@ -1480,6 +1480,24 @@
       },
       {
         "type": "select",
+        "id": "drawer_style",
+        "label": "Desktop drawer behavior",
+        "options": [
+          {
+            "value": "overlay",
+            "label": "Overlay (floats over page, no layout shift)"
+          },
+          {
+            "value": "push",
+            "label": "Push (squeezes page content)"
+          }
+        ],
+        "default": "overlay",
+        "info": "Overlay prevents layout shifts by opening the drawer over the page with a backdrop.",
+        "visible_if": "{{ settings.cart_type == 'drawer' }}"
+      },
+      {
+        "type": "select",
         "id": "product_title_case",
         "label": "t:settings.product_title_case",
         "options": [

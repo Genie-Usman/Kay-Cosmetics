@@ -1,0 +1,185 @@
+{% doc %}
+  Trust Features ("Why Kay Cosmetics") section.
+  Communicates genuine wholesale background, nationwide delivery,
+  and Cash on Delivery without fabricated claims or inflated stats.
+{% enddoc %}
+
+<div
+  class="section section--{{ section.settings.section_width }} trust-features-section spacing-style"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <div class="category-grid-header">
+    {% if section.settings.eyebrow != blank %}
+      <span class="section-eyebrow">{{ section.settings.eyebrow }}</span>
+    {% endif %}
+    {% if section.settings.title != blank %}
+      <h2 class="section-title">{{ section.settings.title }}</h2>
+    {% endif %}
+    {% if section.settings.subtitle != blank %}
+      <p class="section-subtitle">{{ section.settings.subtitle }}</p>
+    {% endif %}
+  </div>
+
+  <div class="trust-features-grid">
+    {% for block in section.blocks %}
+      <div class="trust-feature-card" {{ block.shopify_attributes }}>
+        <div class="trust-feature-icon" aria-hidden="true">
+          {% case block.settings.icon %}
+            {% when 'authentic' %}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            {% when 'wholesale' %}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><rect width="20" height="5" x="2" y="7" rx="1"/></svg>
+            {% when 'delivery' %}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="13" x="1" y="3" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            {% when 'checkout' %}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+            {% when 'support' %}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            {% else %}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          {% endcase %}
+        </div>
+        <h3 class="trust-feature-title">{{ block.settings.title }}</h3>
+        <p class="trust-feature-desc">{{ block.settings.description }}</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Why Kay Cosmetics",
+  "tag": "section",
+  "class": "section-trust-features",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Wholesale Heritage"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Why Choose Kay Cosmetics"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Built on our cosmetics wholesale foundation, bringing reliable beauty products directly to online shoppers."
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section width",
+      "options": [
+        { "value": "page-width", "label": "Page width" },
+        { "value": "full-width", "label": "Full width" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Trust Feature",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "authentic", "label": "Authentic Products" },
+            { "value": "wholesale", "label": "Wholesale Sourcing" },
+            { "value": "delivery", "label": "Nationwide Delivery" },
+            { "value": "checkout", "label": "Cash on Delivery" },
+            { "value": "support", "label": "WhatsApp Support" }
+          ],
+          "default": "authentic"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Authentic Sourcing"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "All products are carefully sourced through authorized brand distributors."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Why Kay Cosmetics",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "authentic",
+            "title": "Authentic Sourcing",
+            "description": "Products sourced through authorized brand distributors and wholesale partners."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "wholesale",
+            "title": "Wholesale Heritage",
+            "description": "Established wholesale operations provide genuine value directly to consumer orders."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "delivery",
+            "title": "Nationwide Delivery",
+            "description": "Courier delivery across all cities and regional areas in Pakistan."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "checkout",
+            "title": "Cash on Delivery",
+            "description": "Pay comfortably upon arrival with Cash on Delivery (COD) service."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "support",
+            "title": "Order Support",
+            "description": "Direct WhatsApp assistance for order questions and product information."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

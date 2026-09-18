@@ -4,6 +4,7 @@
     class="shopify-design-mode"
   {% endif %}
   lang="{{ request.locale.iso_code }}"
+  data-drawer-style="{{ settings.drawer_style | default: 'overlay' }}"
 >
   <head>
     {%- if settings.favicon != blank -%}

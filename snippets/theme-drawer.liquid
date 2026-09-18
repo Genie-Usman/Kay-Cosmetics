@@ -27,9 +27,8 @@
     var drawerIds = (sessionStorage.getItem('theme-drawer-open') || '').split(',').filter(Boolean);
     if (!drawerIds.length) return;
 
-    // Only restore on wide viewports (squeeze mode). On narrow viewports the
-    // drawer is a modal overlay — let it start closed after navigation rather
-    // than re-opening a fullscreen dialog the user may have left behind.
+    // Only restore on wide viewports (squeeze mode) if push mode is active.
+    if (document.documentElement.dataset.drawerStyle !== 'push') return;
     if (!window.matchMedia('(min-width: 990px)').matches) return;
 
     var dialogs = [];
@@ -86,9 +85,10 @@
   const squeezeQuery = window.matchMedia('(min-width: 990px)');
 
   // ── Squeeze coordination ──
-  // Listens to all drawers. Only squeezes on wide viewports.
+  // Listens to all drawers. Only squeezes on wide viewports if push mode is active.
   document.addEventListener('theme-drawer:open', () => {
-    if (squeezeQuery.matches) {
+    const isPushMode = document.documentElement.dataset.drawerStyle === 'push';
+    if (isPushMode && squeezeQuery.matches) {
       pageWrapper?.classList.add('page-wrapper--drawer-open');
     }
   });
@@ -102,7 +102,8 @@
 
   squeezeQuery.addEventListener('change', () => {
     const openDrawer = document.querySelector('theme-drawer[open]');
-    pageWrapper?.classList.toggle('page-wrapper--drawer-open', Boolean(openDrawer) && squeezeQuery.matches);
+    const isPushMode = document.documentElement.dataset.drawerStyle === 'push';
+    pageWrapper?.classList.toggle('page-wrapper--drawer-open', isPushMode && Boolean(openDrawer) && squeezeQuery.matches);
   });
 
   // ── State persistence ──

@@ -1,0 +1,160 @@
+{% doc %}
+  WhatsApp Concierge & Newsletter CTA section for Kay Cosmetics.
+  Clean, useful, and restrained — designed for Pakistani customer assistance.
+{% enddoc %}
+
+<div
+  class="section section--{{ section.settings.section_width }} whatsapp-vip-section spacing-style"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <div class="whatsapp-card-frame">
+    <div class="whatsapp-vip-info">
+      {% if section.settings.eyebrow != blank %}
+        <span class="section-eyebrow">{{ section.settings.eyebrow }}</span>
+      {% endif %}
+      {% if section.settings.title != blank %}
+        <h2 class="section-title">{{ section.settings.title }}</h2>
+      {% endif %}
+      {% if section.settings.subtitle != blank %}
+        <p class="section-subtitle">{{ section.settings.subtitle }}</p>
+      {% endif %}
+    </div>
+
+    <div class="whatsapp-actions-box">
+      {% if section.settings.whatsapp_number != blank %}
+        {% liquid
+          assign clean_number = section.settings.whatsapp_number | remove: '+' | remove: ' ' | remove: '-'
+          assign wa_url = 'https://wa.me/' | append: clean_number | append: '?text=' | append: section.settings.whatsapp_preset_message | url_encode
+        %}
+
+        <a
+          href="{{ wa_url }}"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="whatsapp-direct-btn"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.031 2C6.512 2 2.023 6.48 2.023 11.988c0 1.76.46 3.48 1.332 5l-1.417 5.176 5.313-1.393a9.92 9.92 0 0 0 4.78 1.226h.004c5.517 0 10.007-4.48 10.007-9.99A9.95 9.95 0 0 0 12.03 2zm0 18.28a8.28 8.28 0 0 1-4.223-1.154l-.303-.18-3.14.823.839-3.06-.197-.313a8.26 8.26 0 0 1-1.27-4.408c0-4.57 3.72-8.288 8.297-8.288 2.215 0 4.298.863 5.863 2.428a8.24 8.24 0 0 1 2.43 5.86c0 4.57-3.72 8.29-8.296 8.29zm4.545-6.208c-.249-.125-1.472-.726-1.7-.809-.229-.083-.395-.125-.561.125-.166.249-.644.81-.789.976-.145.166-.291.187-.54.062-.25-.125-1.053-.388-2.006-1.238-.742-.662-1.243-1.48-1.389-1.729-.145-.25-.015-.385.11-.51.112-.112.25-.29.374-.436.124-.145.166-.25.25-.415.083-.166.041-.312-.021-.436-.063-.125-.561-1.35-.769-1.85-.202-.486-.407-.42-.56-.428l-.478-.008c-.166 0-.436.062-.664.312-.228.249-.872.852-.872 2.077 0 1.226.893 2.41 1.018 2.576.125.166 1.756 2.68 4.254 3.758.594.257 1.058.41 1.42.525.597.19 1.14.163 1.57.099.479-.072 1.472-.602 1.68-1.184.208-.581.208-1.08.145-1.184-.062-.104-.228-.166-.477-.29z"/>
+          </svg>
+          <span>{{ section.settings.whatsapp_btn_label }}</span>
+        </a>
+      {% endif %}
+
+      {% if section.settings.whatsapp_number != blank %}
+        <div class="vip-divider">or sign up for email updates</div>
+      {% endif %}
+
+      {% form 'customer', class: 'vip-form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <div class="vip-email-form">
+          <input
+            type="email"
+            name="contact[email]"
+            id="VipEmailInput"
+            class="vip-email-input"
+            value="{{ form.email }}"
+            placeholder="Enter your email address"
+            autocorrect="off"
+            autocapitalize="off"
+            required
+          >
+          <button type="submit" class="button">
+            Subscribe
+          </button>
+        </div>
+
+        {% if form.posted_successfully? %}
+          <p style="color: #2A6B3D; font-size: 0.8125rem; margin-top: 8px;">
+            Thank you for subscribing.
+          </p>
+        {% endif %}
+        {% if form.errors %}
+          <p style="color: #A33A3A; font-size: 0.8125rem; margin-top: 8px;">
+            {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
+          </p>
+        {% endif %}
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Customer Care & Updates",
+  "tag": "section",
+  "class": "section-whatsapp-vip",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Customer Assistance"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Order Help & Product Inquiries"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Connect with our team directly on WhatsApp for order updates and assistance, or subscribe for email notifications."
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_number",
+      "label": "WhatsApp Number (international format)",
+      "info": "Enter your active business WhatsApp number with country code (e.g. 923001234567). Leave empty to hide WhatsApp button."
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_preset_message",
+      "label": "WhatsApp Preset Message",
+      "default": "Hello Kay Cosmetics, I have an inquiry regarding products."
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_btn_label",
+      "label": "WhatsApp Button Label",
+      "default": "Chat on WhatsApp"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section width",
+      "options": [
+        { "value": "page-width", "label": "Page width" },
+        { "value": "full-width", "label": "Full width" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer Care & Updates"
+    }
+  ]
+}
+{% endschema %}
