@@ -160,13 +160,15 @@
           "name": "t:names.product_card",
           "static": true,
           "settings": {
-            "product_card_gap": 4,
-            "border": "none",
+            "product_card_gap": 8,
+            "background_color": "#FFFFFF",
+            "border": "solid",
             "border_width": 1,
             "border_opacity": 100,
-            "border_radius": 0,
+            "border_color": "#E8E2E4",
+            "border_radius": 24,
             "padding-block-start": 0,
-            "padding-block-end": 0,
+            "padding-block-end": 16,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
@@ -175,11 +177,12 @@
               "type": "_product-card-gallery",
               "name": "t:names.product_card_media",
               "settings": {
-                "image_ratio": "adapt",
+                "image_ratio": "portrait",
                 "border": "none",
                 "border_width": 1,
                 "border_opacity": 100,
-                "border_radius": 0,
+                "border_color": "",
+                "border_radius": 24,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -191,12 +194,13 @@
               "type": "product-title",
               "name": "t:names.product_title",
               "settings": {
+                "show_vendor": true,
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": "1rem",
+                "font_size": "0.9375rem",
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
@@ -204,10 +208,25 @@
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
-                "padding-block-start": 4,
+                "padding-block-start": 6,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "product_review_404": {
+              "type": "review",
+              "name": "t:names.product_review_stars",
+              "settings": {
+                "stars_style": "shaded",
+                "show_number": true,
+                "count_format": "parentheses",
+                "show_fallback_rating": true,
+                "fallback_rating": 5,
+                "fallback_count": 8,
+                "width": "100%",
+                "alignment": "left"
               },
               "blocks": {}
             },
@@ -222,14 +241,28 @@
                 "width": "100%",
                 "alignment": "left",
                 "font": "var(--font-body--family)",
-                "font_size": "1rem",
+                "font_size": "0.9375rem",
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
-                "padding-block-start": 0,
+                "padding-block-start": 2,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "product_card_button_404": {
+              "type": "product-card-button",
+              "name": "Card Add to Bag Button",
+              "settings": {
+                "button_text": "ADD TO BAG",
+                "button_style": "outline",
+                "border_color": "#2C1E26",
+                "text_color": "#2C1E26",
+                "bg_color": "#FFFFFF",
+                "hover_bg_color": "#2C1E26",
+                "hover_text_color": "#FFFFFF"
               },
               "blocks": {}
             }
@@ -237,7 +270,9 @@
           "block_order": [
             "product_card_gallery_wxYqE3",
             "product_title_83YMDL",
-            "price_A6DYPt"
+            "product_review_404",
+            "price_A6DYPt",
+            "product_card_button_404"
           ]
         }
       },

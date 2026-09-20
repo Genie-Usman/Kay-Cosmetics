@@ -1,0 +1,139 @@
+{%- doc -%}
+  Product Card Add to Bag button block.
+  Renders a configurable, accessible action button on product cards.
+  If single variant: submits form to add to cart directly.
+  If multiple variants: opens quick-add modal to pick variant.
+  If sold out: displays disabled sold-out state.
+{%- enddoc -%}
+
+{% liquid
+  assign block_settings = block.settings
+  assign product = closest.product
+  assign variant = product.selected_or_first_available_variant
+  assign button_label = block_settings.button_text | default: 'ADD TO BAG'
+  assign available = variant.available
+  assign has_multiple_variants = false
+  if product.variants.size > 1 or product.options.size > 1
+    assign has_multiple_variants = true
+  endif
+%}
+
+<div
+  class="product-card-action product-card-action--{{ block.id }}"
+  {{ block.shopify_attributes }}
+>
+  {% if product == blank %}
+    <button type="button" class="product-card-btn product-card-btn--outline" disabled>
+      {{ button_label }}
+    </button>
+  {% elsif available == false %}
+    <button type="button" class="product-card-btn product-card-btn--sold-out" disabled>
+      {{ 'products.product.sold_out' | t | default: 'SOLD OUT' }}
+    </button>
+  {% elsif has_multiple_variants %}
+    <button
+      type="button"
+      class="product-card-btn product-card-btn--outline"
+      aria-label="{{ button_label }} - {{ product.title | escape }}"
+      data-product-id="{{ product.id }}"
+      onclick="const qa = this.closest('product-card')?.querySelector('quick-add-component button'); if (qa) { qa.click(); } else { window.location.href = '{{ product.url }}'; }"
+    >
+      {{ button_label }}
+    </button>
+  {% else %}
+    {%- assign form_id = 'product-card-form-' | append: section.id | append: '-' | append: product.id -%}
+    <product-form-component
+      data-section-id="{{ section.id }}"
+      data-product-id="{{ product.id }}"
+      data-product-url="{{ product.url }}"
+      on:submit="/handleSubmit"
+    >
+      <div class="visually-hidden" aria-live="assertive" role="status" ref="liveRegion"></div>
+      {%- form 'product', product, id: form_id, novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+        <input type="hidden" name="id" ref="variantId" value="{{ variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button
+          type="submit"
+          name="add"
+          ref="addToCartButton"
+          class="product-card-btn product-card-btn--outline"
+          aria-label="{{ button_label }} - {{ product.title | escape }}"
+        >
+          <span class="product-card-btn__text">{{ button_label }}</span>
+          <span class="product-card-btn__added">
+            <span class="svg-wrapper">
+              {{- 'icon-checkmark-burst.svg' | inline_asset_content -}}
+            </span>
+          </span>
+        </button>
+      {%- endform -%}
+    </product-form-component>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Card Add to Bag Button",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "ADD TO BAG"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Style",
+      "options": [
+        {
+          "value": "outline",
+          "label": "Outline Pill"
+        },
+        {
+          "value": "solid",
+          "label": "Solid Pill"
+        }
+      ],
+      "default": "outline"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#2C1E26"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#2C1E26"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "hover_bg_color",
+      "label": "Hover background color",
+      "default": "#2C1E26"
+    },
+    {
+      "type": "color",
+      "id": "hover_text_color",
+      "label": "Hover text color",
+      "default": "#FFFFFF"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Card Add to Bag Button",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

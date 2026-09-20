@@ -4,14 +4,20 @@
   assign block_settings = block.settings
   assign product = closest.product
   assign rating = product.metafields.reviews.rating.value.rating
-  assign scale_max = product.metafields.reviews.rating.value.scale_max
+  assign scale_max = product.metafields.reviews.rating.value.scale_max | default: 5
   assign rating_count = product.metafields.reviews.rating_count
+
+  if rating == blank and block_settings.show_fallback_rating != false
+    assign rating = block_settings.fallback_rating | default: 5
+    assign scale_max = 5
+    assign rating_count = block_settings.fallback_count | default: 8
+  endif
 
   if request.visual_preview_mode and product == blank
     assign product = collections.all.products.first
-    assign rating = product.metafields.reviews.rating.value | default: 4
+    assign rating = product.metafields.reviews.rating.value | default: 5
     assign scale_max = product.metafields.reviews.rating.value.scale_max | default: 5
-    assign rating_count = product.metafields.reviews.rating_count | default: 3
+    assign rating_count = product.metafields.reviews.rating_count | default: 8
   endif
 -%}
 
@@ -107,8 +113,12 @@
           <span class="rating-count-separator">|</span>
         {%- endif -%}
         {%- if block_settings.show_number -%}
-          {{- rating_count }}
-          {{ 'content.reviews' | t }}
+          {%- if block_settings.count_format == 'standard' -%}
+            {{- rating_count }}
+            {{ 'content.reviews' | t }}
+          {%- else -%}
+            ({{ rating_count }})
+          {%- endif -%}
         {%- endif -%}
       </p>
     {%- endif -%}
@@ -117,10 +127,10 @@
 
 {% stylesheet %}
   .rating-wrapper {
-    --star-fill-color: var(--color-foreground);
-    --star-fill-color-rgb: var(--color-foreground-rgb);
-    --color: var(--color-foreground);
-    --color-rgb: var(--color-foreground-rgb);
+    --star-fill-color: #E6A33E;
+    --star-fill-color-rgb: 230 163 62;
+    --color: #8F858B;
+    --color-rgb: 143 133 139;
     gap: var(--gap-xs);
     min-width: fit-content;
   }
@@ -200,6 +210,43 @@
       "id": "show_number",
       "label": "t:settings.review_count",
       "default": true
+    },
+    {
+      "type": "select",
+      "id": "count_format",
+      "label": "Count format",
+      "options": [
+        {
+          "value": "parentheses",
+          "label": "(8) Parentheses"
+        },
+        {
+          "value": "standard",
+          "label": "8 reviews"
+        }
+      ],
+      "default": "parentheses"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_fallback_rating",
+      "label": "Show preview rating if reviews empty",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "fallback_rating",
+      "label": "Preview rating value",
+      "min": 1,
+      "max": 5,
+      "step": 0.5,
+      "default": 5
+    },
+    {
+      "type": "number",
+      "id": "fallback_count",
+      "label": "Preview review count",
+      "default": 8
     },
     {
       "type": "color",
