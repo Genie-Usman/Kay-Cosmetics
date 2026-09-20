@@ -29,6 +29,9 @@ class HeaderMenu extends Component {
   /** @type {ReturnType<typeof setTimeout> | undefined} */
   #hoverDispatchTimer;
 
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  #deactivateTimer;
+
   connectedCallback() {
     super.connectedCallback();
 
@@ -50,6 +53,8 @@ class HeaderMenu extends Component {
     this.#cleanupMutationObserver();
     clearTimeout(this.#hoverDispatchTimer);
     this.#hoverDispatchTimer = undefined;
+    clearTimeout(this.#deactivateTimer);
+    this.#deactivateTimer = undefined;
   }
 
   /**
@@ -72,6 +77,7 @@ class HeaderMenu extends Component {
     const item = this.#state.activeItem;
     if (!item) return;
 
+    clearTimeout(this.#deactivateTimer);
     const control = this.#focusTargetAfterClose(item);
     this.#deactivate(item, { force: true });
     control.focus();
@@ -90,6 +96,7 @@ class HeaderMenu extends Component {
 
     const isExpanded = button.getAttribute('aria-expanded') === 'true';
     if (isExpanded) {
+      clearTimeout(this.#deactivateTimer);
       // Close whatever is currently active. In the overflow panel the initially
       // selected item is tracked as `activeOverflowItem` while the More trigger is
       // the `activeItem`, so deactivating `item` directly would no-op; deactivate
@@ -256,6 +263,7 @@ class HeaderMenu extends Component {
    * @param {PointerEvent | FocusEvent} event
    */
   activate = (event) => {
+    clearTimeout(this.#deactivateTimer);
     if (!(event.target instanceof Element) || !this.headerComponent) return;
 
     const item = findMenuItem(event.target);
@@ -405,7 +413,10 @@ class HeaderMenu extends Component {
       return;
     }
 
-    this.#deactivate();
+    clearTimeout(this.#deactivateTimer);
+    this.#deactivateTimer = setTimeout(() => {
+      this.#deactivate();
+    }, 180);
   }
 
   /**

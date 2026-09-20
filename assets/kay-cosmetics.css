@@ -961,7 +961,7 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   position: absolute !important;
   bottom: -1px !important;
   left: 50% !important;
-  transform: translateX(-50%) translateY(-10px) !important;
+  transform: translateX(-50%) translateY(-6px) !important;
   width: 0 !important;
   height: 0 !important;
   border-left: 9px solid transparent !important;
@@ -971,15 +971,15 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   pointer-events: none !important;
   opacity: 0 !important;
   filter: drop-shadow(0 -2px 2px rgba(44, 30, 38, 0.04)) !important;
-  transition: opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) 0.1s,
-              transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) 0.1s !important;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .menu-list__list-item:where(:has([aria-expanded='true']), :hover):has(.menu-list__submenu) .menu-list__trigger::after {
   opacity: 1 !important;
   transform: translateX(-50%) translateY(0) !important;
-  transition: opacity 0.85s cubic-bezier(0.25, 0.1, 0.25, 1) 0.05s,
-              transform 0.85s cubic-bezier(0.25, 0.1, 0.25, 1) 0.05s !important;
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.05s,
+              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.05s !important;
 }
 
 /* Underlay override so bottom row stays pink and megamenu floats as a tooltip card */
@@ -993,7 +993,7 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   box-shadow: none !important;
 }
 
-/* Floating Tooltip Submenu Container - Slow, Buttery Luxury Glide (0.85s open, 0.6s close) */
+/* Floating Tooltip Submenu Container - Buttery Luxury Glide */
 .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu {
   position: absolute !important;
   top: 100% !important;
@@ -1007,11 +1007,11 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   z-index: calc(var(--layer-header-menu, 100) + 20) !important;
   visibility: hidden !important;
   opacity: 0 !important;
-  transform: translateY(-16px) !important;
+  transform: translateY(-8px) !important;
   pointer-events: none !important;
-  transition: opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) 0.1s,
-              transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) 0.1s,
-              visibility 0s linear 0.72s !important;
+  transition: opacity 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0s linear 0.38s !important;
   will-change: opacity, transform !important;
 }
 
@@ -1022,9 +1022,14 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   opacity: 1 !important;
   transform: translateY(0) !important;
   pointer-events: auto !important;
-  transition: opacity 0.85s cubic-bezier(0.25, 0.1, 0.25, 1) 0.05s,
-              transform 0.85s cubic-bezier(0.25, 0.1, 0.25, 1) 0.05s,
+  transition: opacity 0.48s cubic-bezier(0.16, 1, 0.3, 1) 0.05s,
+              transform 0.48s cubic-bezier(0.16, 1, 0.3, 1) 0.05s,
               visibility 0s linear 0s !important;
+}
+
+/* Keep product cards visible in submenu during closing transition so they don't vanish abruptly */
+.menu-list__list-item > .menu-list__submenu product-component {
+  display: block !important;
 }
 
 /* Submenu Inner Card - Locked flush to header row with subtle shadow */
@@ -1688,22 +1693,27 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
 .product-card .product-grid__card {
   background-color: #FFFFFF !important;
   border-radius: 24px !important;
-  border: 1px solid rgba(44, 30, 38, 0.09) !important;
-  box-shadow: 0 4px 16px -2px rgba(44, 30, 38, 0.04) !important;
+  border: 1px solid rgba(44, 30, 38, 0.08) !important;
+  box-shadow: 0 4px 18px -2px rgba(44, 30, 38, 0.04) !important;
   overflow: hidden !important;
   display: flex !important;
   flex-direction: column !important;
   padding: 0 0 20px 0 !important;
-  transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1),
-              box-shadow 0.35s cubic-bezier(0.25, 0.1, 0.25, 1),
-              border-color 0.35s ease !important;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.6s ease !important;
   box-sizing: border-box !important;
+  will-change: transform, box-shadow;
+  transform: none !important;
 }
 
 .product-card:hover .product-grid__card {
-  transform: translateY(-4px) !important;
-  box-shadow: 0 12px 32px -4px rgba(44, 30, 38, 0.09), 0 4px 12px rgba(44, 30, 38, 0.03) !important;
-  border-color: rgba(189, 115, 133, 0.35) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 16px 40px -6px rgba(44, 30, 38, 0.08), 0 4px 14px -2px rgba(189, 115, 133, 0.06) !important;
+  border-color: rgba(189, 115, 133, 0.30) !important;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.6s ease !important;
 }
 
 /* Full-bleed Top Image / Media Gallery */
@@ -1720,20 +1730,150 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   position: relative !important;
 }
 
+/* Multi-Image Product Card Luxury Crossfade */
+.product-card .card-gallery slideshow-component,
+.product-card .card-gallery slideshow-container {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  position: relative !important;
+}
+
+.product-card .card-gallery slideshow-slides {
+  display: grid !important;
+  grid-template-areas: "slide-stack" !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  height: 100% !important;
+  scroll-behavior: auto !important;
+  scroll-snap-type: none !important;
+}
+
+.product-card .card-gallery slideshow-slide {
+  grid-area: slide-stack !important;
+  width: 100% !important;
+  height: 100% !important;
+  content-visibility: visible !important;
+  contain-intrinsic-size: none !important;
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  translate: 0 0 !important;
+  transform: none !important;
+}
+
+/* Base image (slide 1) */
+.product-card .card-gallery slideshow-slide:first-child {
+  z-index: 1 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* Secondary hover image (slide 2) - Smooth & responsive luxury crossfade */
+.product-card .card-gallery slideshow-slide:nth-child(2) {
+  z-index: 2 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: opacity 0.7s cubic-bezier(0.25, 0.1, 0.25, 1),
+              visibility 0s linear 0.7s !important;
+}
+
+/* On product card hover: gracefully crossfade in slide 2 */
+.product-card:hover .card-gallery slideshow-slide:nth-child(2),
+.product-card:focus-within .card-gallery slideshow-slide:nth-child(2) {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transition: opacity 0.7s cubic-bezier(0.25, 0.1, 0.25, 1),
+              visibility 0s linear 0s !important;
+}
+
+/* Hide any 3rd+ slide from card gallery view to keep clean 2-image crossfade */
+.product-card .card-gallery slideshow-slide:nth-child(n+3) {
+  display: none !important;
+}
+
+/* Hide navigation arrows on card gallery images so the photo stays pristine and editorial */
+.product-card .card-gallery slideshow-controls,
+.product-card .card-gallery .slideshow-control {
+  display: none !important;
+}
+
+/* Luminous Studio Reflection Sweep across Cosmetic Packaging */
+.product-card .card-gallery {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.product-card .card-gallery::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -140%;
+  width: 80% !important;
+  height: 100% !important;
+  background: linear-gradient(
+    105deg,
+    transparent 15%,
+    rgba(255, 255, 255, 0.15) 35%,
+    rgba(255, 255, 255, 0.65) 50%,
+    rgba(255, 255, 255, 0.15) 65%,
+    transparent 85%
+  ) !important;
+  transform: skewX(-20deg) translateZ(0) !important;
+  pointer-events: none !important;
+  z-index: 5 !important;
+  opacity: 0;
+  will-change: left, opacity;
+}
+
+.product-card:hover .card-gallery::after,
+.product-card:focus-within .card-gallery::after,
+.card-gallery:hover::after {
+  animation: luminous-sheen-sweep 1.35s cubic-bezier(0.25, 0.1, 0.25, 1) forwards !important;
+}
+
+@keyframes luminous-sheen-sweep {
+  0% {
+    left: -130%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    left: 150%;
+    opacity: 0;
+  }
+}
+
+/* Product Media Gallery - Stable Geometry & Crisp Studio Clarity */
 .product-card .card-gallery__image,
 .product-card .product-media-container img,
 .product-card slideshow-component img {
   border-top-left-radius: 23px !important;
   border-top-right-radius: 23px !important;
-  transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+  transition: filter 0.8s cubic-bezier(0.25, 0.1, 0.25, 1),
+              opacity 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
   object-fit: cover !important;
   width: 100% !important;
+  transform: none !important;
+  backface-visibility: hidden !important;
+  will-change: filter !important;
 }
 
 .product-card:hover .card-gallery__image,
 .product-card:hover .product-media-container img,
 .product-card:hover slideshow-component img {
-  transform: scale(1.03) !important;
+  transform: none !important;
+  filter: contrast(1.025) brightness(1.02) !important;
+  transition: filter 0.8s cubic-bezier(0.25, 0.1, 0.25, 1),
+              opacity 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
 }
 
 /* Content Area Internal Padding below Gallery */
@@ -1770,72 +1910,199 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   text-transform: uppercase !important;
 }
 
-/* Floating Action Button (Top-Right Circle Plus '+') */
-.product-card .quick-add {
+/* ==========================================================================
+   Desktop On-Image Quick-Add Button (Frosted Milk-Glass Floating Pill)
+   ========================================================================== */
+
+.product-card .card-gallery .quick-add {
   position: absolute !important;
   inset: 0 !important;
   pointer-events: none !important;
   z-index: 10 !important;
-}
-
-.product-card button.quick-add__button {
-  position: absolute !important;
-  top: 14px !important;
-  right: 14px !important;
-  left: auto !important;
-  bottom: auto !important;
-  width: 32px !important;
-  height: 32px !important;
-  min-width: 32px !important;
-  max-width: 32px !important;
-  border-radius: 50% !important;
-  background: #FFFFFF !important;
-  border: 1px solid rgba(44, 30, 38, 0.08) !important;
-  box-shadow: 0 2px 8px rgba(44, 30, 38, 0.08) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  color: #BD7385 !important;
-  opacity: 1 !important;
-  padding: 0 !important;
-  pointer-events: auto !important;
-  cursor: pointer !important;
-  font-size: 0 !important;
-  transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease !important;
-}
-
-.product-card button.quick-add__button:hover {
-  transform: scale(1.08) !important;
-  background: #BD7385 !important;
-  color: #FFFFFF !important;
-  box-shadow: 0 4px 12px rgba(189, 115, 133, 0.3) !important;
-}
-
-.product-card button.quick-add__button .svg-wrapper {
-  width: 14px !important;
-  height: 14px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: initial !important;
-}
-
-.product-card button.quick-add__button .svg-wrapper svg {
-  width: 14px !important;
-  height: 14px !important;
-}
-
-/* Brand / Vendor Label */
-.product-card .product-vendor-label {
   display: block !important;
+}
+
+.product-card .card-gallery .quick-add .quick-add__product-form-component,
+.product-card .card-gallery .quick-add form {
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.product-card .card-gallery [data-quick-add-button='add'] add-to-cart-component {
+  display: contents !important;
+}
+
+.product-card .card-gallery .quick-add button.quick-add__button,
+.product-card .card-gallery .quick-add .quick-add__button--add,
+.product-card .card-gallery .quick-add .quick-add__button--choose {
+  position: absolute !important;
+  bottom: 14px !important;
+  left: 14px !important;
+  right: 14px !important;
+  top: auto !important;
+  width: calc(100% - 28px) !important;
+  max-width: calc(100% - 28px) !important;
+  min-width: 0 !important;
+  height: 42px !important;
+  border-radius: 9999px !important;
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  color: #2C1E26 !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
   font-size: 0.75rem !important;
   font-weight: 600 !important;
-  letter-spacing: 0.1em !important;
+  letter-spacing: 0.14em !important;
   text-transform: uppercase !important;
-  color: var(--yozo-rosewood, #BD7385) !important;
-  margin-top: 14px !important;
-  margin-bottom: 4px !important;
-  line-height: 1.2 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 16px !important;
+  box-shadow: 0 8px 24px rgba(44, 30, 38, 0.12),
+              0 2px 6px rgba(0, 0, 0, 0.04),
+              inset 0 1px 1.5px rgba(255, 255, 255, 0.95),
+              inset 0 -1px 1px rgba(44, 30, 38, 0.04) !important;
+  pointer-events: none !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  opacity: 0 !important;
+  transform: translateY(8px) !important;
+  scale: none !important;
+  isolation: isolate !important;
+  overflow: hidden !important;
+  transition: opacity 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
+              transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
+              background-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              color 0.35s cubic-bezier(0.25, 0.1, 0.25, 1),
+              border-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+}
+
+/* Pseudo-element for smooth velvet plum gradient overlay */
+.product-card .card-gallery button.quick-add__button::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  background: linear-gradient(135deg, #2C1E26 0%, #3E2434 100%) !important;
+  opacity: 0 !important;
+  transition: opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+}
+
+/* Text and inner elements transition color smoothly in sync */
+.product-card .card-gallery button.quick-add__button span:not(.checkmark-burst, .checkmark-burst *) {
+  color: inherit !important;
+  transition: color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+}
+
+/* On card hover / focus: swiftly & smoothly reveal floating pill */
+.product-card:hover .card-gallery [data-quick-add-button='add'] .quick-add__button--add,
+.product-card:hover .card-gallery [data-quick-add-button='choose'] .quick-add__button--choose,
+.product-card:focus-within .card-gallery [data-quick-add-button='add'] .quick-add__button--add,
+.product-card:focus-within .card-gallery [data-quick-add-button='choose'] .quick-add__button--choose {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  pointer-events: auto !important;
+  scale: none !important;
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              border-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Button Hover State: Velvet Deep Plum / Rosewood Glow with Responsive Color Duration (Zero Scaling) */
+.product-card .card-gallery button.quick-add__button:hover {
+  background-color: #2C1E26 !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 10px 28px rgba(44, 30, 38, 0.26),
+              0 3px 10px rgba(189, 115, 133, 0.20),
+              inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-2px) !important;
+  scale: none !important;
+  transition: background-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              border-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.product-card .card-gallery button.quick-add__button:hover::before {
+  opacity: 1 !important;
+  transition: opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+}
+
+.product-card .card-gallery button.quick-add__button:active {
+  transform: translateY(0) !important;
+  scale: none !important;
+  box-shadow: 0 4px 14px rgba(44, 30, 38, 0.22) !important;
+}
+
+.product-card .card-gallery button.quick-add__button:disabled {
+  background: rgba(244, 241, 242, 0.85) !important;
+  color: #A89F9E !important;
+  border-color: rgba(232, 226, 228, 0.6) !important;
+  cursor: not-allowed !important;
+  opacity: 0.8 !important;
+  box-shadow: none !important;
+}
+
+/* When item is successfully added, show checkmark burst feedback cleanly */
+.product-card .card-gallery button.quick-add__button[data-added='true'] {
+  background: #2C1E26 !important;
+  color: #FFFFFF !important;
+  border-color: #2C1E26 !important;
+  scale: none !important;
+}
+
+.product-card .card-gallery button.quick-add__button .checkmark-burst svg {
+  stroke: #BD7385 !important;
+}
+
+/* Ensure inactive quick-add button stays hidden */
+[data-quick-add-button='choose'] add-to-cart-component {
+  display: none !important;
+}
+
+[data-quick-add-button='add'] .quick-add__button--choose {
+  display: none !important;
+}
+
+/* Brand / Vendor Block */
+.product-card .product-vendor,
+.product-card [data-block-id*="product_vendor"] {
+  display: block !important;
+  width: 100%;
+  padding-block-start: var(--padding-block-start, 14px);
+  padding-block-end: var(--padding-block-end, 4px);
+  padding-inline-start: var(--padding-inline-start, 0);
+  padding-inline-end: var(--padding-inline-end, 0);
+}
+
+.product-card .product-vendor-label {
+  display: block;
+  font-family: var(--font-family, var(--font-body--family));
+  font-size: var(--font-size, 0.75rem);
+  font-weight: var(--font-weight, 600);
+  letter-spacing: var(--letter-spacing, 0.1em);
+  text-transform: var(--text-transform, uppercase);
+  color: var(--color, var(--yozo-rosewood, #BD7385));
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: var(--line-height, 1.2);
+}
+
+.product-card .product-vendor-link {
+  color: inherit;
+  text-decoration: none;
 }
 
 /* Product Title */
@@ -1867,40 +2134,21 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   color: var(--yozo-rosewood, #BD7385) !important;
 }
 
-/* Rating Stars & Count */
+/* Reviews removed from product cards */
 .product-card .rating-wrapper {
-  display: flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  margin-top: 2px !important;
-  margin-bottom: 6px !important;
-}
-
-.product-card .rating {
-  display: flex !important;
-  align-items: center !important;
-  gap: 2px !important;
-}
-
-.product-card .stars {
-  height: 13px !important;
-  width: 13px !important;
-  fill: #E6A33E !important;
-  color: #E6A33E !important;
-}
-
-.product-card .rating-count {
-  font-size: 0.85rem !important;
-  color: #8F858B !important;
-  font-weight: 400 !important;
-  margin: 0 !important;
-  letter-spacing: 0 !important;
+  display: none !important;
 }
 
 /* Price Section */
 .product-card product-price {
-  margin-top: 4px !important;
-  margin-bottom: 12px !important;
+  display: block;
+  width: 100%;
+  padding-block-start: var(--padding-block-start, 4px);
+  padding-block-end: var(--padding-block-end, 12px);
+  padding-inline-start: var(--padding-inline-start, 0);
+  padding-inline-end: var(--padding-inline-end, 0);
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .product-card product-price [ref="priceContainer"] {
@@ -1910,32 +2158,47 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   gap: 8px !important;
 }
 
-.product-card .price,
-.product-card .price-item__group.price,
+.product-card product-price .price,
 .product-card [ref="priceContainer"] .price {
-  font-family: var(--font-heading--family, 'Cinzel', serif) !important;
-  font-size: 1.1875rem !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.01em !important;
-  color: var(--yozo-rosewood, #BD7385) !important;
+  font-family: var(--font-family, var(--font-heading--family, 'Cinzel', serif));
+  font-size: var(--font-size, 1.125rem);
+  font-weight: var(--font-weight, 600);
+  letter-spacing: var(--letter-spacing, 0.01em);
+  color: var(--color, var(--yozo-rosewood, #BD7385));
+  line-height: var(--line-height, 1.2);
 }
 
-.product-card .price-item__group.compare-at-price,
-.product-card .price-item--regular.compare-at-price,
+.product-card product-price .compare-at-price,
 .product-card [ref="priceContainer"] .compare-at-price {
-  font-family: var(--font-body--family, sans-serif) !important;
-  font-size: 0.9rem !important;
-  font-weight: 400 !important;
-  color: #A89F9E !important;
-  text-decoration: line-through !important;
-  margin-inline-start: 2px !important;
+  font-family: var(--font-body--family, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #A89F9E;
+  text-decoration: line-through;
+  margin-inline-start: 2px;
 }
 
-/* Action Button (Full-width Outline Pill ADD TO BAG) */
-.product-card .product-card-action {
-  margin-top: auto !important;
-  padding-top: 4px !important;
-  width: 100% !important;
+/* Action Button: Desktop vs Mobile Responsive Behavior */
+@media screen and (min-width: 750px) {
+  /* On desktop: remove button from bottom of card */
+  .product-card .product-card-action {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  /* On mobile: keep button at bottom of card */
+  .product-card .product-card-action {
+    display: block !important;
+    margin-top: auto !important;
+    padding-top: 4px !important;
+    width: 100% !important;
+  }
+
+  /* On mobile: hide on-image quick-add button so product photos are unobstructed */
+  .product-card .card-gallery .quick-add {
+    display: none !important;
+  }
 }
 
 .product-card-btn {
@@ -1944,38 +2207,84 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
-  height: 44px !important;
+  height: 42px !important;
   border-radius: 9999px !important;
-  padding: 10px 20px !important;
-  font-size: 0.8125rem !important;
+  padding: 0 18px !important;
+  font-size: 0.75rem !important;
   font-weight: 600 !important;
-  letter-spacing: 0.1em !important;
+  letter-spacing: 0.14em !important;
   text-transform: uppercase !important;
   cursor: pointer !important;
-  transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
   box-sizing: border-box !important;
   position: relative !important;
   overflow: hidden !important;
   text-decoration: none !important;
+  scale: none !important;
+  transform: none !important;
 }
 
 .product-card-btn--outline {
   background-color: #FFFFFF !important;
   color: #2C1E26 !important;
-  border: 1.5px solid #2C1E26 !important;
+  border: 1px solid rgba(44, 30, 38, 0.18) !important;
+  box-shadow: 0 2px 8px rgba(44, 30, 38, 0.05), inset 0 1px 1.5px #FFFFFF !important;
+  isolation: isolate !important;
+  transition: background-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              border-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
 }
 
-.product-card-btn--outline:hover {
+.product-card-btn--outline::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  background: linear-gradient(135deg, #2C1E26 0%, #3E2434 100%) !important;
+  opacity: 0 !important;
+  transition: opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+}
+
+.product-card-btn--outline:hover,
+.product-card-btn--outline:active {
   background-color: #2C1E26 !important;
   color: #FFFFFF !important;
   border-color: #2C1E26 !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(44, 30, 38, 0.15) !important;
+  box-shadow: 0 6px 18px rgba(44, 30, 38, 0.20) !important;
+  scale: none !important;
+  transform: none !important;
+  transition: background-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              border-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
 }
 
-.product-card-btn--outline:active {
-  transform: translateY(0) !important;
-  scale: 0.98 !important;
+.product-card-btn--outline:hover::before,
+.product-card-btn--outline:active::before {
+  opacity: 1 !important;
+  transition: opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+}
+
+/* Universal PDP / Standalone Add to Bag Button: Smooth Color Hover Transition */
+.add-to-cart-button:not(.quick-add__button),
+button[id^='BuyButtons-ProductSubmitButton-'] {
+  transition: background-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              border-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.add-to-cart-button:not(.quick-add__button):hover,
+button[id^='BuyButtons-ProductSubmitButton-']:hover {
+  transition: background-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              border-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .product-card-btn--sold-out {

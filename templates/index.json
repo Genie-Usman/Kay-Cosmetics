@@ -322,11 +322,33 @@
               },
               "blocks": {}
             },
+            "product_vendor": {
+              "type": "product-vendor",
+              "name": "Product Vendor / Brand",
+              "settings": {
+                "link_to_vendor": false,
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size": "0.75rem",
+                "line_height": "normal",
+                "letter_spacing": "loose",
+                "case": "uppercase",
+                "text_color": "#BD7385",
+                "padding-block-start": 14,
+                "padding-block-end": 4,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
             "product_title": {
               "type": "product-title",
               "name": "t:names.product_title",
               "settings": {
-                "show_vendor": true,
+                "show_vendor": false,
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -341,25 +363,10 @@
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
-                "padding-block-start": 6,
+                "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "product_review": {
-              "type": "review",
-              "name": "t:names.product_review_stars",
-              "settings": {
-                "stars_style": "shaded",
-                "show_number": true,
-                "count_format": "parentheses",
-                "show_fallback_rating": true,
-                "fallback_rating": 5,
-                "fallback_count": 8,
-                "width": "100%",
-                "alignment": "left"
               },
               "blocks": {}
             },
@@ -370,17 +377,17 @@
                 "show_sale_price_first": true,
                 "show_installments": false,
                 "show_tax_info": false,
-                "type_preset": "h6",
+                "type_preset": "custom",
                 "width": "100%",
                 "alignment": "left",
-                "font": "var(--font-body--family)",
-                "font_size": "0.9375rem",
+                "font": "var(--font-heading--family)",
+                "font_size": "1.125rem",
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
-                "text_color": "",
-                "padding-block-start": 2,
-                "padding-block-end": 0,
+                "text_color": "#BD7385",
+                "padding-block-start": 4,
+                "padding-block-end": 12,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
               },
@@ -390,7 +397,8 @@
               "type": "product-card-button",
               "name": "Card Add to Bag Button",
               "settings": {
-                "button_text": "ADD TO BAG",
+                "button_text": "Add to Bag",
+                "button_multi_text": "Select Options",
                 "button_style": "outline",
                 "border_color": "#2C1E26",
                 "text_color": "#2C1E26",
@@ -403,8 +411,8 @@
           },
           "block_order": [
             "product_card_gallery",
+            "product_vendor",
             "product_title",
-            "product_review",
             "product_price",
             "product_card_button"
           ]

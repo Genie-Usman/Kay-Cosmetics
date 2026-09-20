@@ -8,8 +8,8 @@
 
 {% liquid
   assign product_form_id = 'QuickAdd-ProductForm-' | append: product.id | append: '-' | append: block.id
-  assign add_to_cart_text = 'actions.add' | t
-  assign choose_options_text = 'actions.choose' | t
+  assign add_to_cart_text = settings.quick_add_single_text | default: 'Add to Bag'
+  assign choose_options_text = settings.quick_add_multi_text | default: 'Select Options'
   # Logic to determine which variant to use (matching swatch selection logic from product-card)
   assign variant = product.selected_or_first_available_variant
 
@@ -22,6 +22,8 @@
     assign can_add_to_cart = true
   else
     assign can_add_to_cart = false
+    assign add_to_cart_text = 'products.product.sold_out' | t | default: 'Sold Out'
+    assign choose_options_text = 'products.product.sold_out' | t | default: 'Sold Out'
   endif
 
   # Both buttons are rendered together only for single-option swatch products - the one
@@ -120,7 +122,7 @@
           add_to_cart_text: add_to_cart_text,
           class: 'quick-add__button quick-add__button--add add-to-cart-button',
           can_add_to_cart: can_add_to_cart,
-          show_icon: true,
+          show_icon: false,
           product: product
         %}
       {%- endform -%}
@@ -132,13 +134,8 @@
       class="button quick-add__button quick-add__button--choose add-to-cart-button"
       name="add"
       on:click="quick-add-component/handleClick"
+      {% unless can_add_to_cart %}disabled{% endunless %}
     >
-      <span
-        aria-hidden="true"
-        class="svg-wrapper add-to-cart-icon"
-      >
-        {{- 'icon-plus.svg' | inline_asset_content -}}
-      </span>
       {{- choose_options_text -}}
     </button>
   {% endif %}

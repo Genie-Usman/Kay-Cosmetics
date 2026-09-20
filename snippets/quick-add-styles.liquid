@@ -82,8 +82,6 @@
     interpolate-size: allow-keywords;
 
     &:hover {
-      scale: 1.03;
-
       /* Hover stabilizer: extends hit area to maintain hover state */
       &::before {
         content: '';
@@ -94,7 +92,7 @@
     }
 
     &:active {
-      scale: 0.99;
+      transform: none;
     }
 
     .quick-add[stay-visible] & {

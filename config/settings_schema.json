@@ -1892,6 +1892,20 @@
         "visible_if": "{{ settings.quick_add == true }}"
       },
       {
+        "type": "text",
+        "id": "quick_add_single_text",
+        "label": "Quick add button text (single variant)",
+        "default": "Add to Bag",
+        "visible_if": "{{ settings.quick_add == true }}"
+      },
+      {
+        "type": "text",
+        "id": "quick_add_multi_text",
+        "label": "Quick add button text (with variants)",
+        "default": "Select Options",
+        "visible_if": "{{ settings.quick_add == true }}"
+      },
+      {
         "type": "header",
         "content": "t:settings.media"
       },

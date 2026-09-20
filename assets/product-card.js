@@ -479,18 +479,8 @@ export class ProductCard extends ProductCardLink {
   previewImage(event) {
     if (event.pointerType !== 'mouse') return;
 
-    const { slideshow } = this.refs;
-
-    if (!slideshow) return;
-
     this.resetVariant.cancel();
-
-    if (this.#previousSlideIndex != null && this.#previousSlideIndex > 0) {
-      slideshow.select(this.#previousSlideIndex, undefined, { animate: false });
-    } else {
-      slideshow.next(undefined, { animate: false });
-      setTimeout(() => this.#preloadNextPreviewImage());
-    }
+    setTimeout(() => this.#preloadNextPreviewImage());
   }
 
   /**
@@ -499,15 +489,6 @@ export class ProductCard extends ProductCardLink {
    */
   resetImage(event) {
     if (event.pointerType !== 'mouse') return;
-
-    const { slideshow } = this.refs;
-
-    if (!this.variantPicker) {
-      if (!slideshow) return;
-      slideshow.previous(undefined, { animate: false });
-    } else {
-      this.#resetVariant();
-    }
   }
 
   /**

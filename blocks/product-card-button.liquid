@@ -10,11 +10,19 @@
   assign block_settings = block.settings
   assign product = closest.product
   assign variant = product.selected_or_first_available_variant
-  assign button_label = block_settings.button_text | default: 'ADD TO BAG'
   assign available = variant.available
   assign has_multiple_variants = false
   if product.variants.size > 1 or product.options.size > 1
     assign has_multiple_variants = true
+  endif
+
+  assign button_single_text = block_settings.button_text | default: 'Add to Bag'
+  assign button_multi_text = block_settings.button_multi_text | default: 'Select Options'
+
+  if has_multiple_variants
+    assign button_label = button_multi_text
+  else
+    assign button_label = button_single_text
   endif
 %}
 
@@ -79,8 +87,14 @@
     {
       "type": "text",
       "id": "button_text",
-      "label": "Button text",
-      "default": "ADD TO BAG"
+      "label": "Button text (single variant)",
+      "default": "Add to Bag"
+    },
+    {
+      "type": "text",
+      "id": "button_multi_text",
+      "label": "Button text (with variants)",
+      "default": "Select Options"
     },
     {
       "type": "select",
