@@ -1,0 +1,40 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-brands-page",
+      "blocks": {
+        "brand_staplex": {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Staplex",
+            "tagline": "Cosmetics & Skincare",
+            "link": "/collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "brand_staplex"
+      ],
+      "settings": {
+        "eyebrow": "Authentic Partners",
+        "title": "Brands We Carry",
+        "subtitle": "Explore genuine cosmetic, skincare, and fragrance brands sourced directly through authorized channels and delivered across Pakistan.",
+        "header_alignment": "center",
+        "show_search": true,
+        "show_alphabet": true,
+        "enable_automated_brands": true,
+        "show_product_count": true,
+        "section_width": "page-width",
+        "columns_desktop": 4,
+        "columns_tablet": "3",
+        "columns_mobile": "2",
+        "card_border_radius": 8,
+        "padding-block-start": 48,
+        "padding-block-end": 64
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

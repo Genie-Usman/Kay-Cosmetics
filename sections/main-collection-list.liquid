@@ -2,7 +2,7 @@
 
 {% liquid
   assign section_collections = collections
-  assign max_items = 20
+  assign max_items = section.settings.max_collections | default: 24
   if section.settings.background_color != blank
     render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
   endif
@@ -39,13 +39,38 @@
   {% endif %}
 
   {% capture list_items %}
-    {% for collection in section_collections limit: max_items %}
-      <div class="resource-list__item">
-        {% content_for 'block', type: '_collection-card', id: 'static-collection-card', closest.collection: collection %}
-      </div>
-      {% unless forloop.last %}
-        <!--@list/split-->
-      {% endunless %}
+    {% assign count = 0 %}
+    {% for collection in section_collections %}
+      {% liquid
+        assign col_type = collection.metafields.custom.collection_type.value | default: collection.metafields.custom.collection_type
+        assign include_collection = true
+
+        if section.settings.collection_type_filter == 'brands_only'
+          if col_type != 'Brand'
+            assign include_collection = false
+          endif
+        elsif section.settings.collection_type_filter == 'all'
+          assign include_collection = true
+        else
+          # collections_only (Default): exclude collections tagged as Brand
+          if col_type == 'Brand'
+            assign include_collection = false
+          endif
+        endif
+      %}
+
+      {% if include_collection %}
+        {% if count > 0 %}
+          <!--@list/split-->
+        {% endif %}
+        <div class="resource-list__item">
+          {% content_for 'block', type: '_collection-card', id: 'static-collection-card', closest.collection: collection %}
+        </div>
+        {% assign count = count | plus: 1 %}
+        {% if count >= max_items %}
+          {% break %}
+        {% endif %}
+      {% endif %}
     {% endfor %}
   {% endcapture %}
 
@@ -324,6 +349,30 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Collection Filter"
+    },
+    {
+      "type": "select",
+      "id": "collection_type_filter",
+      "label": "Collection type to display",
+      "options": [
+        { "value": "collections_only", "label": "Collections only (Exclude brands)" },
+        { "value": "brands_only", "label": "Brands only" },
+        { "value": "all", "label": "All collections" }
+      ],
+      "default": "collections_only"
+    },
+    {
+      "type": "range",
+      "id": "max_collections",
+      "label": "Maximum collections to show",
+      "min": 4,
+      "max": 50,
+      "step": 2,
+      "default": 24
     }
   ]
 }

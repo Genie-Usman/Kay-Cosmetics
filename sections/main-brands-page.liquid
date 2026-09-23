@@ -1,0 +1,894 @@
+{% doc %}
+  Main Brands Directory section for Kay Cosmetics.
+  Displays an A-Z directory of brands automatically pulled from collections
+  with the `custom.collection_type` metafield set to 'Brand',
+  along with optional merchant-curated brand blocks, real-time live search,
+  and alphabet quick navigation.
+{% enddoc %}
+
+{% liquid
+  assign section_id = section.id | replace: '-', '_'
+  assign bg_color = section.settings.section_bg_color
+  assign col_desktop = section.settings.columns_desktop | default: 4
+  assign col_tablet = section.settings.columns_tablet | default: '3'
+  assign col_mobile = section.settings.columns_mobile | default: '2'
+  assign card_radius = section.settings.card_border_radius | default: 8
+  assign show_search = section.settings.show_search
+  assign show_alphabet = section.settings.show_alphabet
+  assign show_product_count = section.settings.show_product_count
+  assign header_align = section.settings.header_alignment | default: 'center'
+%}
+
+<div
+  id="BrandsPage-{{ section.id }}"
+  class="section section--{{ section.settings.section_width }} brands-directory-section spacing-style"
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    {% if bg_color != blank and bg_color != 'rgba(0,0,0,0)' %}background-color: {{ bg_color }};{% endif %}
+    --brand-cols-desktop: {{ col_desktop }};
+    --brand-cols-tablet: {{ col_tablet }};
+    --brand-card-radius: {{ card_radius }}px;
+  "
+>
+  <div class="brands-directory-header brands-directory-header--{{ header_align }}">
+    {% if section.settings.eyebrow != blank %}
+      <span class="section-eyebrow">{{ section.settings.eyebrow }}</span>
+    {% endif %}
+
+    {% if section.settings.title != blank %}
+      <h1 class="section-title">{{ section.settings.title }}</h1>
+    {% endif %}
+
+    {% if section.settings.subtitle != blank %}
+      <p class="section-subtitle" style="{% if header_align == 'center' %}margin-inline: auto;{% endif %}">
+        {{ section.settings.subtitle }}
+      </p>
+    {% endif %}
+
+    {% if show_search %}
+      <div class="brands-search-wrapper" style="{% if header_align == 'center' %}margin-inline: auto;{% endif %}">
+        <svg class="brands-search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="search"
+          id="BrandSearch-{{ section_id }}"
+          class="brands-search-input"
+          placeholder="Search brands (e.g. Staplex, CeraVe, Maybelline)..."
+          aria-label="Search brands"
+          autocomplete="off"
+        >
+        <button
+          type="button"
+          id="BrandSearchClear-{{ section_id }}"
+          class="brands-search-clear"
+          style="display: none;"
+          aria-label="Clear search"
+        >
+          &times;
+        </button>
+      </div>
+    {% endif %}
+
+    {% if show_alphabet %}
+      <div class="brands-alphabet-nav" id="BrandsAlphabet-{{ section_id }}" aria-label="Alphabet navigation">
+        <button type="button" class="brands-alphabet-btn is-active" data-letter="all">All</button>
+        <button type="button" class="brands-alphabet-btn" data-letter="#">#</button>
+        {% assign letters = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z' | split: ',' %}
+        {% for letter in letters %}
+          <button type="button" class="brands-alphabet-btn" data-letter="{{ letter }}">{{ letter }}</button>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  {% liquid
+    # 1. Collect automated Brand collections (custom.collection_type == 'Brand')
+    assign automated_brands_count = 0
+    for collection in collections
+      assign col_type = collection.metafields.custom.collection_type.value | default: collection.metafields.custom.collection_type
+      if col_type == 'Brand'
+        assign automated_brands_count = automated_brands_count | plus: 1
+      endif
+    endfor
+
+    # Total brands count (automated + manual blocks)
+    assign total_brands = automated_brands_count | plus: section.blocks.size
+  %}
+
+  <div
+    class="
+      brands-grid
+      brands-grid--cols-{{ col_desktop }}
+      brands-grid--tablet-{{ col_tablet }}
+      brands-grid--mobile-{{ col_mobile }}
+    "
+    id="BrandsGrid-{{ section_id }}"
+  >
+    {%- comment -%} 1. Automated Brand Collections from Shopify {%- endcomment -%}
+    {% if section.settings.enable_automated_brands and automated_brands_count > 0 %}
+      {% for collection in collections %}
+        {% liquid
+          assign col_type = collection.metafields.custom.collection_type.value | default: collection.metafields.custom.collection_type
+          if col_type != 'Brand'
+            continue
+          endif
+
+          assign brand_title = collection.title
+          assign brand_link = collection.url
+          assign brand_image = collection.image | default: collection.featured_image
+          assign product_count = collection.all_products_count
+
+          # Calculate first letter
+          assign first_char = brand_title | slice: 0, 1 | upcase
+          assign is_alpha = false
+          if 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' contains first_char
+            assign is_alpha = true
+          endif
+          assign letter_group = first_char
+          unless is_alpha
+            assign letter_group = '#'
+          endunless
+        %}
+
+        <a
+          href="{{ brand_link }}"
+          class="brand-directory-card"
+          data-brand-name="{{ brand_title | downcase | escape }}"
+          data-brand-letter="{{ letter_group }}"
+        >
+          <div class="brand-directory-card__media">
+            {% if brand_image != blank %}
+              {{
+                brand_image
+                | image_url: width: 600
+                | image_tag:
+                  widths: '200, 350, 600',
+                  class: 'brand-directory-card__image',
+                  alt: brand_title,
+                  loading: 'lazy'
+              }}
+            {% else %}
+              <div class="brand-directory-card__monogram">
+                <span>{{ first_char }}</span>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="brand-directory-card__content">
+            <h2 class="brand-directory-card__title">{{ brand_title }}</h2>
+            {% if show_product_count %}
+              <span class="brand-directory-card__count">
+                {{ product_count }} {{ product_count | pluralize: 'product', 'products' }}
+              </span>
+            {% endif %}
+            <span class="brand-directory-card__link-text">
+              Shop Brand &rarr;
+            </span>
+          </div>
+        </a>
+      {% endfor %}
+    {% endif %}
+
+    {%- comment -%} 2. Manual Brand Blocks {%- endcomment -%}
+    {% for block in section.blocks %}
+      {% liquid
+        assign collection = block.settings.collection
+        assign brand_title = block.settings.brand_name
+        if brand_title == blank and collection != blank
+          assign brand_title = collection.title
+        endif
+        if brand_title == blank
+          assign brand_title = 'Brand'
+        endif
+
+        assign brand_link = block.settings.link
+        if brand_link == blank and collection != blank
+          assign brand_link = collection.url
+        endif
+        if brand_link == blank
+          assign brand_link = '/collections/all'
+        endif
+
+        assign brand_image = block.settings.logo
+        if brand_image == blank and collection != blank and collection.image != blank
+          assign brand_image = collection.image
+        elsif brand_image == blank and collection != blank and collection.featured_image != blank
+          assign brand_image = collection.featured_image
+        endif
+
+        assign product_count = 0
+        if collection != blank
+          assign product_count = collection.all_products_count
+        endif
+
+        assign first_char = brand_title | slice: 0, 1 | upcase
+        assign is_alpha = false
+        if 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' contains first_char
+          assign is_alpha = true
+        endif
+        assign letter_group = first_char
+        unless is_alpha
+          assign letter_group = '#'
+        endunless
+      %}
+
+      <a
+        href="{{ brand_link }}"
+        class="brand-directory-card"
+        data-brand-name="{{ brand_title | downcase | escape }}"
+        data-brand-letter="{{ letter_group }}"
+        {{ block.shopify_attributes }}
+      >
+        <div class="brand-directory-card__media">
+          {% if brand_image != blank %}
+            {{
+              brand_image
+              | image_url: width: 600
+              | image_tag:
+                widths: '200, 350, 600',
+                class: 'brand-directory-card__image',
+                alt: brand_title,
+                loading: 'lazy'
+            }}
+          {% elsif block.settings.image_asset != blank %}
+            <img
+              src="{{ block.settings.image_asset | asset_url }}"
+              alt="{{ brand_title }}"
+              class="brand-directory-card__image"
+              loading="lazy"
+              width="300"
+              height="200"
+            >
+          {% else %}
+            <div class="brand-directory-card__monogram">
+              <span>{{ first_char }}</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="brand-directory-card__content">
+          <h2 class="brand-directory-card__title">{{ brand_title }}</h2>
+          {% if block.settings.tagline != blank %}
+            <p class="brand-directory-card__tagline">{{ block.settings.tagline }}</p>
+          {% elsif show_product_count and collection != blank %}
+            <span class="brand-directory-card__count">
+              {{ product_count }} {{ product_count | pluralize: 'product', 'products' }}
+            </span>
+          {% endif %}
+          <span class="brand-directory-card__link-text">
+            Shop Brand &rarr;
+          </span>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+
+  <div id="BrandsEmptySearch-{{ section_id }}" class="brands-empty-search" style="display: none;">
+    <p class="brands-empty-search__title">No brands found</p>
+    <p class="brands-empty-search__desc">Try checking for spelling errors or clear your search to browse all brands.</p>
+    <button type="button" id="BrandsResetBtn-{{ section_id }}" class="brands-reset-btn">
+      View All Brands
+    </button>
+  </div>
+
+  {% if total_brands == 0 %}
+    <div class="brands-empty-state">
+      <p class="brands-empty-state__title">No brands configured yet</p>
+      <p class="brands-empty-state__desc">
+        To display brands on this page:
+        <br>
+        1. In Shopify Admin &rarr; <strong>Collections</strong>, set the <strong>Collection Type</strong> metafield to <strong>Brand</strong> on any brand collection.
+        <br>
+        2. Or add <strong>Brand Blocks</strong> directly in the theme customizer.
+      </p>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  /* ==========================================================================
+     Brands Directory Scoped Styles for Kay Cosmetics
+     ========================================================================== */
+
+  #BrandsPage-{{ section.id }} {
+    position: relative;
+  }
+
+  /* Header */
+  #BrandsPage-{{ section.id }} .brands-directory-header {
+    margin-bottom: clamp(24px, 4.5vw, 44px);
+  }
+  #BrandsPage-{{ section.id }} .brands-directory-header--left {
+    text-align: left;
+  }
+  #BrandsPage-{{ section.id }} .brands-directory-header--center {
+    text-align: center;
+  }
+
+  #BrandsPage-{{ section.id }} .section-eyebrow {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--yozo-rosewood, #BD7385);
+    margin-bottom: 8px;
+  }
+
+  #BrandsPage-{{ section.id }} .section-title {
+    font-family: var(--font-heading--family), serif;
+    font-size: clamp(2rem, 3.8vw, 2.85rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--yozo-plum-dark, #2C1E26);
+    margin: 0 0 10px 0;
+  }
+
+  #BrandsPage-{{ section.id }} .section-subtitle {
+    font-size: 0.9375rem;
+    color: var(--yozo-text-muted, #6B5C65);
+    line-height: 1.55;
+    max-width: 620px;
+    margin: 0 0 24px 0;
+  }
+
+  /* Live Search Bar */
+  #BrandsPage-{{ section.id }} .brands-search-wrapper {
+    position: relative;
+    max-width: 520px;
+    margin-bottom: 24px;
+  }
+  #BrandsPage-{{ section.id }} .brands-search-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 44px 0 46px;
+    border-radius: 9999px;
+    border: 1.5px solid var(--yozo-border-medium, #DECED2);
+    background-color: #FFFFFF;
+    color: var(--yozo-plum-dark, #2C1E26);
+    font-family: var(--font-body--family), sans-serif;
+    font-size: 0.875rem;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  #BrandsPage-{{ section.id }} .brands-search-input:focus {
+    border-color: var(--yozo-rosewood, #BD7385);
+    box-shadow: 0 0 0 3px rgba(189, 115, 133, 0.15);
+  }
+  #BrandsPage-{{ section.id }} .brands-search-icon {
+    position: absolute;
+    top: 50%;
+    left: 18px;
+    transform: translateY(-50%);
+    color: var(--yozo-text-subdued, #94848D);
+    pointer-events: none;
+  }
+  #BrandsPage-{{ section.id }} .brands-search-clear {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--yozo-text-muted, #6B5C65);
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+
+  /* Alphabet Quick Navigation */
+  #BrandsPage-{{ section.id }} .brands-alphabet-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  #BrandsPage-{{ section.id }} .brands-alphabet-btn {
+    background: #FFFFFF;
+    border: 1px solid var(--yozo-border-subtle, #EFE6E8);
+    color: var(--yozo-plum-dark, #2C1E26);
+    font-family: var(--font-body--family), sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #BrandsPage-{{ section.id }} .brands-alphabet-btn:hover {
+    border-color: var(--yozo-rosewood, #BD7385);
+    color: var(--yozo-rosewood, #BD7385);
+    background: rgba(189, 115, 133, 0.08);
+  }
+  #BrandsPage-{{ section.id }} .brands-alphabet-btn.is-active {
+    background: var(--yozo-rosewood, #BD7385);
+    border-color: var(--yozo-rosewood, #BD7385);
+    color: #FFFFFF;
+  }
+
+  /* Grid Layout */
+  #BrandsPage-{{ section.id }} .brands-grid {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+  }
+  #BrandsPage-{{ section.id }} .brands-grid--cols-3 { grid-template-columns: repeat(3, 1fr); }
+  #BrandsPage-{{ section.id }} .brands-grid--cols-4 { grid-template-columns: repeat(4, 1fr); }
+  #BrandsPage-{{ section.id }} .brands-grid--cols-5 { grid-template-columns: repeat(5, 1fr); }
+  #BrandsPage-{{ section.id }} .brands-grid--cols-6 { grid-template-columns: repeat(6, 1fr); }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    #BrandsPage-{{ section.id }} .brands-grid--tablet-2 { grid-template-columns: repeat(2, 1fr) !important; }
+    #BrandsPage-{{ section.id }} .brands-grid--tablet-3 { grid-template-columns: repeat(3, 1fr) !important; }
+  }
+
+  @media screen and (max-width: 749px) {
+    #BrandsPage-{{ section.id }} .brands-grid--mobile-1 { grid-template-columns: 1fr !important; }
+    #BrandsPage-{{ section.id }} .brands-grid--mobile-2 { grid-template-columns: repeat(2, 1fr) !important; gap: 12px; }
+  }
+
+  /* Brand Card */
+  #BrandsPage-{{ section.id }} .brand-directory-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--brand-card-radius);
+    background: #FFFFFF;
+    border: 1px solid var(--yozo-border-subtle, #EFE6E8);
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+  }
+  #BrandsPage-{{ section.id }} .brand-directory-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--yozo-rosewood, #BD7385);
+    box-shadow: 0 12px 28px -6px rgba(189, 115, 133, 0.16),
+                0 4px 10px rgba(44, 30, 38, 0.04);
+  }
+
+  #BrandsPage-{{ section.id }} .brand-directory-card__media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: var(--yozo-canvas, #FAF5F2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+  #BrandsPage-{{ section.id }} .brand-directory-card__image {
+    max-width: 85%;
+    max-height: 85%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.4s ease;
+  }
+  #BrandsPage-{{ section.id }} .brand-directory-card:hover .brand-directory-card__image {
+    transform: scale(1.06);
+  }
+
+  #BrandsPage-{{ section.id }} .brand-directory-card__monogram {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(189, 115, 133, 0.12);
+    color: var(--yozo-rosewood, #BD7385);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading--family), serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  #BrandsPage-{{ section.id }} .brand-directory-card__content {
+    padding: 16px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #FFFFFF;
+    flex-grow: 1;
+  }
+
+  #BrandsPage-{{ section.id }} .brand-directory-card__title {
+    font-family: var(--font-heading--family), serif;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--yozo-plum-dark, #2C1E26);
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  #BrandsPage-{{ section.id }} .brand-directory-card__tagline {
+    font-size: 0.75rem;
+    color: var(--yozo-text-muted, #6B5C65);
+    margin: 0;
+    line-height: 1.35;
+  }
+
+  #BrandsPage-{{ section.id }} .brand-directory-card__count {
+    font-size: 0.75rem;
+    color: var(--yozo-rosewood, #BD7385);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  #BrandsPage-{{ section.id }} .brand-directory-card__link-text {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--yozo-rosewood, #BD7385);
+    margin-top: 10px;
+    transition: transform 0.2s ease, color 0.2s ease;
+    display: inline-block;
+  }
+  #BrandsPage-{{ section.id }} .brand-directory-card:hover .brand-directory-card__link-text {
+    color: var(--yozo-rosewood-hover, #A75D6F);
+    transform: translateX(4px);
+  }
+
+  /* Empty Search State */
+  #BrandsPage-{{ section.id }} .brands-empty-search {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  #BrandsPage-{{ section.id }} .brands-empty-search__title {
+    font-family: var(--font-heading--family), serif;
+    font-size: 1.35rem;
+    color: var(--yozo-plum-dark, #2C1E26);
+    margin: 0 0 8px 0;
+  }
+  #BrandsPage-{{ section.id }} .brands-empty-search__desc {
+    font-size: 0.875rem;
+    color: var(--yozo-text-muted, #6B5C65);
+    margin: 0 0 20px 0;
+  }
+  #BrandsPage-{{ section.id }} .brands-reset-btn {
+    background: var(--yozo-rosewood, #BD7385);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 9999px;
+    padding: 10px 24px;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  #BrandsPage-{{ section.id }} .brands-reset-btn:hover {
+    background: var(--yozo-rosewood-hover, #A75D6F);
+  }
+
+  /* Empty Setup State */
+  #BrandsPage-{{ section.id }} .brands-empty-state {
+    background: #FFFFFF;
+    border: 1.5px dashed var(--yozo-border-medium, #DECED2);
+    border-radius: 12px;
+    padding: 40px 24px;
+    text-align: center;
+    max-width: 640px;
+    margin: 20px auto;
+  }
+  #BrandsPage-{{ section.id }} .brands-empty-state__title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--yozo-plum-dark, #2C1E26);
+    margin: 0 0 10px 0;
+  }
+  #BrandsPage-{{ section.id }} .brands-empty-state__desc {
+    font-size: 0.875rem;
+    color: var(--yozo-text-muted, #6B5C65);
+    line-height: 1.6;
+    margin: 0;
+  }
+</style>
+
+<script>
+  (function () {
+    const root = document.getElementById('BrandsPage-{{ section.id }}');
+    if (!root) return;
+
+    const searchInput = root.querySelector('#BrandSearch-{{ section_id }}');
+    const searchClear = root.querySelector('#BrandSearchClear-{{ section_id }}');
+    const alphabetBtns = root.querySelectorAll('.brands-alphabet-btn');
+    const cards = root.querySelectorAll('.brand-directory-card');
+    const emptyMsg = root.querySelector('#BrandsEmptySearch-{{ section_id }}');
+    const resetBtn = root.querySelector('#BrandsResetBtn-{{ section_id }}');
+
+    let currentLetter = 'all';
+    let currentQuery = '';
+
+    function filterBrands() {
+      let visibleCount = 0;
+
+      cards.forEach((card) => {
+        const name = card.dataset.brandName || '';
+        const letter = card.dataset.brandLetter || '';
+
+        const matchesLetter = currentLetter === 'all' || letter === currentLetter;
+        const matchesSearch = !currentQuery || name.includes(currentQuery);
+
+        if (matchesLetter && matchesSearch) {
+          card.style.display = '';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      if (emptyMsg) {
+        emptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+      }
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        currentQuery = this.value.trim().toLowerCase();
+        if (searchClear) {
+          searchClear.style.display = currentQuery ? 'block' : 'none';
+        }
+        filterBrands();
+      });
+    }
+
+    if (searchClear) {
+      searchClear.addEventListener('click', function () {
+        if (searchInput) {
+          searchInput.value = '';
+          currentQuery = '';
+          this.style.display = 'none';
+          filterBrands();
+          searchInput.focus();
+        }
+      });
+    }
+
+    alphabetBtns.forEach((btn) => {
+      btn.addEventListener('click', function () {
+        alphabetBtns.forEach((b) => b.classList.remove('is-active'));
+        this.classList.add('is-active');
+        currentLetter = this.dataset.letter || 'all';
+        filterBrands();
+      });
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function () {
+        currentLetter = 'all';
+        currentQuery = '';
+        if (searchInput) searchInput.value = '';
+        if (searchClear) searchClear.style.display = 'none';
+        alphabetBtns.forEach((b) => {
+          b.classList.toggle('is-active', b.dataset.letter === 'all');
+        });
+        filterBrands();
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Brands Directory",
+  "tag": "section",
+  "class": "section-brands-page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Authentic Partners"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Brands We Carry"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Explore genuine cosmetic, skincare, and fragrance brands sourced directly through authorized channels and delivered across Pakistan."
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Search & Navigation"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show brand search bar",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_alphabet",
+      "label": "Show A–Z alphabet filter",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Brand Collection Sourcing"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_automated_brands",
+      "label": "Show collections tagged as 'Brand'",
+      "info": "Pulls all collections with custom.collection_type = Brand",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "label": "Show product count",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Grid Layout"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section width",
+      "options": [
+        { "value": "page-width", "label": "Page width" },
+        { "value": "full-width", "label": "Full width" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Section background color"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "columns_tablet",
+      "label": "Columns on tablet",
+      "options": [
+        { "value": "2", "label": "2 columns" },
+        { "value": "3", "label": "3 columns" }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Corner roundness",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Featured Brand",
+      "settings": [
+        {
+          "type": "text",
+          "id": "brand_name",
+          "label": "Brand Name",
+          "default": "Brand Name"
+        },
+        {
+          "type": "text",
+          "id": "tagline",
+          "label": "Tagline / Category",
+          "default": "Cosmetics & Skincare"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Linked Collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Brand Logo / Image"
+        },
+        {
+          "type": "text",
+          "id": "image_asset",
+          "label": "Theme image filename (optional)",
+          "info": "e.g. brand-logo.png from theme assets"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Brand Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brands Directory",
+      "blocks": [
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Staplex",
+            "tagline": "Cosmetics & Skincare"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
