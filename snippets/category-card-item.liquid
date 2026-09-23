@@ -1,0 +1,146 @@
+{% doc %}
+  Renders an individual category item supporting Flower Badge (Scallop) and Classic Cards.
+{% enddoc %}
+
+{% liquid
+  assign collection = block.settings.collection
+  assign title = block.settings.title
+  if title == blank and collection != blank
+    assign title = collection.title
+  endif
+  if title == blank
+    assign title = 'Category'
+  endif
+
+  assign link = block.settings.link
+  if link == blank and collection != blank
+    assign link = collection.url
+  endif
+  if link == blank
+    assign link = '/collections/all'
+  endif
+
+  assign image = block.settings.image
+  if image == blank and collection != blank and collection.image != blank
+    assign image = collection.image
+  elsif image == blank and collection != blank and collection.featured_image != blank
+    assign image = collection.featured_image
+  endif
+
+  assign product_count = 0
+  if collection != blank
+    assign product_count = collection.all_products_count
+  endif
+
+  # Calculate Scallop Badge Color
+  assign badge_color = '#FF5DA2'
+  if block.settings.scallop_color_override != blank and block.settings.scallop_color_override != 'rgba(0,0,0,0)'
+    assign badge_color = block.settings.scallop_color_override
+  elsif scallop_color_type == 'rosewood'
+    assign badge_color = '#BD7385'
+  elsif scallop_color_type == 'custom'
+    assign badge_color = scallop_custom_color
+  elsif scallop_color_type == 'pastel_rainbow'
+    assign mod = forloop_index | modulo: 5
+    if mod == 1
+      assign badge_color = '#FF75A0'
+    elsif mod == 2
+      assign badge_color = '#7BC8F6'
+    elsif mod == 3
+      assign badge_color = '#B993E0'
+    elsif mod == 4
+      assign badge_color = '#FFB385'
+    else
+      assign badge_color = '#79D2A6'
+    endif
+  endif
+%}
+
+{% if card_style == 'scallop_flower' %}
+  <a href="{{ link }}" class="category-card category-card--scallop-flower" {{ block.shopify_attributes }}>
+    <div class="category-card__scallop-frame" style="--scallop-fill: {{ badge_color }};">
+      <svg class="category-card__scallop-svg" viewBox="0 0 200 200" fill="currentColor">
+        <path d="M 176 100 A 21.24 21.24 0 0 1 165.82 138 A 21.24 21.24 0 0 1 138 165.82 A 21.24 21.24 0 0 1 100 176 A 21.24 21.24 0 0 1 62 165.82 A 21.24 21.24 0 0 1 34.18 138 A 21.24 21.24 0 0 1 24 100 A 21.24 21.24 0 0 1 34.18 62 A 21.24 21.24 0 0 1 62 34.18 A 21.24 21.24 0 0 1 100 24 A 21.24 21.24 0 0 1 138 34.18 A 21.24 21.24 0 0 1 165.82 62 A 21.24 21.24 0 0 1 176 100 Z"/>
+      </svg>
+      <div class="category-card__scallop-media">
+        {% if image != blank %}
+          {{
+            image
+            | image_url: width: 400
+            | image_tag:
+              widths: '200, 300, 400',
+              class: 'category-card__scallop-img',
+              alt: title,
+              loading: 'lazy'
+          }}
+        {% elsif block.settings.image_asset != blank %}
+          {% assign asset_file = block.settings.image_asset %}
+          {% if asset_file contains '.jpg' %}
+            {% assign asset_file = asset_file | replace: '.jpg', '.png' %}
+          {% endif %}
+          <img
+            src="{{ asset_file | asset_url }}"
+            alt="{{ title }}"
+            class="category-card__scallop-img"
+            loading="lazy"
+            width="250"
+            height="250"
+          >
+        {% else %}
+          {{ 'collection-1' | placeholder_svg_tag: 'category-card__scallop-img' }}
+        {% endif %}
+      </div>
+    </div>
+    <div class="category-card__scallop-caption">
+      <span class="category-card__scallop-title">{{ title | upcase }}</span>
+    </div>
+  </a>
+
+{% else %}
+  {%- comment -%} Classic Card Styles {%- endcomment -%}
+  <a
+    href="{{ link }}"
+    class="category-card category-card--{{ card_style }} category-card--standard"
+    {{ block.shopify_attributes }}
+  >
+    <div class="category-card__media category-card__media--ratio-{{ img_ratio }} category-card__media--fit-{{ img_fit }}">
+      {% if image != blank %}
+        {{
+          image
+          | image_url: width: 600
+          | image_tag:
+            widths: '250, 400, 600',
+            class: 'category-card__image',
+            alt: title,
+            loading: 'lazy'
+        }}
+      {% elsif block.settings.image_asset != blank %}
+        <img
+          src="{{ block.settings.image_asset | asset_url }}"
+          alt="{{ title }}"
+          class="category-card__image"
+          loading="lazy"
+          width="400"
+          height="500"
+        >
+      {% else %}
+        {{ 'collection-1' | placeholder_svg_tag: 'category-card__image' }}
+      {% endif %}
+    </div>
+
+    <div class="category-card__content">
+      <h3 class="category-card__title">
+        <span>{{ title }}</span>
+        {% if show_arrow %}
+          <span class="category-card__arrow">&rarr;</span>
+        {% endif %}
+      </h3>
+      {% if show_tagline and block.settings.tagline != blank %}
+        <p class="category-card__tagline">{{ block.settings.tagline }}</p>
+      {% endif %}
+      {% if show_count and collection != blank %}
+        <span class="category-card__count">{{ product_count }} {{ product_count | pluralize: 'product', 'products' }}</span>
+      {% endif %}
+    </div>
+  </a>
+{% endif %}

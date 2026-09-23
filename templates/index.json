@@ -133,95 +133,106 @@
     "shop_by_category": {
       "type": "category-grid",
       "blocks": {
-        "cat_makeup": {
+        "cat_lipstick": {
           "type": "category",
           "settings": {
             "collection": "",
-            "title": "Makeup",
-            "tagline": "Lipsticks, Foundations & Palettes",
-            "image_asset": "cat-makeup.jpg",
-            "link": "shopify://collections/all",
-            "badge_text": "",
-            "badge_color": "#bd7385",
-            "badge_bg_color": "#ffffff",
-            "card_bg_override": ""
+            "title": "LIPSTICK",
+            "image_asset": "cat-lipstick.png",
+            "scallop_color_override": "",
+            "link": "shopify://collections/all"
           }
         },
-        "cat_skincare": {
+        "cat_foundation": {
           "type": "category",
           "settings": {
             "collection": "",
-            "title": "Skincare",
-            "tagline": "Cleansers, Serums & Creams",
-            "image_asset": "cat-skincare.jpg",
-            "link": "shopify://collections/all",
-            "badge_text": "",
-            "badge_color": "#bd7385",
-            "badge_bg_color": "#ffffff",
-            "card_bg_override": ""
+            "title": "FOUNDATION",
+            "image_asset": "cat-foundation.png",
+            "scallop_color_override": "",
+            "link": "shopify://collections/all"
           }
         },
-        "cat_haircare": {
+        "cat_edp": {
           "type": "category",
           "settings": {
             "collection": "",
-            "title": "Haircare",
-            "tagline": "Shampoos, Oils & Treatments",
-            "image_asset": "cat-haircare.jpg",
-            "link": "shopify://collections/all",
-            "badge_text": "",
-            "badge_color": "#bd7385",
-            "badge_bg_color": "#ffffff",
-            "card_bg_override": ""
+            "title": "EDP",
+            "image_asset": "cat-edp.png",
+            "scallop_color_override": "",
+            "link": "shopify://collections/all"
           }
         },
-        "cat_fragrance": {
+        "cat_edt": {
           "type": "category",
           "settings": {
             "collection": "",
-            "title": "Fragrance",
-            "tagline": "Perfumes & Fragrance Mists",
-            "image_asset": "cat-fragrance.jpg",
-            "link": "shopify://collections/all",
-            "badge_text": "",
-            "badge_color": "#bd7385",
-            "badge_bg_color": "#ffffff",
-            "card_bg_override": ""
+            "title": "EDT",
+            "image_asset": "cat-edt.png",
+            "scallop_color_override": "",
+            "link": "shopify://collections/all"
           }
         },
-        "cat_tools": {
+        "cat_nailpolish": {
           "type": "category",
           "settings": {
             "collection": "",
-            "title": "Beauty Tools",
-            "tagline": "Brushes, Sponges & Accessories",
-            "image_asset": "cat-tools.jpg",
-            "link": "shopify://collections/all",
-            "badge_text": "",
-            "badge_color": "#bd7385",
-            "badge_bg_color": "#ffffff",
-            "card_bg_override": ""
+            "title": "NAIL POLISH",
+            "image_asset": "cat-nailpolish.png",
+            "scallop_color_override": "",
+            "link": "shopify://collections/all"
+          }
+        },
+        "cat_shampoo": {
+          "type": "category",
+          "settings": {
+            "collection": "",
+            "title": "SHAMPOO",
+            "image_asset": "cat-shampoo.png",
+            "scallop_color_override": "",
+            "link": "shopify://collections/all"
+          }
+        },
+        "cat_concealer": {
+          "type": "category",
+          "settings": {
+            "collection": "",
+            "title": "CONCEALER",
+            "image_asset": "cat-concealer.png",
+            "scallop_color_override": "",
+            "link": "shopify://collections/all"
           }
         }
       },
       "block_order": [
-        "cat_makeup",
-        "cat_skincare",
-        "cat_haircare",
-        "cat_fragrance",
-        "cat_tools"
+        "cat_lipstick",
+        "cat_foundation",
+        "cat_edp",
+        "cat_edt",
+        "cat_nailpolish",
+        "cat_shampoo",
+        "cat_concealer"
       ],
       "settings": {
+        "display_format": "slider",
+        "items_desktop": "6.5",
+        "items_tablet": "4.5",
+        "items_mobile": "2.3",
+        "card_style": "scallop_flower",
+        "badge_size": 180,
+        "scallop_color_type": "custom",
+        "scallop_custom_color": "#FF5D5D",
+        "show_arrows": true,
+        "enable_autoplay": false,
+        "autoplay_speed": 5,
         "eyebrow": "Collections",
         "eyebrow_style": "uppercase",
         "eyebrow_color": "#bd7385",
         "title": "Shop by Category",
-        "heading_tag": "h2",
         "heading_size": "medium",
         "heading_color": "#2c1e26",
-        "subtitle": "Browse our multi-brand selection across key cosmetics categories.",
+        "subtitle": "Explore authentic makeup, fragrances, and beauty essentials.",
         "subtitle_color": "#6b5c65",
-        "subtitle_max_width": 560,
         "header_alignment": "left",
         "show_view_all": true,
         "view_all_label": "View All Collections",
@@ -230,32 +241,6 @@
         "view_all_position": "header",
         "section_width": "page-width",
         "section_bg_color": "",
-        "columns_desktop": 5,
-        "columns_tablet": "3",
-        "mobile_layout": "carousel",
-        "column_gap": 16,
-        "row_gap": 20,
-        "card_style": "standard",
-        "image_ratio": "4_5",
-        "image_fit": "cover",
-        "card_bg_type": "pastel_cycle",
-        "card_custom_bg": "#ffffff",
-        "card_border": "subtle",
-        "card_border_radius": 8,
-        "card_shadow": "hover",
-        "hover_effect": "lift_and_zoom",
-        "content_alignment": "left",
-        "content_padding": 14,
-        "card_title_font": "body",
-        "card_title_size": 15,
-        "card_title_weight": "600",
-        "card_title_color": "#2c1e26",
-        "show_tagline": true,
-        "card_tagline_color": "#6b5c65",
-        "show_count": false,
-        "show_arrow": true,
-        "arrow_style": "inline",
-        "arrow_color": "#bd7385",
         "padding-block-start": 48,
         "padding-block-end": 48
       }
@@ -505,12 +490,14 @@
         "brand_fragrances": {
           "type": "brand",
           "settings": {
+            "collection": "",
             "brand_name": "Kay Luxe Parfums",
             "headline": "BOLD ICONIC FRAGRANCES",
             "bar_color": "#000000",
             "bar_text_color": "#ffffff",
             "button_label": "SHOP NOW",
             "banner_image_asset": "brand-banner-fragrances.jpg",
+            "show_brand_name_overlay": false,
             "link": "shopify://collections/all"
           }
         },
@@ -524,6 +511,7 @@
             "bar_text_color": "#ffffff",
             "button_label": "SHOP NOW",
             "banner_image_asset": "brand-banner-miss-rose.jpg",
+            "show_brand_name_overlay": false,
             "link": "shopify://collections/miss-rose"
           }
         },
@@ -533,10 +521,11 @@
             "collection": "dr-oz",
             "brand_name": "Dr.Oz",
             "headline": "ELEGANCE IN DERMA CARE",
-            "bar_color": "#0F3A3A",
+            "bar_color": "#0f3a3a",
             "bar_text_color": "#ffffff",
             "button_label": "SHOP NOW",
             "banner_image_asset": "brand-banner-dr-oz.jpg",
+            "show_brand_name_overlay": false,
             "link": "shopify://collections/dr-oz"
           }
         }
@@ -547,6 +536,15 @@
         "brand_dr_oz"
       ],
       "settings": {
+        "layout_style": "banner_slider",
+        "slides_desktop": "2.3",
+        "slides_tablet": "1.75",
+        "slides_mobile": "1.15",
+        "banner_aspect_ratio": "16_9",
+        "card_border_radius": 12,
+        "show_arrows": true,
+        "enable_autoplay": false,
+        "autoplay_speed": 5,
         "eyebrow": "Brand Selection",
         "title": "Brands We Carry",
         "subtitle": "Discover genuine cosmetics and skincare products from authentic brand partners delivered across Pakistan.",

@@ -1,42 +1,28 @@
 {% doc %}
-  Category Grid section for Kay Cosmetics.
-  Displays beauty categories supporting native Shopify collections,
-  custom images, titles, badges, product counts, and multiple layout styles.
+  Category Grid & Slider section for Kay Cosmetics.
+  Supports playful Flower Badge Carousel, standard cards, and merchant styling.
 {% enddoc %}
+
+<script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer="defer"></script>
 
 {% liquid
   assign section_id = section.id | replace: '-', '_'
   assign bg_color = section.settings.section_bg_color
   assign header_align = section.settings.header_alignment | default: 'left'
-  assign col_desktop = section.settings.columns_desktop | default: 5
-  assign col_tablet = section.settings.columns_tablet | default: '3'
-  assign mobile_layout = section.settings.mobile_layout | default: 'carousel'
-  assign card_style = section.settings.card_style | default: 'standard'
-  assign img_ratio = section.settings.image_ratio | default: '4_5'
-  assign img_fit = section.settings.image_fit | default: 'cover'
-  assign card_radius = section.settings.card_border_radius | default: 8
-  assign card_border = section.settings.card_border | default: 'subtle'
-  assign card_shadow = section.settings.card_shadow | default: 'hover'
-  assign hover_effect = section.settings.hover_effect | default: 'lift_and_zoom'
-  assign card_title_font = section.settings.card_title_font | default: 'body'
-  assign card_title_size = section.settings.card_title_size | default: 15
-  assign card_title_weight = section.settings.card_title_weight | default: '600'
-  assign card_title_color = section.settings.card_title_color | default: '#2c1e26'
-  assign card_tagline_color = section.settings.card_tagline_color | default: '#6b5c65'
-  assign show_tagline = section.settings.show_tagline
-  assign show_count = section.settings.show_count
-  assign show_arrow = section.settings.show_arrow
-  assign arrow_style = section.settings.arrow_style | default: 'inline'
-  assign arrow_color = section.settings.arrow_color | default: '#bd7385'
-  assign content_align = section.settings.content_alignment | default: 'left'
-  assign content_pad = section.settings.content_padding | default: 14
-  assign card_bg_type = section.settings.card_bg_type | default: 'pastel_cycle'
-  assign card_custom_bg = section.settings.card_custom_bg | default: '#ffffff'
-  assign col_gap = section.settings.column_gap | default: 16
-  assign row_gap = section.settings.row_gap | default: 20
+  assign display_format = section.settings.display_format | default: 'slider'
+  assign card_style = section.settings.card_style | default: 'scallop_flower'
+  assign badge_size = section.settings.badge_size | default: 145
+  assign items_desktop = section.settings.items_desktop | default: '6.5'
+  assign items_tablet = section.settings.items_tablet | default: '4.5'
+  assign items_mobile = section.settings.items_mobile | default: '2.3'
+  assign show_arrows = section.settings.show_arrows
+  assign enable_autoplay = section.settings.enable_autoplay
+  assign autoplay_speed = section.settings.autoplay_speed | default: 5
+  assign scallop_color_type = section.settings.scallop_color_type | default: 'vibrant_pink'
+  assign scallop_custom_color = section.settings.scallop_custom_color | default: '#FF5DA2'
   assign show_view_all = section.settings.show_view_all
   assign view_all_pos = section.settings.view_all_position | default: 'header'
-  assign view_all_style = section.settings.view_all_style | default: 'link_arrow'
+  assign view_all_style = section.settings.view_all_style | default: 'button_outline'
   assign view_all_label = section.settings.view_all_label | default: 'View All Collections'
   assign view_all_link = section.settings.view_all_link | default: '/collections'
 %}
@@ -47,18 +33,10 @@
   style="
     {% render 'spacing-style', settings: section.settings %}
     {% if bg_color != blank and bg_color != 'rgba(0,0,0,0)' %}background-color: {{ bg_color }};{% endif %}
-    --cat-cols-desktop: {{ col_desktop }};
-    --cat-cols-tablet: {{ col_tablet }};
-    --cat-col-gap: {{ col_gap }}px;
-    --cat-row-gap: {{ row_gap }}px;
-    --cat-card-radius: {{ card_radius }}px;
-    --cat-content-pad: {{ content_pad }}px;
-    --cat-title-size: {{ card_title_size }}px;
-    --cat-title-weight: {{ card_title_weight }};
-    --cat-title-color: {{ card_title_color }};
-    --cat-tagline-color: {{ card_tagline_color }};
-    --cat-arrow-color: {{ arrow_color }};
-    --cat-subtitle-max-w: {{ section.settings.subtitle_max_width | default: 560 }}px;
+    --cat-cols-desktop: {{ items_desktop | floor | at_least: 2 }};
+    --cat-cols-tablet: {{ items_tablet | floor | at_least: 2 }};
+    --cat-cols-mobile: {{ items_mobile | floor | at_least: 1 }};
+    --cat-badge-size: {{ badge_size }}px;
   "
 >
   {%- capture view_all_element -%}
@@ -101,14 +79,14 @@
       {% endif %}
 
       {% if section.settings.title != blank %}
-        <{{ section.settings.heading_tag | default: 'h2' }}
+        <h2
           class="section-title section-title--{{ section.settings.heading_size | default: 'medium' }}"
           {% if section.settings.heading_color != blank %}
             style="color: {{ section.settings.heading_color }};"
           {% endif %}
         >
           {{ section.settings.title }}
-        </{{ section.settings.heading_tag | default: 'h2' }}>
+        </h2>
       {% endif %}
 
       {% if section.settings.subtitle != blank %}
@@ -116,7 +94,6 @@
           class="section-subtitle"
           style="
             {% if section.settings.subtitle_color != blank %}color: {{ section.settings.subtitle_color }};{% endif %}
-            max-width: var(--cat-subtitle-max-w);
             {% if header_align == 'center' %}margin-left: auto; margin-right: auto;{% elsif header_align == 'right' %}margin-left: auto;{% endif %}
           "
         >
@@ -138,152 +115,61 @@
     {% endif %}
   </div>
 
-  <div
-    class="
-      category-grid
-      category-grid--cols-{{ col_desktop }}
-      category-grid--tablet-{{ col_tablet }}
-      category-grid--mobile-{{ mobile_layout }}
-      category-grid--style-{{ card_style }}
-      category-grid--border-{{ card_border }}
-      category-grid--shadow-{{ card_shadow }}
-      category-grid--hover-{{ hover_effect }}
-      category-grid--ratio-{{ img_ratio }}
-      category-grid--align-{{ content_align }}
-      category-grid--font-{{ card_title_font }}
-    "
-  >
-    {% for block in section.blocks %}
-      {% liquid
-        assign collection = block.settings.collection
-        assign title = block.settings.title
-        if title == blank and collection != blank
-          assign title = collection.title
-        endif
-        if title == blank
-          assign title = 'Category'
-        endif
+  {% if display_format == 'slider' %}
+    {%- comment -%} ================= SWIPER CAROUSEL ================= {%- endcomment -%}
+    <div class="category-swiper-wrapper" id="CatSwiperWrap-{{ section_id }}">
+      <div class="swiper category-swiper" id="CatSwiper-{{ section_id }}">
+        <div class="swiper-wrapper">
+          {% for block in section.blocks %}
+            <div class="swiper-slide category-swiper-slide">
+              {% render 'category-card-item',
+                block: block,
+                card_style: card_style,
+                scallop_color_type: scallop_color_type,
+                scallop_custom_color: scallop_custom_color,
+                forloop_index: forloop.index
+              %}
+            </div>
+          {% endfor %}
+        </div>
 
-        assign link = block.settings.link
-        if link == blank and collection != blank
-          assign link = collection.url
-        endif
-        if link == blank
-          assign link = '/collections/all'
-        endif
-
-        assign image = block.settings.image
-        if image == blank and collection != blank and collection.image != blank
-          assign image = collection.image
-        elsif image == blank and collection != blank and collection.featured_image != blank
-          assign image = collection.featured_image
-        endif
-
-        assign product_count = 0
-        if collection != blank
-          assign product_count = collection.all_products_count
-        endif
-
-        assign custom_card_bg = ''
-        if block.settings.card_bg_override != blank and block.settings.card_bg_override != 'rgba(0,0,0,0)'
-          assign custom_card_bg = block.settings.card_bg_override
-        elsif card_bg_type == 'white'
-          assign custom_card_bg = '#FFFFFF'
-        elsif card_bg_type == 'canvas'
-          assign custom_card_bg = 'var(--yozo-canvas, #FAF5F2)'
-        elsif card_bg_type == 'transparent'
-          assign custom_card_bg = 'transparent'
-        elsif card_bg_type == 'custom'
-          assign custom_card_bg = card_custom_bg
-        endif
-      %}
-
-      <a
-        href="{{ link }}"
-        class="category-card category-card--{{ card_style }} {% if card_bg_type == 'pastel_cycle' and custom_card_bg == '' %}category-card--pastel-cycle{% endif %}"
-        {% if custom_card_bg != '' %}
-          style="--card-bg-override: {{ custom_card_bg }};"
+        {% if show_arrows and section.blocks.size > 2 %}
+          <button
+            type="button"
+            class="category-swiper__nav category-swiper__nav--prev"
+            aria-label="Previous categories"
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="category-swiper__nav category-swiper__nav--next"
+            aria-label="Next categories"
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
         {% endif %}
-        {{ block.shopify_attributes }}
-      >
-        <div class="category-card__media category-card__media--fit-{{ img_fit }}">
-          {% if block.settings.badge_text != blank %}
-            <span
-              class="category-card__badge"
-              style="
-                --badge-text: {{ block.settings.badge_color | default: '#bd7385' }};
-                --badge-bg: {{ block.settings.badge_bg_color | default: '#ffffff' }};
-              "
-            >
-              {{ block.settings.badge_text }}
-            </span>
-          {% endif %}
+      </div>
+    </div>
 
-          {% if image != blank %}
-            {{
-              image
-              | image_url: width: 800
-              | image_tag:
-                widths: '250, 400, 600, 800',
-                class: 'category-card__image',
-                alt: title,
-                loading: 'lazy'
-            }}
-          {% elsif block.settings.image_asset != blank %}
-            <img
-              src="{{ block.settings.image_asset | asset_url }}"
-              alt="{{ title }}"
-              class="category-card__image"
-              loading="lazy"
-              width="400"
-              height="500"
-            >
-          {% else %}
-            {{ 'collection-1' | placeholder_svg_tag: 'category-card__image' }}
-          {% endif %}
-
-          {% if card_style == 'overlay' %}
-            <div class="category-card__overlay-scrim"></div>
-          {% endif %}
-        </div>
-
-        <div class="category-card__content">
-          <div class="category-card__header-wrap">
-            <h3 class="category-card__title">
-              <span>{{ title }}</span>
-              {% if show_arrow and arrow_style == 'inline' %}
-                <span class="category-card__arrow category-card__arrow--inline" aria-hidden="true">&rarr;</span>
-              {% endif %}
-            </h3>
-
-            {% if show_arrow and arrow_style == 'circle_icon' %}
-              <span class="category-card__arrow category-card__arrow--circle" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </span>
-            {% endif %}
-          </div>
-
-          {% if show_tagline and block.settings.tagline != blank %}
-            <p class="category-card__tagline">{{ block.settings.tagline }}</p>
-          {% endif %}
-
-          {% if show_count and collection != blank %}
-            <span class="category-card__count">
-              {{ product_count }} {{ product_count | pluralize: 'product', 'products' }}
-            </span>
-          {% endif %}
-
-          {% if show_arrow and arrow_style == 'pill' %}
-            <span class="category-card__arrow category-card__arrow--pill">
-              Explore &rarr;
-            </span>
-          {% endif %}
-        </div>
-      </a>
-    {% endfor %}
-  </div>
+  {% else %}
+    {%- comment -%} ================= GRID LAYOUT ================= {%- endcomment -%}
+    <div class="category-grid category-grid--style-{{ card_style }}">
+      {% for block in section.blocks %}
+        {% render 'category-card-item',
+          block: block,
+          card_style: card_style,
+          scallop_color_type: scallop_color_type,
+          scallop_custom_color: scallop_custom_color,
+          forloop_index: forloop.index
+        %}
+      {% endfor %}
+    </div>
+  {% endif %}
 
   {% if show_view_all and view_all_pos == 'bottom' or show_view_all and view_all_pos == 'both' %}
     <div class="category-grid__footer-action">
@@ -293,10 +179,6 @@
 </div>
 
 <style>
-  /* ==========================================================================
-     Category Grid Scoped Styling for Kay Cosmetics
-     ========================================================================== */
-
   #CategoryGrid-{{ section.id }} {
     position: relative;
   }
@@ -306,129 +188,94 @@
     margin-bottom: clamp(20px, 3.5vw, 36px);
   }
 
-  #CategoryGrid-{{ section.id }} .category-grid-header--left {
-    text-align: left;
-  }
-  #CategoryGrid-{{ section.id }} .category-grid-header--center {
-    text-align: center;
-  }
-  #CategoryGrid-{{ section.id }} .category-grid-header--right {
-    text-align: right;
-  }
-
   #CategoryGrid-{{ section.id }} .category-grid-header--split {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     gap: 20px;
+    flex-wrap: wrap;
   }
 
-  /* Eyebrow Styles */
-  #CategoryGrid-{{ section.id }} .section-eyebrow--uppercase {
+  #CategoryGrid-{{ section.id }} .category-grid-header--left { text-align: left; }
+  #CategoryGrid-{{ section.id }} .category-grid-header--center { text-align: center; }
+  #CategoryGrid-{{ section.id }} .category-grid-header--right { text-align: right; }
+
+  #CategoryGrid-{{ section.id }} .section-eyebrow {
     display: inline-block;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    margin-bottom: 8px;
     color: var(--yozo-rosewood, #BD7385);
-    margin-bottom: 6px;
+  }
+
+  #CategoryGrid-{{ section.id }} .section-eyebrow--uppercase {
+    text-transform: uppercase;
   }
 
   #CategoryGrid-{{ section.id }} .section-eyebrow--serif_italic {
-    display: inline-block;
-    font-family: var(--font-heading--family), serif;
+    font-family: var(--font-heading--family), Georgia, serif;
     font-style: italic;
-    font-size: clamp(1rem, 2vw, 1.25rem);
+    letter-spacing: 0.04em;
+    font-size: 0.9375rem;
     font-weight: 400;
-    letter-spacing: 0.01em;
-    color: var(--yozo-rosewood, #BD7385);
-    margin-bottom: 4px;
     text-transform: none;
   }
 
   #CategoryGrid-{{ section.id }} .section-eyebrow--pill {
-    display: inline-block;
-    background-color: rgba(189, 115, 133, 0.12);
-    color: var(--yozo-rosewood, #BD7385);
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: 0.09em;
     text-transform: uppercase;
-    padding: 4px 12px;
-    border-radius: 9999px;
-    margin-bottom: 8px;
-    border: 1px solid rgba(189, 115, 133, 0.18);
+    padding: 3px 10px;
+    background: rgba(189, 115, 133, 0.12);
+    border-radius: 20px;
   }
 
-  /* Heading Sizes */
   #CategoryGrid-{{ section.id }} .section-title {
     font-family: var(--font-heading--family), serif;
-    font-weight: var(--font-heading--weight, 600);
-    letter-spacing: -0.02em;
     line-height: 1.2;
-    color: var(--yozo-plum-dark, #2C1E26);
-    margin: 0 0 8px 0;
-  }
-
-  #CategoryGrid-{{ section.id }} .section-title--small {
-    font-size: clamp(1.35rem, 2.3vw, 1.75rem);
-  }
-  #CategoryGrid-{{ section.id }} .section-title--medium {
-    font-size: clamp(1.6rem, 3vw, 2.25rem);
-  }
-  #CategoryGrid-{{ section.id }} .section-title--large {
-    font-size: clamp(1.95rem, 3.8vw, 2.75rem);
-  }
-  #CategoryGrid-{{ section.id }} .section-title--xlarge {
-    font-size: clamp(2.35rem, 4.6vw, 3.25rem);
-  }
-
-  #CategoryGrid-{{ section.id }} .section-subtitle {
-    font-size: 0.9375rem;
-    color: var(--yozo-text-muted, #6B5C65);
-    line-height: 1.55;
     margin: 0;
   }
 
-  /* View All Button & Link Styles */
+  #CategoryGrid-{{ section.id }} .section-title--small { font-size: clamp(1.25rem, 2.2vw, 1.625rem); }
+  #CategoryGrid-{{ section.id }} .section-title--medium { font-size: clamp(1.625rem, 3vw, 2.125rem); }
+  #CategoryGrid-{{ section.id }} .section-title--large { font-size: clamp(2rem, 3.8vw, 2.75rem); }
+
+  #CategoryGrid-{{ section.id }} .section-subtitle {
+    margin: 8px 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    max-width: 560px;
+  }
+
+  /* View All Button Styles */
   #CategoryGrid-{{ section.id }} .category-grid__view-all-link {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.8125rem;
-    font-weight: 600;
+    font-size: 0.875rem;
+    font-weight: 700;
     letter-spacing: 0.04em;
     color: var(--yozo-rosewood, #BD7385);
     text-decoration: none;
-    transition: color 0.2s ease, transform 0.2s ease;
-    white-space: nowrap;
-    padding-block: 4px;
+    transition: gap 0.25s ease, color 0.2s ease;
   }
   #CategoryGrid-{{ section.id }} .category-grid__view-all-link:hover {
-    color: var(--yozo-rosewood-hover, #A75D6F);
-  }
-  #CategoryGrid-{{ section.id }} .category-grid__view-all-link:hover .category-grid__view-all-arrow {
-    transform: translateX(4px);
-  }
-  #CategoryGrid-{{ section.id }} .category-grid__view-all-arrow {
-    transition: transform 0.2s ease;
-    display: inline-block;
+    gap: 10px;
+    color: var(--yozo-plum-dark, #2C1E26);
   }
 
   #CategoryGrid-{{ section.id }} .category-grid__btn {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    gap: 8px;
     padding: 10px 22px;
-    border-radius: 9999px;
+    border-radius: 30px;
     font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
     text-decoration: none;
-    transition: all 0.25s ease;
-    white-space: nowrap;
-    cursor: pointer;
+    transition: all 0.3s ease;
   }
+
   #CategoryGrid-{{ section.id }} .category-grid__btn--outline {
     background: transparent;
     color: var(--yozo-plum-dark, #2C1E26);
@@ -438,35 +285,26 @@
     background: var(--yozo-plum-dark, #2C1E26);
     color: #FFFFFF;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(44, 30, 38, 0.15);
   }
 
   #CategoryGrid-{{ section.id }} .category-grid__btn--rosewood {
     background: var(--yozo-rosewood, #BD7385);
     color: #FFFFFF;
     border: 1.5px solid var(--yozo-rosewood, #BD7385);
-    box-shadow: 0 4px 14px rgba(189, 115, 133, 0.25);
   }
   #CategoryGrid-{{ section.id }} .category-grid__btn--rosewood:hover {
-    background: var(--yozo-rosewood-hover, #A75D6F);
-    border-color: var(--yozo-rosewood-hover, #A75D6F);
-    color: #FFFFFF;
+    background: #A86072;
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(189, 115, 133, 0.35);
   }
 
   #CategoryGrid-{{ section.id }} .category-grid__btn--plum {
     background: var(--yozo-plum-dark, #2C1E26);
     color: #FFFFFF;
     border: 1.5px solid var(--yozo-plum-dark, #2C1E26);
-    box-shadow: 0 4px 14px rgba(44, 30, 38, 0.18);
   }
   #CategoryGrid-{{ section.id }} .category-grid__btn--plum:hover {
     background: #3F2B37;
-    border-color: #3F2B37;
-    color: #FFFFFF;
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(44, 30, 38, 0.28);
   }
 
   #CategoryGrid-{{ section.id }} .category-grid__footer-action {
@@ -475,424 +313,275 @@
     margin-top: clamp(24px, 4vw, 36px);
   }
 
-  /* ==========================================================================
-     Grid Layout & Responsive Columns
-     ========================================================================== */
-
-  #CategoryGrid-{{ section.id }} .category-grid {
-    display: grid;
-    gap: var(--cat-row-gap) var(--cat-col-gap);
+  /* Swiper Slider Container & Navigation */
+  #CategoryGrid-{{ section.id }} .category-swiper-wrapper {
+    position: relative;
     width: 100%;
+    overflow: visible;
   }
 
-  /* Desktop columns */
-  #CategoryGrid-{{ section.id }} .category-grid--cols-2 { grid-template-columns: repeat(2, 1fr); }
-  #CategoryGrid-{{ section.id }} .category-grid--cols-3 { grid-template-columns: repeat(3, 1fr); }
-  #CategoryGrid-{{ section.id }} .category-grid--cols-4 { grid-template-columns: repeat(4, 1fr); }
-  #CategoryGrid-{{ section.id }} .category-grid--cols-5 { grid-template-columns: repeat(5, 1fr); }
-  #CategoryGrid-{{ section.id }} .category-grid--cols-6 { grid-template-columns: repeat(6, 1fr); }
-
-  /* Tablet columns */
-  @media screen and (min-width: 750px) and (max-width: 989px) {
-    #CategoryGrid-{{ section.id }} .category-grid--tablet-2 { grid-template-columns: repeat(2, 1fr) !important; }
-    #CategoryGrid-{{ section.id }} .category-grid--tablet-3 { grid-template-columns: repeat(3, 1fr) !important; }
-    #CategoryGrid-{{ section.id }} .category-grid--tablet-4 { grid-template-columns: repeat(4, 1fr) !important; }
+  #CategoryGrid-{{ section.id }} .category-swiper {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding: 18px 4px 16px;
   }
 
-  /* Mobile Layouts */
-  @media screen and (max-width: 749px) {
-    #CategoryGrid-{{ section.id }} .category-grid--mobile-grid_1 {
-      grid-template-columns: 1fr !important;
-      gap: 12px;
-    }
-    #CategoryGrid-{{ section.id }} .category-grid--mobile-grid_2 {
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 10px;
-    }
-    #CategoryGrid-{{ section.id }} .category-grid--mobile-carousel {
-      display: flex !important;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      padding-bottom: 8px;
-      gap: 12px;
-      margin-inline: -16px;
-      padding-inline: 16px;
-    }
-    #CategoryGrid-{{ section.id }} .category-grid--mobile-carousel::-webkit-scrollbar {
-      display: none;
-    }
-    #CategoryGrid-{{ section.id }} .category-grid--mobile-carousel .category-card {
-      flex: 0 0 68%;
-      max-width: 280px;
-      scroll-snap-align: start;
-    }
-  }
-
-  /* ==========================================================================
-     Category Card Core Styles
-     ========================================================================== */
-
-  #CategoryGrid-{{ section.id }} .category-card {
+  #CategoryGrid-{{ section.id }} .category-swiper-slide {
+    height: auto;
     display: flex;
-    flex-direction: column;
-    border-radius: var(--cat-card-radius);
-    overflow: hidden;
-    background-color: var(--card-bg-override, var(--yozo-card-bg, #FFFFFF));
-    text-decoration: none;
-    position: relative;
-    box-sizing: border-box;
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.35s ease,
-                box-shadow 0.35s ease;
+    justify-content: center;
   }
 
-  /* Borders */
-  #CategoryGrid-{{ section.id }} .category-grid--border-subtle .category-card {
-    border: 1px solid var(--yozo-border-subtle, #EFE6E8);
-  }
-  #CategoryGrid-{{ section.id }} .category-grid--border-soft .category-card {
-    border: 1px solid var(--yozo-border-medium, #DECED2);
-  }
-  #CategoryGrid-{{ section.id }} .category-grid--border-none .category-card {
-    border: none;
-  }
-
-  /* Shadows */
-  #CategoryGrid-{{ section.id }} .category-grid--shadow-hover .category-card:hover {
-    box-shadow: 0 12px 28px -6px rgba(189, 115, 133, 0.16),
-                0 4px 10px rgba(44, 30, 38, 0.04);
-  }
-  #CategoryGrid-{{ section.id }} .category-grid--shadow-always .category-card {
-    box-shadow: 0 6px 18px rgba(44, 30, 38, 0.06);
-  }
-  #CategoryGrid-{{ section.id }} .category-grid--shadow-always .category-card:hover {
-    box-shadow: 0 14px 32px -4px rgba(189, 115, 133, 0.2);
-  }
-
-  /* Hover Animations */
-  #CategoryGrid-{{ section.id }} .category-grid--hover-lift_and_zoom .category-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--yozo-rosewood, #BD7385);
-  }
-  #CategoryGrid-{{ section.id }} .category-grid--hover-lift_and_zoom .category-card:hover .category-card__image {
-    transform: scale(1.05);
-  }
-
-  #CategoryGrid-{{ section.id }} .category-grid--hover-zoom_only .category-card:hover .category-card__image {
-    transform: scale(1.06);
-  }
-
-  #CategoryGrid-{{ section.id }} .category-grid--hover-lift_only .category-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--yozo-rosewood, #BD7385);
-  }
-
-  #CategoryGrid-{{ section.id }} .category-grid--hover-glow .category-card:hover {
-    border-color: var(--yozo-rosewood, #BD7385);
-    box-shadow: 0 0 0 3px rgba(189, 115, 133, 0.2), 0 8px 20px rgba(44, 30, 38, 0.08);
-  }
-
-  /* ==========================================================================
-     Media Container & Aspect Ratios
-     ========================================================================== */
-
-  #CategoryGrid-{{ section.id }} .category-card__media {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    background-color: var(--yozo-pastel-peach, #FBF1ED);
-  }
-
-  /* Aspect Ratio presets */
-  #CategoryGrid-{{ section.id }} .category-grid--ratio-4_5 .category-card__media { aspect-ratio: 4 / 5; }
-  #CategoryGrid-{{ section.id }} .category-grid--ratio-3_4 .category-card__media { aspect-ratio: 3 / 4; }
-  #CategoryGrid-{{ section.id }} .category-grid--ratio-1_1 .category-card__media { aspect-ratio: 1 / 1; }
-  #CategoryGrid-{{ section.id }} .category-grid--ratio-16_9 .category-card__media { aspect-ratio: 16 / 9; }
-  #CategoryGrid-{{ section.id }} .category-grid--ratio-circle .category-card__media {
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
-    width: 85%;
-    margin: 12px auto 0;
-  }
-
-  /* Media Background Pastels for standard palette rotation */
-  #CategoryGrid-{{ section.id }} .category-card--pastel-cycle:nth-child(5n + 1) .category-card__media {
-    background-color: var(--yozo-pastel-peach, #FBF1ED);
-  }
-  #CategoryGrid-{{ section.id }} .category-card--pastel-cycle:nth-child(5n + 2) .category-card__media {
-    background-color: var(--yozo-pastel-blue, #EBF3F8);
-  }
-  #CategoryGrid-{{ section.id }} .category-card--pastel-cycle:nth-child(5n + 3) .category-card__media {
-    background-color: var(--yozo-pastel-lilac, #F5F0FB);
-  }
-  #CategoryGrid-{{ section.id }} .category-card--pastel-cycle:nth-child(5n + 4) .category-card__media {
-    background-color: var(--yozo-pastel-pink, #FDF2F4);
-  }
-  #CategoryGrid-{{ section.id }} .category-card--pastel-cycle:nth-child(5n + 5) .category-card__media {
-    background-color: var(--yozo-pastel-mint, #F0FBF0);
-  }
-
-  /* Image tag */
-  #CategoryGrid-{{ section.id }} .category-card__image {
-    width: 100%;
-    height: 100%;
-    display: block;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  #CategoryGrid-{{ section.id }} .category-card__media--fit-cover .category-card__image {
-    object-fit: cover;
-  }
-  #CategoryGrid-{{ section.id }} .category-card__media--fit-contain .category-card__image {
-    object-fit: contain;
-    padding: 12px;
-  }
-
-  /* Pill Badge */
-  #CategoryGrid-{{ section.id }} .category-card__badge {
+  #CategoryGrid-{{ section.id }} .category-swiper__nav {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 3;
-    background: var(--badge-bg, #FFFFFF);
-    color: var(--badge-text, var(--yozo-rosewood, #BD7385));
-    border-radius: 9999px;
-    border: 1px solid rgba(189, 115, 133, 0.18);
-    box-shadow: 0 2px 8px rgba(44, 30, 38, 0.08);
-    padding: 3px 10px;
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    line-height: 1.2;
-    text-transform: uppercase;
+    top: 42%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(44, 30, 38, 0.72);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    transition: all 0.25s ease;
+  }
+
+  #CategoryGrid-{{ section.id }} .category-swiper__nav:hover {
+    background: rgba(44, 30, 38, 0.95);
+    border-color: rgba(255, 255, 255, 0.7);
+    transform: translateY(-50%) scale(1.08);
+  }
+
+  #CategoryGrid-{{ section.id }} .category-swiper__nav--prev { left: 4px; }
+  #CategoryGrid-{{ section.id }} .category-swiper__nav--next { right: 4px; }
+
+  #CategoryGrid-{{ section.id }} .category-swiper__nav.swiper-button-disabled {
+    opacity: 0;
     pointer-events: none;
   }
 
-  /* ==========================================================================
-     Card Content & Typography
-     ========================================================================== */
-
-  #CategoryGrid-{{ section.id }} .category-card__content {
-    padding: var(--cat-content-pad);
+  /* Scallop Flower Badge Styles (Matching Reference) */
+  #CategoryGrid-{{ section.id }} .category-card--scallop-flower {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    position: relative;
-    background-color: var(--card-bg-override, #FFFFFF);
-  }
-
-  #CategoryGrid-{{ section.id }} .category-grid--align-left .category-card__content {
-    text-align: left;
-    align-items: flex-start;
-  }
-  #CategoryGrid-{{ section.id }} .category-grid--align-center .category-card__content {
+    align-items: center;
     text-align: center;
-    align-items: center;
-  }
-
-  #CategoryGrid-{{ section.id }} .category-card__header-wrap {
+    text-decoration: none;
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
+    max-width: var(--cat-badge-size, 145px);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    overflow: visible;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  #CategoryGrid-{{ section.id }} .category-grid--align-center .category-card__header-wrap {
-    justify-content: center;
+  #CategoryGrid-{{ section.id }} .category-card--scallop-flower:hover {
+    transform: translateY(-4px);
   }
 
-  #CategoryGrid-{{ section.id }} .category-card__title {
-    font-size: var(--cat-title-size);
-    font-weight: var(--cat-title-weight);
-    color: var(--cat-title-color);
-    margin: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    line-height: 1.25;
-  }
-
-  #CategoryGrid-{{ section.id }} .category-grid--font-heading .category-card__title {
-    font-family: var(--font-heading--family), serif;
-    letter-spacing: -0.01em;
-  }
-  #CategoryGrid-{{ section.id }} .category-grid--font-body .category-card__title {
-    font-family: var(--font-body--family), sans-serif;
-    letter-spacing: -0.01em;
-  }
-
-  #CategoryGrid-{{ section.id }} .category-card__tagline {
-    font-size: 0.75rem;
-    color: var(--cat-tagline-color);
-    line-height: 1.35;
-    margin: 0;
-  }
-
-  #CategoryGrid-{{ section.id }} .category-card__count {
-    display: inline-block;
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    color: var(--yozo-rosewood, #BD7385);
-    margin-top: 2px;
-  }
-
-  /* Arrow Styles */
-  #CategoryGrid-{{ section.id }} .category-card__arrow {
-    color: var(--cat-arrow-color);
-    transition: transform 0.25s ease, color 0.25s ease;
-  }
-
-  #CategoryGrid-{{ section.id }} .category-card__arrow--inline {
-    font-size: 0.8125rem;
-    display: inline-block;
-  }
-  #CategoryGrid-{{ section.id }} .category-card:hover .category-card__arrow--inline {
-    transform: translateX(4px);
-    color: var(--yozo-rosewood-hover, #A75D6F);
-  }
-
-  #CategoryGrid-{{ section.id }} .category-card__arrow--circle {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: rgba(189, 115, 133, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.25s ease;
-  }
-  #CategoryGrid-{{ section.id }} .category-card:hover .category-card__arrow--circle {
-    background: var(--yozo-rosewood, #BD7385);
-    color: #FFFFFF !important;
-    transform: translateX(2px);
-  }
-
-  #CategoryGrid-{{ section.id }} .category-card__arrow--pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-top: 6px;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--yozo-rosewood, #BD7385);
-  }
-  #CategoryGrid-{{ section.id }} .category-card:hover .category-card__arrow--pill {
-    color: var(--yozo-rosewood-hover, #A75D6F);
-  }
-
-  /* ==========================================================================
-     Card Style Variants: Overlay, Circle, Arched, Minimal
-     ========================================================================== */
-
-  /* Overlay Style (Full bleed image with bottom dark gradient scrim) */
-  #CategoryGrid-{{ section.id }} .category-card--overlay {
+  #CategoryGrid-{{ section.id }} .category-card__scallop-frame {
     position: relative;
-    border-radius: var(--cat-card-radius);
-    overflow: hidden;
-  }
-  #CategoryGrid-{{ section.id }} .category-card--overlay .category-card__media {
     width: 100%;
-    height: 100%;
+    aspect-ratio: 1 / 1;
+    max-width: var(--cat-badge-size, 145px);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  #CategoryGrid-{{ section.id }} .category-card--overlay .category-card__overlay-scrim {
+
+  #CategoryGrid-{{ section.id }} .category-card__scallop-svg {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      to top,
-      rgba(44, 30, 38, 0.88) 0%,
-      rgba(44, 30, 38, 0.45) 50%,
-      rgba(44, 30, 38, 0.05) 100%
-    );
+    width: 100%;
+    height: 100%;
+    color: var(--scallop-fill, #FF5DA2);
+    /* Clean subtle shadow with zero blurry colored halo */
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.08));
+    transition: filter 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+  }
+
+  #CategoryGrid-{{ section.id }} .category-card--scallop-flower:hover .category-card__scallop-svg {
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.12));
+    transform: scale(1.02);
+  }
+
+  #CategoryGrid-{{ section.id }} .category-card__scallop-media {
+    position: relative;
     z-index: 2;
-    transition: opacity 0.35s ease;
-  }
-  #CategoryGrid-{{ section.id }} .category-card--overlay:hover .category-card__overlay-scrim {
-    background: linear-gradient(
-      to top,
-      rgba(44, 30, 38, 0.94) 0%,
-      rgba(44, 30, 38, 0.55) 60%,
-      rgba(44, 30, 38, 0.1) 100%
-    );
-  }
-  #CategoryGrid-{{ section.id }} .category-card--overlay .category-card__content {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 3;
-    background: transparent !important;
-    padding: var(--cat-content-pad);
-  }
-  #CategoryGrid-{{ section.id }} .category-card--overlay .category-card__title {
-    color: #FFFFFF !important;
-  }
-  #CategoryGrid-{{ section.id }} .category-card--overlay .category-card__tagline {
-    color: rgba(255, 255, 255, 0.82) !important;
-  }
-  #CategoryGrid-{{ section.id }} .category-card--overlay .category-card__arrow {
-    color: var(--yozo-rose-ribbon, #F3C9D2) !important;
-  }
-  #CategoryGrid-{{ section.id }} .category-card--overlay .category-card__count {
-    color: var(--yozo-rose-ribbon, #F3C9D2) !important;
-  }
-
-  /* Circle Style (Avatar category icons) */
-  #CategoryGrid-{{ section.id }} .category-card--circle {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-  #CategoryGrid-{{ section.id }} .category-card--circle .category-card__media {
-    border-radius: 50% !important;
-    aspect-ratio: 1 / 1 !important;
-    width: 82%;
-    margin: 0 auto;
-    border: 2px solid var(--yozo-border-subtle, #EFE6E8);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  }
-  #CategoryGrid-{{ section.id }} .category-card--circle:hover .category-card__media {
-    border-color: var(--yozo-rosewood, #BD7385);
-    box-shadow: 0 8px 20px rgba(189, 115, 133, 0.2);
-  }
-  #CategoryGrid-{{ section.id }} .category-card--circle .category-card__content {
-    background: transparent !important;
-    text-align: center;
-    align-items: center;
-    padding: 10px 4px 4px;
-  }
-  #CategoryGrid-{{ section.id }} .category-card--circle .category-card__header-wrap {
+    width: 88%;
+    height: 108%;
+    margin-top: -10%;
+    display: flex;
+    align-items: flex-end;
     justify-content: center;
+    overflow: visible;
   }
 
-  /* Soft Arched Boutique Style */
-  #CategoryGrid-{{ section.id }} .category-card--portrait_card {
-    border-radius: 28px 28px var(--cat-card-radius) var(--cat-card-radius);
-  }
-  #CategoryGrid-{{ section.id }} .category-card--portrait_card .category-card__media {
-    border-radius: 28px 28px 0 0;
+  #CategoryGrid-{{ section.id }} .category-card__scallop-img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: 100%;
+    object-fit: contain;
+    background: transparent;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.16));
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s ease;
+    display: block;
   }
 
-  /* Minimalist Style (Border-free, seamless) */
+  #CategoryGrid-{{ section.id }} .category-card--scallop-flower:hover .category-card__scallop-img {
+    transform: translateY(-6px) scale(1.06);
+    filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.24));
+  }
+
+  #CategoryGrid-{{ section.id }} .category-card__scallop-caption {
+    margin-top: 14px;
+    width: 100%;
+    text-align: center;
+  }
+
+  #CategoryGrid-{{ section.id }} .category-card__scallop-title {
+    font-family: var(--font-body--family), sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--yozo-plum-dark, #2C1E26);
+    line-height: 1.25;
+    transition: color 0.2s ease;
+    display: block;
+  }
+
+  #CategoryGrid-{{ section.id }} .category-card--scallop-flower:hover .category-card__scallop-title {
+    color: var(--yozo-rosewood, #BD7385);
+  }
+
+  /* Grid Layout */
+  #CategoryGrid-{{ section.id }} .category-grid {
+    display: grid;
+    gap: 24px 20px;
+    width: 100%;
+    grid-template-columns: repeat(var(--cat-cols-desktop, 6), 1fr);
+    justify-items: center;
+  }
+
+  @media screen and (max-width: 989px) {
+    #CategoryGrid-{{ section.id }} .category-grid {
+      grid-template-columns: repeat(var(--cat-cols-tablet, 4), 1fr);
+    }
+  }
+
+  @media screen and (max-width: 639px) {
+    #CategoryGrid-{{ section.id }} .category-grid {
+      grid-template-columns: repeat(var(--cat-cols-mobile, 2), 1fr);
+    }
+  }
+
+  /* Standard Card Fallback */
+  #CategoryGrid-{{ section.id }} .category-card--standard,
+  #CategoryGrid-{{ section.id }} .category-card--circle,
   #CategoryGrid-{{ section.id }} .category-card--minimal {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
+    max-width: var(--cat-badge-size, 145px);
   }
-  #CategoryGrid-{{ section.id }} .category-card--minimal .category-card__media {
-    border-radius: var(--cat-card-radius);
+
+  #CategoryGrid-{{ section.id }} .category-card--circle .category-card__scallop-svg {
+    display: none;
   }
-  #CategoryGrid-{{ section.id }} .category-card--minimal .category-card__content {
-    background: transparent !important;
-    padding-inline: 4px;
-    padding-top: 10px;
+
+  #CategoryGrid-{{ section.id }} .category-card--circle .category-card__scallop-frame {
+    border-radius: 50%;
+    background-color: var(--scallop-fill, #FF5DA2);
+    overflow: hidden;
   }
 </style>
+
+<script>
+  (function () {
+    function initCatSwiper() {
+      const container = document.getElementById('CatSwiper-{{ section_id }}');
+      if (!container) return;
+
+      if (typeof Swiper === 'undefined') {
+        setTimeout(initCatSwiper, 60);
+        return;
+      }
+
+      if (container.swiper) {
+        container.swiper.destroy(true, true);
+      }
+
+      const desktopSlides = parseFloat('{{ items_desktop | default: 6.5 }}');
+      const tabletSlides = parseFloat('{{ items_tablet | default: 4.5 }}');
+      const mobileSlides = parseFloat('{{ items_mobile | default: 2.3 }}');
+
+      const config = {
+        slidesPerView: mobileSlides,
+        spaceBetween: 14,
+        grabCursor: true,
+        watchSlidesProgress: true,
+        navigation: {
+          prevEl: '#CatSwiperWrap-{{ section_id }} .category-swiper__nav--prev',
+          nextEl: '#CatSwiperWrap-{{ section_id }} .category-swiper__nav--next',
+        },
+        breakpoints: {
+          640: {
+            slidesPerView: tabletSlides > 3 ? tabletSlides - 1 : tabletSlides,
+            spaceBetween: 16,
+          },
+          750: {
+            slidesPerView: tabletSlides,
+            spaceBetween: 18,
+          },
+          1024: {
+            slidesPerView: desktopSlides,
+            spaceBetween: 22,
+          }
+        }
+      };
+
+      {% if enable_autoplay %}
+        config.autoplay = {
+          delay: {{ autoplay_speed | default: 5 | times: 1000 }},
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        };
+      {% endif %}
+
+      new Swiper(container, config);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCatSwiper);
+    } else {
+      initCatSwiper();
+    }
+
+    document.addEventListener('shopify:section:load', function (e) {
+      if (e.target.contains(document.getElementById('CategoryGrid-{{ section.id }}'))) {
+        initCatSwiper();
+      }
+    });
+  })();
+</script>
 
 {% schema %}
 {
@@ -902,30 +591,146 @@
   "settings": [
     {
       "type": "header",
-      "content": "Section Header"
+      "content": "Layout & Style"
+    },
+    {
+      "type": "select",
+      "id": "display_format",
+      "label": "Layout style",
+      "options": [
+        { "value": "slider", "label": "Slider (Carousel)" },
+        { "value": "grid", "label": "Grid" }
+      ],
+      "default": "slider"
+    },
+    {
+      "type": "select",
+      "id": "items_desktop",
+      "label": "Items on desktop",
+      "options": [
+        { "value": "4", "label": "4 items" },
+        { "value": "5", "label": "5 items" },
+        { "value": "6", "label": "6 items" },
+        { "value": "6.5", "label": "6.5 items (Peeking)" },
+        { "value": "7", "label": "7 items" }
+      ],
+      "default": "6.5"
+    },
+    {
+      "type": "select",
+      "id": "items_tablet",
+      "label": "Items on tablet",
+      "options": [
+        { "value": "3", "label": "3 items" },
+        { "value": "3.5", "label": "3.5 items (Peeking)" },
+        { "value": "4", "label": "4 items" },
+        { "value": "4.5", "label": "4.5 items (Peeking)" }
+      ],
+      "default": "4.5"
+    },
+    {
+      "type": "select",
+      "id": "items_mobile",
+      "label": "Items on mobile",
+      "options": [
+        { "value": "2", "label": "2 items" },
+        { "value": "2.3", "label": "2.3 items (Peeking)" },
+        { "value": "2.5", "label": "2.5 items (Peeking)" },
+        { "value": "3", "label": "3 items" }
+      ],
+      "default": "2.3"
+    },
+    {
+      "type": "select",
+      "id": "card_style",
+      "label": "Badge style",
+      "options": [
+        { "value": "scallop_flower", "label": "Scallop flower badge" },
+        { "value": "standard", "label": "Card" },
+        { "value": "circle", "label": "Circle" },
+        { "value": "minimal", "label": "Borderless" }
+      ],
+      "default": "scallop_flower"
+    },
+    {
+      "type": "range",
+      "id": "badge_size",
+      "label": "Badge size",
+      "min": 120,
+      "max": 180,
+      "step": 5,
+      "unit": "px",
+      "default": 145
+    },
+    {
+      "type": "select",
+      "id": "scallop_color_type",
+      "label": "Badge color",
+      "options": [
+        { "value": "vibrant_pink", "label": "Vibrant pink" },
+        { "value": "rosewood", "label": "Rosewood" },
+        { "value": "pastel_cycle", "label": "Rainbow pastels" },
+        { "value": "custom", "label": "Custom color" }
+      ],
+      "default": "vibrant_pink"
+    },
+    {
+      "type": "color",
+      "id": "scallop_custom_color",
+      "label": "Custom badge color",
+      "default": "#FF5DA2"
+    },
+    {
+      "type": "header",
+      "content": "Slider Controls"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show navigation arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_autoplay",
+      "label": "Enable automatic slide change",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Slide speed in seconds",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Heading & Text"
     },
     {
       "type": "text",
       "id": "eyebrow",
-      "label": "Eyebrow text",
+      "label": "Top text",
       "default": "Collections"
     },
     {
       "type": "select",
       "id": "eyebrow_style",
-      "label": "Eyebrow style",
+      "label": "Top text style",
       "options": [
         { "value": "uppercase", "label": "Uppercase" },
-        { "value": "serif_italic", "label": "Italic serif" },
-        { "value": "pill", "label": "Badge pill" }
+        { "value": "serif_italic", "label": "Italic script" },
+        { "value": "pill", "label": "Pill badge" }
       ],
       "default": "uppercase"
     },
     {
       "type": "color",
       "id": "eyebrow_color",
-      "label": "Eyebrow color",
-      "default": "#bd7385"
+      "label": "Top text color"
     },
     {
       "type": "text",
@@ -935,24 +740,12 @@
     },
     {
       "type": "select",
-      "id": "heading_tag",
-      "label": "Heading level",
-      "options": [
-        { "value": "h1", "label": "H1" },
-        { "value": "h2", "label": "H2" },
-        { "value": "h3", "label": "H3" }
-      ],
-      "default": "h2"
-    },
-    {
-      "type": "select",
       "id": "heading_size",
       "label": "Heading size",
       "options": [
         { "value": "small", "label": "Small" },
         { "value": "medium", "label": "Medium" },
-        { "value": "large", "label": "Large" },
-        { "value": "xlarge", "label": "Extra Large" }
+        { "value": "large", "label": "Large" }
       ],
       "default": "medium"
     },
@@ -966,7 +759,7 @@
       "type": "textarea",
       "id": "subtitle",
       "label": "Subtitle",
-      "default": "Browse our multi-brand selection across key cosmetics categories."
+      "default": "Explore authentic makeup, fragrances, and beauty essentials."
     },
     {
       "type": "color",
@@ -975,23 +768,12 @@
       "default": "#6b5c65"
     },
     {
-      "type": "range",
-      "id": "subtitle_max_width",
-      "label": "Subtitle max width",
-      "min": 400,
-      "max": 900,
-      "step": 20,
-      "unit": "px",
-      "default": 560
-    },
-    {
       "type": "select",
       "id": "header_alignment",
-      "label": "Text alignment",
+      "label": "Header alignment",
       "options": [
         { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
+        { "value": "center", "label": "Center" }
       ],
       "default": "left"
     },
@@ -1002,13 +784,13 @@
     {
       "type": "checkbox",
       "id": "show_view_all",
-      "label": "Show 'View all' button",
+      "label": "Show 'View All' button",
       "default": true
     },
     {
       "type": "text",
       "id": "view_all_label",
-      "label": "Button text",
+      "label": "Button label",
       "default": "View All Collections"
     },
     {
@@ -1023,7 +805,7 @@
       "options": [
         { "value": "button_outline", "label": "Outline button" },
         { "value": "button_rosewood", "label": "Rosewood button" },
-        { "value": "button_plum", "label": "Dark button" },
+        { "value": "button_plum", "label": "Dark plum button" },
         { "value": "link_arrow", "label": "Text link with arrow" }
       ],
       "default": "button_outline"
@@ -1034,14 +816,13 @@
       "label": "Button position",
       "options": [
         { "value": "header", "label": "Next to heading" },
-        { "value": "bottom", "label": "Below cards" },
-        { "value": "both", "label": "Both header & below cards" }
+        { "value": "bottom", "label": "Below categories" }
       ],
       "default": "header"
     },
     {
       "type": "header",
-      "content": "Grid Layout"
+      "content": "Section Spacing"
     },
     {
       "type": "select",
@@ -1056,273 +837,12 @@
     {
       "type": "color",
       "id": "section_bg_color",
-      "label": "Section background color"
-    },
-    {
-      "type": "range",
-      "id": "columns_desktop",
-      "label": "Columns on desktop",
-      "min": 2,
-      "max": 6,
-      "step": 1,
-      "default": 5
-    },
-    {
-      "type": "select",
-      "id": "columns_tablet",
-      "label": "Columns on tablet",
-      "options": [
-        { "value": "2", "label": "2 columns" },
-        { "value": "3", "label": "3 columns" },
-        { "value": "4", "label": "4 columns" }
-      ],
-      "default": "3"
-    },
-    {
-      "type": "select",
-      "id": "mobile_layout",
-      "label": "Mobile layout",
-      "options": [
-        { "value": "carousel", "label": "Swipe slider" },
-        { "value": "grid_2", "label": "2 columns" },
-        { "value": "grid_1", "label": "1 column" }
-      ],
-      "default": "carousel"
-    },
-    {
-      "type": "range",
-      "id": "column_gap",
-      "label": "Space between columns",
-      "min": 8,
-      "max": 32,
-      "step": 2,
-      "unit": "px",
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "row_gap",
-      "label": "Space between rows",
-      "min": 8,
-      "max": 40,
-      "step": 4,
-      "unit": "px",
-      "default": 20
-    },
-    {
-      "type": "header",
-      "content": "Card Style"
-    },
-    {
-      "type": "select",
-      "id": "card_style",
-      "label": "Card style",
-      "options": [
-        { "value": "standard", "label": "Standard" },
-        { "value": "overlay", "label": "Text over image" },
-        { "value": "portrait_card", "label": "Arched top" },
-        { "value": "circle", "label": "Round image" },
-        { "value": "minimal", "label": "Borderless" }
-      ],
-      "default": "standard"
-    },
-    {
-      "type": "select",
-      "id": "image_ratio",
-      "label": "Image shape",
-      "options": [
-        { "value": "4_5", "label": "Portrait (4:5)" },
-        { "value": "3_4", "label": "Portrait (3:4)" },
-        { "value": "1_1", "label": "Square (1:1)" },
-        { "value": "16_9", "label": "Wide (16:9)" },
-        { "value": "circle", "label": "Circle (1:1)" }
-      ],
-      "default": "4_5"
-    },
-    {
-      "type": "select",
-      "id": "image_fit",
-      "label": "Image fit",
-      "options": [
-        { "value": "cover", "label": "Fill card (Crop to fit)" },
-        { "value": "contain", "label": "Show whole image" }
-      ],
-      "default": "cover"
-    },
-    {
-      "type": "select",
-      "id": "card_bg_type",
-      "label": "Card background",
-      "options": [
-        { "value": "pastel_cycle", "label": "Pastel colors (Rotating)" },
-        { "value": "white", "label": "White" },
-        { "value": "canvas", "label": "Warm cream" },
-        { "value": "transparent", "label": "Transparent" },
-        { "value": "custom", "label": "Custom color" }
-      ],
-      "default": "pastel_cycle"
-    },
-    {
-      "type": "color",
-      "id": "card_custom_bg",
-      "label": "Custom card background",
-      "default": "#FFFFFF"
-    },
-    {
-      "type": "select",
-      "id": "card_border",
-      "label": "Card border",
-      "options": [
-        { "value": "subtle", "label": "Light border" },
-        { "value": "soft", "label": "Medium border" },
-        { "value": "none", "label": "No border" }
-      ],
-      "default": "subtle"
-    },
-    {
-      "type": "range",
-      "id": "card_border_radius",
-      "label": "Corner roundness",
-      "min": 0,
-      "max": 24,
-      "step": 2,
-      "unit": "px",
-      "default": 8
-    },
-    {
-      "type": "select",
-      "id": "card_shadow",
-      "label": "Card shadow",
-      "options": [
-        { "value": "none", "label": "None" },
-        { "value": "hover", "label": "On hover" },
-        { "value": "always", "label": "Always" }
-      ],
-      "default": "hover"
-    },
-    {
-      "type": "select",
-      "id": "hover_effect",
-      "label": "Hover animation",
-      "options": [
-        { "value": "lift_and_zoom", "label": "Lift card and zoom image" },
-        { "value": "zoom_only", "label": "Zoom image only" },
-        { "value": "lift_only", "label": "Lift card only" },
-        { "value": "glow", "label": "Glow border" },
-        { "value": "none", "label": "None" }
-      ],
-      "default": "lift_and_zoom"
-    },
-    {
-      "type": "header",
-      "content": "Card Content & Text"
-    },
-    {
-      "type": "select",
-      "id": "content_alignment",
-      "label": "Text alignment",
-      "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" }
-      ],
-      "default": "left"
-    },
-    {
-      "type": "range",
-      "id": "content_padding",
-      "label": "Card padding",
-      "min": 10,
-      "max": 28,
-      "step": 2,
-      "unit": "px",
-      "default": 14
-    },
-    {
-      "type": "select",
-      "id": "card_title_font",
-      "label": "Title font",
-      "options": [
-        { "value": "body", "label": "Modern (Sans-serif)" },
-        { "value": "heading", "label": "Classic (Serif)" }
-      ],
-      "default": "body"
-    },
-    {
-      "type": "range",
-      "id": "card_title_size",
-      "label": "Title size",
-      "min": 13,
-      "max": 22,
-      "step": 1,
-      "unit": "px",
-      "default": 15
-    },
-    {
-      "type": "select",
-      "id": "card_title_weight",
-      "label": "Title thickness",
-      "options": [
-        { "value": "500", "label": "Medium" },
-        { "value": "600", "label": "Semi-bold" },
-        { "value": "700", "label": "Bold" }
-      ],
-      "default": "600"
-    },
-    {
-      "type": "color",
-      "id": "card_title_color",
-      "label": "Title color",
-      "default": "#2c1e26"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_tagline",
-      "label": "Show subtext",
-      "default": true
-    },
-    {
-      "type": "color",
-      "id": "card_tagline_color",
-      "label": "Subtext color",
-      "default": "#6b5c65"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_count",
-      "label": "Show product count",
-      "default": false
-    },
-    {
-      "type": "checkbox",
-      "id": "show_arrow",
-      "label": "Show arrow or button",
-      "default": true
-    },
-    {
-      "type": "select",
-      "id": "arrow_style",
-      "label": "Arrow or button style",
-      "options": [
-        { "value": "inline", "label": "Arrow (→)" },
-        { "value": "circle_icon", "label": "Round button" },
-        { "value": "pill", "label": "Text button ('Explore →')" }
-      ],
-      "default": "inline"
-    },
-    {
-      "type": "color",
-      "id": "arrow_color",
-      "label": "Arrow and button color",
-      "default": "#bd7385"
-    },
-    {
-      "type": "header",
-      "content": "Section Spacing"
+      "label": "Background color"
     },
     {
       "type": "range",
       "id": "padding-block-start",
-      "label": "Padding top",
+      "label": "Top padding",
       "min": 0,
       "max": 100,
       "step": 4,
@@ -1332,7 +852,7 @@
     {
       "type": "range",
       "id": "padding-block-end",
-      "label": "Padding bottom",
+      "label": "Bottom padding",
       "min": 0,
       "max": 100,
       "step": 4,
@@ -1343,7 +863,7 @@
   "blocks": [
     {
       "type": "category",
-      "name": "Category Card",
+      "name": "Category Item",
       "settings": [
         {
           "type": "collection",
@@ -1353,56 +873,28 @@
         {
           "type": "text",
           "id": "title",
-          "label": "Custom title (optional)"
-        },
-        {
-          "type": "text",
-          "id": "tagline",
-          "label": "Subtext",
-          "default": "Explore collection"
+          "label": "Category name"
         },
         {
           "type": "image_picker",
           "id": "image",
-          "label": "Image"
+          "label": "Custom image"
         },
         {
           "type": "text",
           "id": "image_asset",
-          "label": "Theme image file (optional)",
-          "info": "Fallback image name from theme assets"
+          "label": "Preset image name",
+          "info": "Optional filename like cat-lipstick.png"
+        },
+        {
+          "type": "color",
+          "id": "scallop_color_override",
+          "label": "Badge color override"
         },
         {
           "type": "url",
           "id": "link",
-          "label": "Custom link"
-        },
-        {
-          "type": "header",
-          "content": "Badge"
-        },
-        {
-          "type": "text",
-          "id": "badge_text",
-          "label": "Badge text",
-          "info": "e.g. Best Seller, Trending, New, Sale"
-        },
-        {
-          "type": "color",
-          "id": "badge_color",
-          "label": "Badge text color",
-          "default": "#bd7385"
-        },
-        {
-          "type": "color",
-          "id": "badge_bg_color",
-          "label": "Badge background color",
-          "default": "#ffffff"
-        },
-        {
-          "type": "color",
-          "id": "card_bg_override",
-          "label": "Custom card background (optional)"
+          "label": "Link override"
         }
       ]
     }
@@ -1414,41 +906,50 @@
         {
           "type": "category",
           "settings": {
-            "title": "Makeup",
-            "tagline": "Lipsticks, Foundations & Palettes",
-            "image_asset": "cat-makeup.jpg"
+            "title": "Lipstick",
+            "image_asset": "cat-lipstick.png"
           }
         },
         {
           "type": "category",
           "settings": {
-            "title": "Skincare",
-            "tagline": "Cleansers, Serums & Creams",
-            "image_asset": "cat-skincare.jpg"
+            "title": "Foundation",
+            "image_asset": "cat-foundation.png"
           }
         },
         {
           "type": "category",
           "settings": {
-            "title": "Haircare",
-            "tagline": "Shampoos, Oils & Treatments",
-            "image_asset": "cat-haircare.jpg"
+            "title": "EDP",
+            "image_asset": "cat-edp.png"
           }
         },
         {
           "type": "category",
           "settings": {
-            "title": "Fragrance",
-            "tagline": "Perfumes & Fragrance Mists",
-            "image_asset": "cat-fragrance.jpg"
+            "title": "EDT",
+            "image_asset": "cat-edt.png"
           }
         },
         {
           "type": "category",
           "settings": {
-            "title": "Beauty Tools",
-            "tagline": "Brushes, Sponges & Accessories",
-            "image_asset": "cat-tools.jpg"
+            "title": "Nail Polish",
+            "image_asset": "cat-nailpolish.png"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Shampoo",
+            "image_asset": "cat-shampoo.png"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Concealer",
+            "image_asset": "cat-concealer.png"
           }
         }
       ]
