@@ -11,7 +11,8 @@
   assign header_align = section.settings.header_alignment | default: 'left'
   assign display_format = section.settings.display_format | default: 'slider'
   assign card_style = section.settings.card_style | default: 'scallop_flower'
-  assign badge_size = section.settings.badge_size | default: 145
+  assign badge_size = section.settings.badge_size | default: 160
+  assign item_gap = section.settings.item_gap | default: 20
   assign items_desktop = section.settings.items_desktop | default: '6.5'
   assign items_tablet = section.settings.items_tablet | default: '4.5'
   assign items_mobile = section.settings.items_mobile | default: '2.3'
@@ -37,6 +38,8 @@
     --cat-cols-tablet: {{ items_tablet | floor | at_least: 2 }};
     --cat-cols-mobile: {{ items_mobile | floor | at_least: 1 }};
     --cat-badge-size: {{ badge_size }}px;
+    --cat-col-gap: {{ item_gap }}px;
+    --cat-row-gap: {{ item_gap | times: 1.25 | round }}px;
   "
 >
   {%- capture view_all_element -%}
@@ -472,7 +475,7 @@
   /* Grid Layout */
   #CategoryGrid-{{ section.id }} .category-grid {
     display: grid;
-    gap: 24px 20px;
+    gap: var(--cat-row-gap, 24px) var(--cat-col-gap, 20px);
     width: 100%;
     grid-template-columns: repeat(var(--cat-cols-desktop, 6), 1fr);
     justify-items: center;
@@ -532,10 +535,13 @@
       const desktopSlides = parseFloat('{{ items_desktop | default: 6.5 }}');
       const tabletSlides = parseFloat('{{ items_tablet | default: 4.5 }}');
       const mobileSlides = parseFloat('{{ items_mobile | default: 2.3 }}');
+      const itemGap = parseInt('{{ item_gap | default: 20 }}', 10);
+      const gapTablet = Math.max(10, Math.round(itemGap * 0.8));
+      const gapMobile = Math.max(8, Math.round(itemGap * 0.65));
 
       const config = {
         slidesPerView: mobileSlides,
-        spaceBetween: 14,
+        spaceBetween: gapMobile,
         grabCursor: true,
         watchSlidesProgress: true,
         navigation: {
@@ -545,15 +551,15 @@
         breakpoints: {
           640: {
             slidesPerView: tabletSlides > 3 ? tabletSlides - 1 : tabletSlides,
-            spaceBetween: 16,
+            spaceBetween: gapTablet,
           },
           750: {
             slidesPerView: tabletSlides,
-            spaceBetween: 18,
+            spaceBetween: gapTablet,
           },
           1024: {
             slidesPerView: desktopSlides,
-            spaceBetween: 22,
+            spaceBetween: itemGap,
           }
         }
       };
@@ -656,11 +662,21 @@
       "type": "range",
       "id": "badge_size",
       "label": "Badge size",
-      "min": 120,
-      "max": 180,
+      "min": 100,
+      "max": 300,
       "step": 5,
       "unit": "px",
-      "default": 145
+      "default": 160
+    },
+    {
+      "type": "range",
+      "id": "item_gap",
+      "label": "Space between items",
+      "min": 8,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 20
     },
     {
       "type": "select",

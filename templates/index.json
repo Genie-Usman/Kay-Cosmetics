@@ -220,6 +220,7 @@
         "items_mobile": "2.3",
         "card_style": "scallop_flower",
         "badge_size": 180,
+        "item_gap": 20,
         "scallop_color_type": "custom",
         "scallop_custom_color": "#FF5D5D",
         "show_arrows": true,
