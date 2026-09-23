@@ -72,6 +72,8 @@
       --line-height: var(--line-height--{{ type }}-{{ settings.line_height }});
     {% endif %}
     --letter-spacing: var(--letter-spacing--{{ type }}-{{ settings.letter_spacing }});
+  {%- elsif settings.weight != blank -%}
+    --font-weight: {{ settings.weight }};
   {%- endif -%}
 {%- endcapture -%}
 {{- variables | strip | strip_newlines -}}

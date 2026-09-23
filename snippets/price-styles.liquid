@@ -60,4 +60,11 @@
   .price-item__group {
     display: inline-block;
   }
+
+  product-price[style*='--font-weight'] .price,
+  .product-price[style*='--font-weight'] .price,
+  product-price[style*='--font-weight'] .price-item__group,
+  .product-price[style*='--font-weight'] .price-item__group {
+    font-weight: var(--font-weight);
+  }
 {% endstylesheet %}

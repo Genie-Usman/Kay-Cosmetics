@@ -61,11 +61,21 @@
       assign media_fit = block_settings.constrain_to_viewport
     endif
   endif
+
+  assign show_sheen = section.settings.hover_sheen
+  if show_sheen == nil
+    assign show_sheen = true
+  endif
+  if block_settings.hover_sheen == 'enable'
+    assign show_sheen = true
+  elsif block_settings.hover_sheen == 'disable'
+    assign show_sheen = false
+  endif
 %}
 
 <div
   ref="cardGallery"
-  class="card-gallery card-gallery-{{ block.id }} spacing-style border-style{% if has_badges %} card-gallery--badge-{{ badge_position }}{% endif %}"
+  class="card-gallery card-gallery-{{ block.id }} spacing-style border-style{% if has_badges %} card-gallery--badge-{{ badge_position }}{% endif %}{% if show_sheen %} card-gallery--sheen{% endif %}"
   style="
     {% render 'border-override', settings: block_settings %}
     {% render 'spacing-style', settings: block_settings %}
@@ -108,27 +118,31 @@
         endif
 
         assign featured_media_class = media_class | replace: '[media_type]', featured_media.media_type | append: media_class_suffix
+        assign hover_anim = section.settings.hover_animation
+        if block_settings.hover_animation != blank and block_settings.hover_animation != 'use_section'
+          assign hover_anim = block_settings.hover_animation
+        endif
+        if hover_anim == blank or hover_anim == ''
+          assign hover_anim = 'second_image_zoom'
+        endif
+
+        assign hover_zoom = section.settings.hover_zoom_level
+        if block_settings.hover_zoom_level != blank and block_settings.hover_zoom_level != 'use_section'
+          assign hover_zoom = block_settings.hover_zoom_level
+        endif
+        assign hover_zoom = hover_zoom | default: '1.08'
+
+        assign hover_spd = section.settings.hover_speed
+        if block_settings.hover_speed != blank and block_settings.hover_speed != 'use_section'
+          assign hover_spd = block_settings.hover_speed
+        endif
+        assign hover_spd = hover_spd | default: '0.5s'
       %}
-      {%- if product.media.size == 1 -%}
-        <div
-          class="{{ featured_media_class }}"
-          style="--product-media-fit: {{ media_fit | default: 'cover' }};"
-        >
-          {% render 'product-media',
-            media: featured_media,
-            sizes: featured_media_sizes,
-            loading: featured_media_loading,
-            preview_image_only: true
-          %}
-        </div>
-      {%- else -%}
+      {%- if hover_anim == 'none' and settings.product_card_carousel and product.media.size > 1 -%}
         {% liquid
           # Check if there are generic media that are not variant images
           assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src'
           assign generic_media_size = product.media.size | minus: variant_images.size
-
-          # Sort media so product.featured_media.preview_image comes first as that is the most relevant image to display
-          # product.featured_media updates based on search context and filters applied
 
           assign other_media = product.media | reject: 'src', product.featured_media
           assign media_list_to_show = product.featured_media | concat: other_media
@@ -137,13 +151,7 @@
             assign show_arrows = true
           endif
 
-          # Don't overfetch media if we don't need to
-          assign max_visible_slide_count = 1
-          if settings.product_card_carousel
-            assign max_visible_slide_count = 5
-          elsif settings.show_second_image_on_hover
-            assign max_visible_slide_count = 2
-          endif
+          assign max_visible_slide_count = 5
 
           capture slides
             for media in media_list_to_show
@@ -151,15 +159,11 @@
               assign attributes = ''
               if variant_images contains media.src
                 assign attributes = 'variant-image'
-
                 if forloop.first == false
-                  # hide all variant images that aren't the first one
                   assign hidden = true
                 endif
               endif
 
-              # Performance improvement: don't render more than 5 visible images into the slideshow
-              # We'll keep the images that we need for the variant images and hover next.
               if forloop.first
                 assign visible_slide_count = 0
               endif
@@ -189,9 +193,6 @@
           endcapture
 
           assign slideshow_attributes = 'data-generic-media-size="[generic_media_size]"' | replace: '[generic_media_size]', generic_media_size
-          if settings.product_card_carousel == false
-            assign slideshow_attributes = slideshow_attributes | append: ' disabled="true"'
-          endif
         %}
         {% render 'slideshow',
           ref: 'slideshow',
@@ -201,6 +202,48 @@
           show_arrows: show_arrows,
           attributes: slideshow_attributes
         %}
+      {%- else -%}
+        {% liquid
+          assign secondary_media = null
+          if product.media.size > 1
+            assign other_media = product.media | reject: 'src', featured_media.src
+            assign secondary_media = other_media.first | default: product.media[1]
+          endif
+        %}
+        <div
+          class="card-gallery__media-wrapper card-gallery--anim-{{ hover_anim }}{% if secondary_media != blank %} card-gallery--has-secondary{% endif %}"
+          style="
+            --gallery-zoom-scale: {{ hover_zoom }};
+            --gallery-anim-duration: {{ hover_spd }};
+          "
+        >
+          <div
+            class="card-gallery__primary-image {{ featured_media_class }}"
+            style="--product-media-fit: {{ media_fit | default: 'cover' }};"
+          >
+            {% render 'product-media',
+              media: featured_media,
+              sizes: featured_media_sizes,
+              loading: featured_media_loading,
+              preview_image_only: true
+            %}
+          </div>
+          {%- if secondary_media != blank -%}
+            {% assign secondary_media_class = media_class | replace: '[media_type]', secondary_media.media_type | append: media_class_suffix %}
+            <div
+              class="card-gallery__secondary-image {{ secondary_media_class }}"
+              style="--product-media-fit: {{ media_fit | default: 'cover' }};"
+              aria-hidden="true"
+            >
+              {% render 'product-media',
+                media: secondary_media,
+                sizes: image_sizes,
+                loading: 'lazy',
+                preview_image_only: true
+              %}
+            </div>
+          {%- endif -%}
+        </div>
       {%- endif -%}
     </a>
   {% elsif product != blank and product.media.size == 0 %}
@@ -236,6 +279,130 @@
 {% render 'product-media-container-styles' %}
 
 {% stylesheet %}
+  /* Card gallery media wrapper & animations */
+  .card-gallery__media-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: block;
+    aspect-ratio: var(--gallery-aspect-ratio, var(--ratio, 1));
+  }
+
+  .card-gallery__primary-image,
+  .card-gallery__secondary-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-gallery__primary-image > *,
+  .card-gallery__secondary-image > * {
+    width: 100%;
+    height: 100%;
+  }
+
+  .card-gallery__primary-image img,
+  .card-gallery__primary-image picture,
+  .card-gallery__primary-image svg,
+  .card-gallery__secondary-image img,
+  .card-gallery__secondary-image picture,
+  .card-gallery__secondary-image svg {
+    width: 100%;
+    height: 100%;
+    object-fit: var(--product-media-fit, cover);
+    display: block;
+  }
+
+  .card-gallery__secondary-image {
+    position: absolute !important;
+    inset: 0 !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity var(--gallery-anim-duration, 0.45s) cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                visibility 0s linear var(--gallery-anim-duration, 0.45s) !important;
+    will-change: opacity, transform !important;
+  }
+
+  .card-gallery__secondary-image img {
+    transform: scale(1) !important;
+    transform-origin: center center !important;
+    transition: transform var(--gallery-anim-duration, 0.55s) cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    will-change: transform !important;
+  }
+
+  /* 1. Animation: Second image zoom in & zoom out */
+  .product-card:hover .card-gallery--anim-second_image_zoom .card-gallery__secondary-image,
+  .card-gallery:hover .card-gallery--anim-second_image_zoom .card-gallery__secondary-image,
+  .resource-list__item:hover .card-gallery--anim-second_image_zoom .card-gallery__secondary-image {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: opacity var(--gallery-anim-duration, 0.45s) cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                visibility 0s !important;
+  }
+
+  .product-card:hover .card-gallery--anim-second_image_zoom .card-gallery__secondary-image img,
+  .card-gallery:hover .card-gallery--anim-second_image_zoom .card-gallery__secondary-image img,
+  .resource-list__item:hover .card-gallery--anim-second_image_zoom .card-gallery__secondary-image img {
+    transform: scale(var(--gallery-zoom-scale, 1.08)) !important;
+  }
+
+  /* Fallback for single image products when second_image_zoom is active */
+  .card-gallery--anim-second_image_zoom:not(.card-gallery--has-secondary) .card-gallery__primary-image img {
+    transform: scale(1) !important;
+    transform-origin: center center !important;
+    transition: transform var(--gallery-anim-duration, 0.55s) cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    will-change: transform !important;
+  }
+  .product-card:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--has-secondary) .card-gallery__primary-image img,
+  .card-gallery:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--has-secondary) .card-gallery__primary-image img,
+  .resource-list__item:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--has-secondary) .card-gallery__primary-image img {
+    transform: scale(var(--gallery-zoom-scale, 1.08)) !important;
+  }
+
+  /* 2. Animation: Second image fade / reveal (no zoom) */
+  .card-gallery--anim-second_image_reveal .card-gallery__secondary-image {
+    transition: opacity var(--gallery-anim-duration, 0.4s) ease,
+                visibility 0s linear var(--gallery-anim-duration, 0.4s) !important;
+  }
+  .card-gallery--anim-second_image_reveal .card-gallery__secondary-image img {
+    transform: none !important;
+    transition: none !important;
+  }
+  .product-card:hover .card-gallery--anim-second_image_reveal .card-gallery__secondary-image,
+  .card-gallery:hover .card-gallery--anim-second_image_reveal .card-gallery__secondary-image,
+  .resource-list__item:hover .card-gallery--anim-second_image_reveal .card-gallery__secondary-image {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: opacity var(--gallery-anim-duration, 0.4s) ease,
+                visibility 0s !important;
+  }
+
+  /* 3. Animation: Zoom main image */
+  .card-gallery--anim-zoom_image .card-gallery__primary-image img {
+    transform: scale(1) !important;
+    transform-origin: center center !important;
+    transition: transform var(--gallery-anim-duration, 0.55s) cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    will-change: transform !important;
+  }
+  .product-card:hover .card-gallery--anim-zoom_image .card-gallery__primary-image img,
+  .card-gallery:hover .card-gallery--anim-zoom_image .card-gallery__primary-image img,
+  .resource-list__item:hover .card-gallery--anim-zoom_image .card-gallery__primary-image img {
+    transform: scale(var(--gallery-zoom-scale, 1.08)) !important;
+  }
+
+  /* 4. Animation: None */
+  .card-gallery--anim-none .card-gallery__secondary-image {
+    display: none !important;
+  }
+  .card-gallery--anim-none .card-gallery__primary-image img {
+    transform: none !important;
+  }
+
   .card-gallery {
     position: relative;
     overflow: hidden;

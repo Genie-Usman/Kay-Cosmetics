@@ -16,7 +16,8 @@
   children: children,
   product: product,
   product_view_context: product_view_context,
-  block: block
+  block: block,
+  section: section
 %}
 {% render 'quantity-selector-styles' %}
 {% render 'buy-buttons-styles' %}
@@ -89,6 +90,30 @@
       "step": 1,
       "unit": "px",
       "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Card animation"
+    },
+    {
+      "type": "select",
+      "id": "hover_lift",
+      "label": "Lift card on hover",
+      "options": [
+        {
+          "value": "use_section",
+          "label": "Same as section"
+        },
+        {
+          "value": "lift",
+          "label": "Lift card on hover"
+        },
+        {
+          "value": "none",
+          "label": "Do not lift"
+        }
+      ],
+      "default": "use_section"
     },
     {
       "type": "header",

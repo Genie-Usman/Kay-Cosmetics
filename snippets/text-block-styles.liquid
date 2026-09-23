@@ -114,4 +114,9 @@
   .text-block.text-block > *:first-child:empty + * {
     margin-block-start: 0;
   }
+
+  .text-block[style*='--font-weight'] :is(h1, h2, h3, h4, h5, h6, p, span, a, div),
+  .text-block[style*='--font-weight'] {
+    font-weight: var(--font-weight);
+  }
 {% endstylesheet %}

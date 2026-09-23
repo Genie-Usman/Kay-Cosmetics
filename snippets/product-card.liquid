@@ -57,10 +57,20 @@
   if block_settings.background_color != blank
     render 'contrast-override', background_color: block_settings.background_color, text_color: block_settings.text_color, section_id: block.id
   endif
+
+  assign is_lift = section.settings.hover_lift
+  if is_lift == nil
+    assign is_lift = true
+  endif
+  if block_settings.hover_lift == 'lift' or block_settings.hover_lift == true
+    assign is_lift = true
+  elsif block_settings.hover_lift == 'none' or block_settings.hover_lift == false
+    assign is_lift = false
+  endif
 %}
 
 <product-card
-  class="product-card size-style"
+  class="product-card size-style{% if is_lift %} product-card--lift{% endif %}"
   style="{% render 'size-style', settings: block_settings %}"
   data-product-id="{{ product.id }}"
   id="product-card-{{ block.id }}"

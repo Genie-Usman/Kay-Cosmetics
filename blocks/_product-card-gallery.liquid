@@ -32,7 +32,7 @@
   {% endunless %}
 {% endcapture %}
 
-{% render 'card-gallery', children: children, block: block %}
+{% render 'card-gallery', children: children, block: block, section: section %}
 
 {% # Title for the zoomed out grid view %}
 <h3 class="product-grid-view-zoom-out--details">
@@ -79,6 +79,106 @@
       "default": "portrait",
       "label": "t:settings.aspect_ratio",
       "info": "t:info.aspect_ratio_adjusted"
+    },
+    {
+      "type": "header",
+      "content": "Hover animation"
+    },
+    {
+      "type": "select",
+      "id": "hover_animation",
+      "label": "Image hover effect",
+      "options": [
+        {
+          "value": "use_section",
+          "label": "Same as section"
+        },
+        {
+          "value": "second_image_zoom",
+          "label": "Second image zoom (In & out)"
+        },
+        {
+          "value": "second_image_reveal",
+          "label": "Second image fade"
+        },
+        {
+          "value": "zoom_image",
+          "label": "Zoom main image"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "use_section"
+    },
+    {
+      "type": "select",
+      "id": "hover_zoom_level",
+      "label": "Zoom level",
+      "options": [
+        {
+          "value": "use_section",
+          "label": "Same as section"
+        },
+        {
+          "value": "1.05",
+          "label": "Subtle"
+        },
+        {
+          "value": "1.08",
+          "label": "Medium"
+        },
+        {
+          "value": "1.12",
+          "label": "Strong"
+        }
+      ],
+      "default": "use_section"
+    },
+    {
+      "type": "select",
+      "id": "hover_speed",
+      "label": "Animation speed",
+      "options": [
+        {
+          "value": "use_section",
+          "label": "Same as section"
+        },
+        {
+          "value": "0.35s",
+          "label": "Fast"
+        },
+        {
+          "value": "0.5s",
+          "label": "Normal"
+        },
+        {
+          "value": "0.7s",
+          "label": "Smooth"
+        }
+      ],
+      "default": "use_section"
+    },
+    {
+      "type": "select",
+      "id": "hover_sheen",
+      "label": "Sheen effect on hover",
+      "options": [
+        {
+          "value": "use_section",
+          "label": "Same as section"
+        },
+        {
+          "value": "enable",
+          "label": "Enable"
+        },
+        {
+          "value": "disable",
+          "label": "Disable"
+        }
+      ],
+      "default": "use_section"
     },
     {
       "type": "header",
