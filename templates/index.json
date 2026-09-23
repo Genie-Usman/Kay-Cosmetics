@@ -502,22 +502,54 @@
     "featured_brands_section": {
       "type": "featured-brands",
       "blocks": {
-        "brand_staplex": {
+        "brand_fragrances": {
           "type": "brand",
           "settings": {
-            "brand_name": "Staplex",
-            "tagline": "Cosmetics & Skincare",
+            "brand_name": "Kay Luxe Parfums",
+            "headline": "BOLD ICONIC FRAGRANCES",
+            "bar_color": "#000000",
+            "bar_text_color": "#ffffff",
+            "button_label": "SHOP NOW",
+            "banner_image_asset": "brand-banner-fragrances.jpg",
             "link": "shopify://collections/all"
+          }
+        },
+        "brand_miss_rose": {
+          "type": "brand",
+          "settings": {
+            "collection": "miss-rose",
+            "brand_name": "Miss Rose",
+            "headline": "CONFIDENCE IN BEAUTY",
+            "bar_color": "#942948",
+            "bar_text_color": "#ffffff",
+            "button_label": "SHOP NOW",
+            "banner_image_asset": "brand-banner-miss-rose.jpg",
+            "link": "shopify://collections/miss-rose"
+          }
+        },
+        "brand_dr_oz": {
+          "type": "brand",
+          "settings": {
+            "collection": "dr-oz",
+            "brand_name": "Dr.Oz",
+            "headline": "ELEGANCE IN DERMA CARE",
+            "bar_color": "#0F3A3A",
+            "bar_text_color": "#ffffff",
+            "button_label": "SHOP NOW",
+            "banner_image_asset": "brand-banner-dr-oz.jpg",
+            "link": "shopify://collections/dr-oz"
           }
         }
       },
       "block_order": [
-        "brand_staplex"
+        "brand_fragrances",
+        "brand_miss_rose",
+        "brand_dr_oz"
       ],
       "settings": {
         "eyebrow": "Brand Selection",
         "title": "Brands We Carry",
-        "subtitle": "Discover quality cosmetic brands available through Kay Cosmetics. Add your carried brands in the theme customizer.",
+        "subtitle": "Discover genuine cosmetics and skincare products from authentic brand partners delivered across Pakistan.",
         "header_alignment": "left",
         "show_view_all": true,
         "view_all_label": "View All Brands",

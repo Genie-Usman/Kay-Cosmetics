@@ -1,21 +1,36 @@
 {% doc %}
   Featured Brands section for Kay Cosmetics.
-  Allows store owners to showcase brands they carry (such as Staplex).
-  Fully merchant-configurable with brand collections, logos, and a link to the Brands directory.
+  Supports both the Editorial Banner Slider (Swiper) and Compact Logo Grid.
+  Features wide campaign banners, custom colored bottom callout bars, and smooth touch-swipe.
 {% enddoc %}
 
+<script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer="defer"></script>
+
 {% liquid
+  assign section_id = section.id | replace: '-', '_'
+  assign layout_style = section.settings.layout_style | default: 'banner_slider'
   assign show_view_all = section.settings.show_view_all
   assign view_all_label = section.settings.view_all_label | default: 'View All Brands'
   assign view_all_link = section.settings.view_all_link | default: '/pages/brands'
   assign view_all_style = section.settings.view_all_style | default: 'link_arrow'
   assign header_align = section.settings.header_alignment | default: 'left'
+  assign slides_desktop = section.settings.slides_desktop | default: '2.3'
+  assign slides_tablet = section.settings.slides_tablet | default: '1.75'
+  assign slides_mobile = section.settings.slides_mobile | default: '1.15'
+  assign card_radius = section.settings.card_border_radius | default: 12
+  assign banner_ratio = section.settings.banner_aspect_ratio | default: '16_9'
+  assign autoplay_enabled = section.settings.enable_autoplay
+  assign autoplay_speed = section.settings.autoplay_speed | default: 5
+  assign show_arrows = section.settings.show_arrows
 %}
 
 <div
   id="FeaturedBrands-{{ section.id }}"
   class="section section--{{ section.settings.section_width }} featured-brands-section spacing-style"
-  style="{% render 'spacing-style', settings: section.settings %}"
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    --brand-card-radius: {{ card_radius }}px;
+  "
 >
   {%- capture view_all_element -%}
     {% if show_view_all and view_all_link != blank %}
@@ -64,59 +79,208 @@
     {% endif %}
   </div>
 
-  <div class="brands-grid">
-    {% for block in section.blocks %}
-      {% liquid
-        assign collection = block.settings.collection
-        assign brand_name = block.settings.brand_name
-        if brand_name == blank and collection != blank
-          assign brand_name = collection.title
-        endif
-        if brand_name == blank
-          assign brand_name = 'Brand Name'
-        endif
+  {% if layout_style == 'banner_slider' %}
+    {%- comment -%} ================= Editorial Swiper Banner Slider ================= {%- endcomment -%}
+    <div class="brand-swiper-container" id="BrandSwiperWrapper-{{ section_id }}">
+      <div class="swiper brand-swiper" id="BrandSwiper-{{ section_id }}">
+        <div class="swiper-wrapper">
+          {% for block in section.blocks %}
+            {% liquid
+              assign collection = block.settings.collection
+              assign brand_name = block.settings.brand_name
+              if brand_name == blank and collection != blank
+                assign brand_name = collection.title
+              endif
+              if brand_name == blank
+                assign brand_name = 'Brand'
+              endif
 
-        assign tagline = block.settings.tagline
-        assign link = block.settings.link
-        if link == blank and collection != blank
-          assign link = collection.url
-        endif
-        if link == blank
-          assign link = '/collections/all'
-        endif
+              assign headline = block.settings.headline
+              if headline == blank
+                assign headline = brand_name | upcase
+              endif
 
-        assign logo = block.settings.logo
-        if logo == blank and collection != blank and collection.image != blank
-          assign logo = collection.image
-        elsif logo == blank and collection != blank and collection.featured_image != blank
-          assign logo = collection.featured_image
-        endif
-      %}
+              assign link = block.settings.link
+              if link == blank and collection != blank
+                assign link = collection.url
+              endif
+              if link == blank
+                assign link = '/collections/all'
+              endif
 
-      <a href="{{ link }}" class="brand-card" {{ block.shopify_attributes }}>
-        {% if logo != blank %}
-          {{
-            logo
-            | image_url: width: 300
-            | image_tag:
-              widths: '150, 300',
-              class: 'brand-card__logo',
-              alt: brand_name,
-              loading: 'lazy'
-          }}
-        {% else %}
+              assign banner_img = block.settings.banner_image
+              if banner_img == blank and collection != blank and collection.image != blank
+                assign banner_img = collection.image
+              elsif banner_img == blank and collection != blank and collection.featured_image != blank
+                assign banner_img = collection.featured_image
+              endif
+
+              assign asset_img = block.settings.banner_image_asset
+              assign logo = block.settings.logo
+              assign bar_bg = block.settings.bar_color | default: '#2C1E26'
+              assign bar_text = block.settings.bar_text_color | default: '#FFFFFF'
+              assign btn_label = block.settings.button_label | default: 'SHOP NOW'
+            %}
+
+            <div class="swiper-slide brand-banner-slide" {{ block.shopify_attributes }}>
+              <a href="{{ link }}" class="brand-banner-card">
+                <div class="brand-banner-card__media brand-banner-card__media--ratio-{{ banner_ratio }}">
+                  {% if banner_img != blank %}
+                    {{
+                      banner_img
+                      | image_url: width: 1200
+                      | image_tag:
+                        widths: '400, 600, 800, 1200',
+                        class: 'brand-banner-card__image',
+                        alt: brand_name,
+                        loading: 'lazy'
+                    }}
+                  {% elsif asset_img != blank %}
+                    <img
+                      src="{{ asset_img | asset_url }}"
+                      alt="{{ brand_name }}"
+                      class="brand-banner-card__image"
+                      loading="lazy"
+                      width="800"
+                      height="450"
+                    >
+                  {% else %}
+                    {{ 'collection-1' | placeholder_svg_tag: 'brand-banner-card__image brand-banner-card__image--placeholder' }}
+                  {% endif %}
+
+                  {% if logo != blank %}
+                    <div class="brand-banner-card__logo-overlay">
+                      {{
+                        logo
+                        | image_url: width: 300
+                        | image_tag:
+                          widths: '150, 300',
+                          class: 'brand-banner-card__logo-img',
+                          alt: brand_name,
+                          loading: 'lazy'
+                      }}
+                    </div>
+                  {% elsif block.settings.show_brand_name_overlay and brand_name != blank %}
+                    <div class="brand-banner-card__name-overlay">
+                      <span>{{ brand_name }}</span>
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div
+                  class="brand-banner-card__bar"
+                  style="
+                    background-color: {{ bar_bg }};
+                    color: {{ bar_text }};
+                  "
+                >
+                  <div class="brand-banner-card__bar-content">
+                    <h3 class="brand-banner-card__headline" style="color: {{ bar_text }};">
+                      {{ headline }}
+                    </h3>
+                    {% if btn_label != blank %}
+                      <span class="brand-banner-card__btn-link" style="color: {{ bar_text }};">
+                        <u>{{ btn_label }}</u>
+                      </span>
+                    {% endif %}
+                  </div>
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if show_arrows and section.blocks.size > 1 %}
+          <button
+            type="button"
+            class="brand-swiper__nav brand-swiper__nav--prev"
+            aria-label="Previous brand slide"
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="brand-swiper__nav brand-swiper__nav--next"
+            aria-label="Next brand slide"
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        {% endif %}
+      </div>
+    </div>
+
+  {% else %}
+    {%- comment -%} ================= Compact Logo Grid ================= {%- endcomment -%}
+    <div class="brands-grid">
+      {% for block in section.blocks %}
+        {% liquid
+          assign collection = block.settings.collection
+          assign brand_name = block.settings.brand_name
+          if brand_name == blank and collection != blank
+            assign brand_name = collection.title
+          endif
+          if brand_name == blank
+            assign brand_name = 'Brand Name'
+          endif
+
+          assign tagline = block.settings.headline | default: block.settings.tagline
+          assign link = block.settings.link
+          if link == blank and collection != blank
+            assign link = collection.url
+          endif
+          if link == blank
+            assign link = '/collections/all'
+          endif
+
+          assign logo = block.settings.logo
+          if logo == blank and collection != blank and collection.image != blank
+            assign logo = collection.image
+          elsif logo == blank and collection != blank and collection.featured_image != blank
+            assign logo = collection.featured_image
+          endif
+        %}
+
+        <a href="{{ link }}" class="brand-card" {{ block.shopify_attributes }}>
+          {% if logo != blank %}
+            <div class="brand-card__logo-wrap">
+              {{
+                logo
+                | image_url: width: 300
+                | image_tag:
+                  widths: '150, 300',
+                  class: 'brand-card__logo',
+                  alt: brand_name,
+                  loading: 'lazy'
+              }}
+            </div>
+          {% endif %}
           <h3 class="brand-card__name">{{ brand_name }}</h3>
-        {% endif %}
 
-        {% if tagline != blank %}
-          <p class="brand-card__tagline">{{ tagline }}</p>
-        {% endif %}
-      </a>
-    {% endfor %}
-  </div>
+          {% if tagline != blank %}
+            <p class="brand-card__tagline">{{ tagline }}</p>
+          {% elsif collection != blank and collection.all_products_count > 0 %}
+            <p class="brand-card__tagline">{{ collection.all_products_count }} {{ collection.all_products_count | pluralize: 'product', 'products' }}</p>
+          {% endif %}
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
 </div>
 
 <style>
+  /* ==========================================================================
+     Featured Brands Styles (Swiper Banner Slider & Header)
+     ========================================================================== */
+
+  #FeaturedBrands-{{ section.id }} {
+    position: relative;
+  }
+
+  /* Header */
   #FeaturedBrands-{{ section.id }} .featured-brands-header {
     margin-bottom: clamp(20px, 3.5vw, 36px);
   }
@@ -133,6 +297,8 @@
     gap: 20px;
     flex-wrap: wrap;
   }
+
+  /* View All Button */
   #FeaturedBrands-{{ section.id }} .featured-brands__view-all-link {
     display: inline-flex;
     align-items: center;
@@ -193,7 +359,286 @@
     color: #FFFFFF;
     transform: translateY(-2px);
   }
+
+  /* ==========================================================================
+     Swiper Slider & Banner Cards
+     ========================================================================== */
+
+  #FeaturedBrands-{{ section.id }} .brand-swiper-container {
+    position: relative;
+    width: 100%;
+    overflow: visible;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-swiper {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding-bottom: 6px;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-slide {
+    height: auto;
+    display: flex;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-radius: var(--brand-card-radius, 12px);
+    overflow: hidden;
+    text-decoration: none;
+    background: #FFFFFF;
+    box-shadow: 0 4px 18px rgba(44, 30, 38, 0.08);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.35s ease;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(44, 30, 38, 0.16);
+  }
+
+  /* Upper Media / Banner */
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__media {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #111111;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__media--ratio-16_9 {
+    aspect-ratio: 16 / 9;
+  }
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__media--ratio-2_1 {
+    aspect-ratio: 2 / 1;
+  }
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__media--ratio-3_2 {
+    aspect-ratio: 3 / 2;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card:hover .brand-banner-card__image {
+    transform: scale(1.05);
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__image--placeholder {
+    opacity: 0.2;
+    padding: 30px;
+  }
+
+  /* Brand Overlays on Banner */
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__logo-overlay {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    max-height: 44px;
+    max-width: 120px;
+  }
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__logo-img {
+    max-height: 44px;
+    max-width: 120px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__name-overlay {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 2;
+    font-family: var(--font-heading--family), serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Lower Solid Color Callout Bar */
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__bar {
+    padding: 16px 20px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 78px;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__bar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__headline {
+    font-family: var(--font-body--family), sans-serif;
+    font-size: clamp(0.9375rem, 1.25vw, 1.125rem);
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: 1.25;
+    margin: 0;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__btn-link {
+    font-family: var(--font-body--family), sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    display: inline-block;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card:hover .brand-banner-card__btn-link {
+    opacity: 0.9;
+  }
+
+  /* Floating Circular Arrow Navigation */
+  #FeaturedBrands-{{ section.id }} .brand-swiper__nav {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(44, 30, 38, 0.65);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    transition: all 0.25s ease;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-swiper__nav:hover {
+    background: rgba(44, 30, 38, 0.95);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-50%) scale(1.08);
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-swiper__nav--prev {
+    left: 12px;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-swiper__nav--next {
+    right: 12px;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-swiper__nav.swiper-button-disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    #FeaturedBrands-{{ section.id }} .brand-swiper__nav {
+      width: 36px;
+      height: 36px;
+    }
+    #FeaturedBrands-{{ section.id }} .brand-swiper__nav--prev {
+      left: 6px;
+    }
+    #FeaturedBrands-{{ section.id }} .brand-swiper__nav--next {
+      right: 6px;
+    }
+  }
+
+  /* Compact Grid fallback */
+  #FeaturedBrands-{{ section.id }} .brand-card__logo-wrap {
+    width: 100%;
+    max-height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  #FeaturedBrands-{{ section.id }} .brand-card__logo {
+    max-height: 50px;
+    max-width: 120px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
 </style>
+
+<script>
+  (function () {
+    function initBrandSwiper() {
+      const container = document.getElementById('BrandSwiper-{{ section_id }}');
+      if (!container) return;
+
+      if (typeof Swiper === 'undefined') {
+        setTimeout(initBrandSwiper, 60);
+        return;
+      }
+
+      if (container.swiper) {
+        container.swiper.destroy(true, true);
+      }
+
+      new Swiper(container, {
+        slidesPerView: {{ slides_mobile }},
+        spaceBetween: 14,
+        grabCursor: true,
+        watchSlidesProgress: true,
+        {% if autoplay_enabled %}
+        autoplay: {
+          delay: {{ autoplay_speed | times: 1000 }},
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        },
+        {% endif %}
+        navigation: {
+          prevEl: '#BrandSwiper-{{ section_id }} .brand-swiper__nav--prev',
+          nextEl: '#BrandSwiper-{{ section_id }} .brand-swiper__nav--next',
+        },
+        breakpoints: {
+          640: {
+            slidesPerView: {{ slides_tablet }},
+            spaceBetween: 18,
+          },
+          1024: {
+            slidesPerView: {{ slides_desktop }},
+            spaceBetween: 22,
+          }
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initBrandSwiper);
+    } else {
+      initBrandSwiper();
+    }
+
+    document.addEventListener('shopify:section:load', function (e) {
+      if (e.target.contains(document.getElementById('FeaturedBrands-{{ section.id }}'))) {
+        initBrandSwiper();
+      }
+    });
+  })();
+</script>
 
 {% schema %}
 {
@@ -203,13 +648,108 @@
   "settings": [
     {
       "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Layout style",
+      "options": [
+        { "value": "banner_slider", "label": "Editorial banner slider" },
+        { "value": "compact_grid", "label": "Compact logo grid" }
+      ],
+      "default": "banner_slider"
+    },
+    {
+      "type": "select",
+      "id": "slides_desktop",
+      "label": "Slides on desktop",
+      "options": [
+        { "value": "2", "label": "2 slides" },
+        { "value": "2.3", "label": "2.3 slides (Peeking)" },
+        { "value": "2.5", "label": "2.5 slides (Peeking)" },
+        { "value": "3", "label": "3 slides" }
+      ],
+      "default": "2.3"
+    },
+    {
+      "type": "select",
+      "id": "slides_tablet",
+      "label": "Slides on tablet",
+      "options": [
+        { "value": "1.5", "label": "1.5 slides" },
+        { "value": "1.75", "label": "1.75 slides (Peeking)" },
+        { "value": "2", "label": "2 slides" }
+      ],
+      "default": "1.75"
+    },
+    {
+      "type": "select",
+      "id": "slides_mobile",
+      "label": "Slides on mobile",
+      "options": [
+        { "value": "1", "label": "1 slide" },
+        { "value": "1.15", "label": "1.15 slides (Peeking)" },
+        { "value": "1.3", "label": "1.3 slides (Peeking)" }
+      ],
+      "default": "1.15"
+    },
+    {
+      "type": "select",
+      "id": "banner_aspect_ratio",
+      "label": "Banner image shape",
+      "options": [
+        { "value": "16_9", "label": "16:9 (Standard wide)" },
+        { "value": "2_1", "label": "2:1 (Ultra wide)" },
+        { "value": "3_2", "label": "3:2 (Classic)" }
+      ],
+      "default": "16_9"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card corner roundness",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Slider Controls"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show navigation arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_autoplay",
+      "label": "Enable automatic slide change",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Slide speed in seconds",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 5
+    },
+    {
+      "type": "header",
       "content": "Header"
     },
     {
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow text",
-      "default": "Brand Partners"
+      "default": "Brand Selection"
     },
     {
       "type": "text",
@@ -221,7 +761,7 @@
       "type": "textarea",
       "id": "subtitle",
       "label": "Subtitle",
-      "default": "Explore cosmetics and beauty products available through Kay Cosmetics."
+      "default": "Discover genuine cosmetics and skincare products from authentic brand partners delivered across Pakistan."
     },
     {
       "type": "select",
@@ -303,7 +843,7 @@
   "blocks": [
     {
       "type": "brand",
-      "name": "Brand",
+      "name": "Brand Slide",
       "settings": [
         {
           "type": "collection",
@@ -318,31 +858,92 @@
         },
         {
           "type": "text",
-          "id": "tagline",
-          "label": "Tagline (optional)"
+          "id": "headline",
+          "label": "Bottom bar headline",
+          "default": "BOLD ICONIC BEAUTY"
+        },
+        {
+          "type": "color",
+          "id": "bar_color",
+          "label": "Bottom bar background color",
+          "default": "#2C1E26"
+        },
+        {
+          "type": "color",
+          "id": "bar_text_color",
+          "label": "Bottom bar text color",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Action link text",
+          "default": "SHOP NOW"
+        },
+        {
+          "type": "image_picker",
+          "id": "banner_image",
+          "label": "Wide banner image"
+        },
+        {
+          "type": "text",
+          "id": "banner_image_asset",
+          "label": "Theme banner image filename",
+          "info": "e.g. brand-banner-miss-rose.jpg from assets"
         },
         {
           "type": "image_picker",
           "id": "logo",
-          "label": "Brand Logo (optional)"
+          "label": "Brand logo overlay (optional)"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_brand_name_overlay",
+          "label": "Show brand name overlay on banner",
+          "default": false
         },
         {
           "type": "url",
           "id": "link",
-          "label": "Brand Link (optional)"
+          "label": "Custom link override (optional)"
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Featured Brands",
+      "name": "Featured Brands Slider",
       "blocks": [
         {
           "type": "brand",
           "settings": {
-            "brand_name": "Staplex",
-            "tagline": "Cosmetics & Skincare"
+            "collection": "miss-rose",
+            "brand_name": "Miss Rose",
+            "headline": "PROFESSIONAL COLOR COSMETICS",
+            "bar_color": "#942948",
+            "button_label": "SHOP NOW",
+            "banner_image_asset": "brand-banner-miss-rose.jpg"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "collection": "dr-oz",
+            "brand_name": "Dr.Oz",
+            "headline": "ADVANCED DERMA & WELLNESS",
+            "bar_color": "#0F3A3A",
+            "button_label": "SHOP NOW",
+            "banner_image_asset": "brand-banner-dr-oz.jpg"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Kay Luxe Parfums",
+            "headline": "BOLD ICONIC FRAGRANCES",
+            "bar_color": "#000000",
+            "button_label": "SHOP NOW",
+            "banner_image_asset": "brand-banner-fragrances.jpg"
           }
         }
       ]

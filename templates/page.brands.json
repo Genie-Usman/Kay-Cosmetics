@@ -3,17 +3,28 @@
     "main": {
       "type": "main-brands-page",
       "blocks": {
-        "brand_staplex": {
+        "brand_miss_rose": {
           "type": "brand",
           "settings": {
-            "brand_name": "Staplex",
-            "tagline": "Cosmetics & Skincare",
-            "link": "/collections/all"
+            "collection": "miss-rose",
+            "brand_name": "Miss Rose",
+            "tagline": "Color Cosmetics & Makeup",
+            "link": "/collections/miss-rose"
+          }
+        },
+        "brand_dr_oz": {
+          "type": "brand",
+          "settings": {
+            "collection": "dr-oz",
+            "brand_name": "Dr.Oz",
+            "tagline": "Skincare & Health",
+            "link": "/collections/dr-oz"
           }
         }
       },
       "block_order": [
-        "brand_staplex"
+        "brand_miss_rose",
+        "brand_dr_oz"
       ],
       "settings": {
         "eyebrow": "Authentic Partners",
