@@ -493,8 +493,8 @@
         "padding-block-start": 48,
         "padding-block-end": 48,
         "hover_animation": "second_image_zoom",
-        "hover_zoom_level": "1.08",
-        "hover_speed": "0.5s",
+        "hover_zoom_level": "1.06",
+        "hover_speed": "0.6s",
         "hover_lift": false,
         "hover_sheen": false
       }

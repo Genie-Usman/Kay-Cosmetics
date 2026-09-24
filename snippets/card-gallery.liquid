@@ -130,13 +130,13 @@
         if block_settings.hover_zoom_level != blank and block_settings.hover_zoom_level != 'use_section'
           assign hover_zoom = block_settings.hover_zoom_level
         endif
-        assign hover_zoom = hover_zoom | default: '1.08'
+        assign hover_zoom = hover_zoom | default: '1.06'
 
         assign hover_spd = section.settings.hover_speed
         if block_settings.hover_speed != blank and block_settings.hover_speed != 'use_section'
           assign hover_spd = block_settings.hover_speed
         endif
-        assign hover_spd = hover_spd | default: '0.5s'
+        assign hover_spd = hover_spd | default: '0.6s'
       %}
       {%- if hover_anim == 'none' and settings.product_card_carousel and product.media.size > 1 -%}
         {% liquid
@@ -211,7 +211,7 @@
           endif
         %}
         <div
-          class="card-gallery__media-wrapper card-gallery--anim-{{ hover_anim }}{% if secondary_media != blank %} card-gallery--has-secondary{% endif %}"
+          class="card-gallery__media-wrapper card-gallery--anim-{{ hover_anim }}{% if hover_anim == 'second_image_zoom' %} card-gallery--anim-second_image_pulse{% endif %}{% if secondary_media != blank %} card-gallery--has-secondary{% endif %}"
           style="
             --gallery-zoom-scale: {{ hover_zoom }};
             --gallery-anim-duration: {{ hover_spd }};
@@ -323,76 +323,158 @@
     z-index: 2 !important;
     opacity: 0 !important;
     visibility: hidden !important;
-    transition: opacity var(--gallery-anim-duration, 0.45s) cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                visibility 0s linear var(--gallery-anim-duration, 0.45s) !important;
+    transition: opacity var(--gallery-anim-duration, 0.5s) cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0s linear var(--gallery-anim-duration, 0.5s) !important;
     will-change: opacity, transform !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
   }
 
   .card-gallery__secondary-image img {
     transform: scale(1) !important;
     transform-origin: center center !important;
-    transition: transform var(--gallery-anim-duration, 0.55s) cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    transition: transform var(--gallery-anim-duration, 0.5s) cubic-bezier(0.16, 1, 0.3, 1) !important;
     will-change: transform !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
   }
 
-  /* 1. Animation: Second image zoom in & zoom out */
-  .product-card:hover .card-gallery--anim-second_image_zoom .card-gallery__secondary-image,
-  .card-gallery:hover .card-gallery--anim-second_image_zoom .card-gallery__secondary-image,
-  .resource-list__item:hover .card-gallery--anim-second_image_zoom .card-gallery__secondary-image {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transition: opacity var(--gallery-anim-duration, 0.45s) cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                visibility 0s !important;
+  /* Pulse Keyframes: Sudden tactile surge to peak scale, smooth gliding return to 1.0 */
+  @keyframes card-image-pulse {
+    0% {
+      transform: scale(1);
+      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    35% {
+      transform: scale(var(--gallery-zoom-scale, 1.06));
+      animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 
-  .product-card:hover .card-gallery--anim-second_image_zoom .card-gallery__secondary-image img,
-  .card-gallery:hover .card-gallery--anim-second_image_zoom .card-gallery__secondary-image img,
-  .resource-list__item:hover .card-gallery--anim-second_image_zoom .card-gallery__secondary-image img {
-    transform: scale(var(--gallery-zoom-scale, 1.08)) !important;
+  /* 1. Animation: Second image with pulse (Smooth, Sudden, Satisfying) */
+  .card-gallery--anim-second_image_zoom .card-gallery__secondary-image,
+  .card-gallery--anim-second_image_pulse .card-gallery__secondary-image {
+    position: absolute !important;
+    inset: 0 !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0s linear 0.35s !important;
+    will-change: opacity, transform !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
   }
 
-  /* Fallback for single image products when second_image_zoom is active */
-  .card-gallery--anim-second_image_zoom:not(.card-gallery--has-secondary) .card-gallery__primary-image img {
+  .card-gallery--anim-second_image_zoom .card-gallery__secondary-image img,
+  .card-gallery--anim-second_image_pulse .card-gallery__secondary-image img,
+  .card-gallery--anim-second_image_zoom .card-gallery__primary-image img,
+  .card-gallery--anim-second_image_pulse .card-gallery__primary-image img {
     transform: scale(1) !important;
     transform-origin: center center !important;
-    transition: transform var(--gallery-anim-duration, 0.55s) cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
     will-change: transform !important;
-  }
-  .product-card:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--has-secondary) .card-gallery__primary-image img,
-  .card-gallery:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--has-secondary) .card-gallery__primary-image img,
-  .resource-list__item:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--has-secondary) .card-gallery__primary-image img {
-    transform: scale(var(--gallery-zoom-scale, 1.08)) !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
   }
 
-  /* 2. Animation: Second image fade / reveal (no zoom) */
-  .card-gallery--anim-second_image_reveal .card-gallery__secondary-image {
-    transition: opacity var(--gallery-anim-duration, 0.4s) ease,
-                visibility 0s linear var(--gallery-anim-duration, 0.4s) !important;
-  }
-  .card-gallery--anim-second_image_reveal .card-gallery__secondary-image img {
-    transform: none !important;
-    transition: none !important;
-  }
-  .product-card:hover .card-gallery--anim-second_image_reveal .card-gallery__secondary-image,
-  .card-gallery:hover .card-gallery--anim-second_image_reveal .card-gallery__secondary-image,
-  .resource-list__item:hover .card-gallery--anim-second_image_reveal .card-gallery__secondary-image {
+  /* When hovered: fade in second image and trigger the pulse animation */
+  .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_zoom .card-gallery__secondary-image,
+  .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_pulse .card-gallery__secondary-image,
+  .product-card:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__secondary-image,
+  .product-card:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__secondary-image,
+  .card-gallery:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__secondary-image,
+  .card-gallery:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__secondary-image,
+  .resource-list__item:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__secondary-image,
+  .resource-list__item:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__secondary-image {
     opacity: 1 !important;
     visibility: visible !important;
-    transition: opacity var(--gallery-anim-duration, 0.4s) ease,
-                visibility 0s !important;
+    transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0s linear 0s !important;
   }
 
-  /* 3. Animation: Zoom main image */
+  /* Pulse secondary image and primary image synchronously for perfectly aligned cross-fade */
+  .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_zoom .card-gallery__secondary-image img,
+  .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_pulse .card-gallery__secondary-image img,
+  .product-card:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__secondary-image img,
+  .product-card:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__secondary-image img,
+  .card-gallery:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__secondary-image img,
+  .card-gallery:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__secondary-image img,
+  .resource-list__item:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__secondary-image img,
+  .resource-list__item:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__secondary-image img,
+  .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_zoom .card-gallery__primary-image img,
+  .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_pulse .card-gallery__primary-image img,
+  .product-card:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__primary-image img,
+  .product-card:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__primary-image img,
+  .card-gallery:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__primary-image img,
+  .card-gallery:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__primary-image img,
+  .resource-list__item:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__primary-image img,
+  .resource-list__item:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__primary-image img {
+    animation: card-image-pulse var(--gallery-anim-duration, 0.6s) both !important;
+  }
+
+  /* Fade-out course: Cleanly dissolves secondary image back to primary image */
+  .card-gallery__media-wrapper.card-gallery--zoom-out.card-gallery--anim-second_image_zoom .card-gallery__secondary-image,
+  .card-gallery__media-wrapper.card-gallery--zoom-out.card-gallery--anim-second_image_pulse .card-gallery__secondary-image {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0s linear 0.35s !important;
+  }
+
+  /* 2. Animation: Second image reveal (Smooth, Sudden, Satisfying - No scale up) */
+  .card-gallery--anim-second_image_reveal .card-gallery__secondary-image {
+    position: absolute !important;
+    inset: 0 !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: none !important;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0s linear 0.35s !important;
+    will-change: opacity !important;
+  }
+  .card-gallery--anim-second_image_reveal .card-gallery__secondary-image img,
+  .card-gallery--anim-second_image_reveal .card-gallery__primary-image img {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+  }
+  .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_reveal .card-gallery__secondary-image,
+  .product-card:hover .card-gallery--anim-second_image_reveal:not(.card-gallery--zoom-out) .card-gallery__secondary-image,
+  .card-gallery:hover .card-gallery--anim-second_image_reveal:not(.card-gallery--zoom-out) .card-gallery__secondary-image,
+  .resource-list__item:hover .card-gallery--anim-second_image_reveal:not(.card-gallery--zoom-out) .card-gallery__secondary-image {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0s linear 0s !important;
+  }
+  .card-gallery__media-wrapper.card-gallery--zoom-out.card-gallery--anim-second_image_reveal .card-gallery__secondary-image {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0s linear 0.35s !important;
+  }
+
+  /* 3. Animation: Pulse main image (zoom_image) */
   .card-gallery--anim-zoom_image .card-gallery__primary-image img {
     transform: scale(1) !important;
     transform-origin: center center !important;
-    transition: transform var(--gallery-anim-duration, 0.55s) cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
     will-change: transform !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
   }
-  .product-card:hover .card-gallery--anim-zoom_image .card-gallery__primary-image img,
-  .card-gallery:hover .card-gallery--anim-zoom_image .card-gallery__primary-image img,
-  .resource-list__item:hover .card-gallery--anim-zoom_image .card-gallery__primary-image img {
-    transform: scale(var(--gallery-zoom-scale, 1.08)) !important;
+  .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-zoom_image .card-gallery__primary-image img,
+  .product-card:hover .card-gallery--anim-zoom_image:not(.card-gallery--zoom-out) .card-gallery__primary-image img,
+  .card-gallery:hover .card-gallery--anim-zoom_image:not(.card-gallery--zoom-out) .card-gallery__primary-image img,
+  .resource-list__item:hover .card-gallery--anim-zoom_image:not(.card-gallery--zoom-out) .card-gallery__primary-image img {
+    animation: card-image-pulse var(--gallery-anim-duration, 0.6s) both !important;
   }
 
   /* 4. Animation: None */
@@ -401,6 +483,7 @@
   }
   .card-gallery--anim-none .card-gallery__primary-image img {
     transform: none !important;
+    animation: none !important;
   }
 
   .card-gallery {
@@ -618,3 +701,67 @@
     }
   }
 {% endstylesheet %}
+
+<script>
+  if (!window._initKayCardZoomCourse) {
+    window._initKayCardZoomCourse = true;
+    (function() {
+      function attachZoomCourse() {
+        const wrappers = document.querySelectorAll('.card-gallery__media-wrapper');
+        wrappers.forEach(function(wrapper) {
+          if (wrapper._zoomCourseAttached) return;
+          wrapper._zoomCourseAttached = true;
+
+          const card = wrapper.closest('product-card') || wrapper.closest('.resource-list__item') || wrapper;
+          let enterTimestamp = 0;
+          let isHovered = false;
+          let exitTimer = null;
+          let finishTimer = null;
+
+          card.addEventListener('mouseenter', function() {
+            isHovered = true;
+            enterTimestamp = Date.now();
+            if (exitTimer) { clearTimeout(exitTimer); exitTimer = null; }
+            if (finishTimer) { clearTimeout(finishTimer); finishTimer = null; }
+
+            wrapper.classList.remove('card-gallery--zoom-out');
+            wrapper.classList.remove('card-gallery--zoom-in');
+            void wrapper.offsetWidth; // Force reflow to cleanly restart the pulse animation
+            wrapper.classList.add('card-gallery--zoom-in');
+          });
+
+          card.addEventListener('mouseleave', function() {
+            isHovered = false;
+            const durationSec = parseFloat(getComputedStyle(wrapper).getPropertyValue('--gallery-anim-duration')) || 0.6;
+            const durationMs = durationSec * 1000;
+            // The pulse course always completes its full cycle before fading out
+            const elapsed = Date.now() - enterTimestamp;
+            const delay = Math.max(0, durationMs - elapsed);
+
+            exitTimer = setTimeout(function() {
+              if (isHovered) return;
+              wrapper.classList.remove('card-gallery--zoom-in');
+              wrapper.classList.add('card-gallery--zoom-out');
+
+              finishTimer = setTimeout(function() {
+                if (isHovered) return;
+                wrapper.classList.remove('card-gallery--zoom-out');
+              }, 380);
+            }, delay);
+          });
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attachZoomCourse);
+      } else {
+        attachZoomCourse();
+      }
+
+      document.addEventListener('shopify:section:load', attachZoomCourse);
+      if ('MutationObserver' in window) {
+        new MutationObserver(attachZoomCourse).observe(document.body, { childList: true, subtree: true });
+      }
+    })();
+  }
+</script>
