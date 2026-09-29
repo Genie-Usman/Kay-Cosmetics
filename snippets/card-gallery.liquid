@@ -211,7 +211,7 @@
           endif
         %}
         <div
-          class="card-gallery__media-wrapper card-gallery--anim-{{ hover_anim }}{% if hover_anim == 'second_image_zoom' %} card-gallery--anim-second_image_pulse{% endif %}{% if secondary_media != blank %} card-gallery--has-secondary{% endif %}"
+          class="card-gallery__media-wrapper card-gallery--anim-{{ hover_anim }}{% if hover_anim == 'second_image_zoom' %} card-gallery--anim-second_image_pulse{% elsif hover_anim == 'second_image_pulse' %} card-gallery--anim-second_image_zoom{% endif %}{% if secondary_media != blank %} card-gallery--has-secondary{% endif %}"
           style="
             --gallery-zoom-scale: {{ hover_zoom }};
             --gallery-anim-duration: {{ hover_spd }};
@@ -331,26 +331,24 @@
   }
 
   .card-gallery__secondary-image img {
-    transform: scale(1) !important;
-    transform-origin: center center !important;
-    transition: transform var(--gallery-anim-duration, 0.5s) cubic-bezier(0.16, 1, 0.3, 1) !important;
-    will-change: transform !important;
-    backface-visibility: hidden !important;
-    -webkit-backface-visibility: hidden !important;
+    transform-origin: center center;
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
 
   /* Pulse Keyframes: Sudden tactile surge to peak scale, smooth gliding return to 1.0 */
   @keyframes card-image-pulse {
     0% {
-      transform: scale(1);
+      transform: scale3d(1, 1, 1);
       animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     }
     35% {
-      transform: scale(var(--gallery-zoom-scale, 1.06));
+      transform: scale3d(var(--gallery-zoom-scale, 1.06), var(--gallery-zoom-scale, 1.06), 1);
       animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
     }
     100% {
-      transform: scale(1);
+      transform: scale3d(1, 1, 1);
     }
   }
 
@@ -371,17 +369,14 @@
   }
 
   .card-gallery--anim-second_image_zoom .card-gallery__secondary-image img,
-  .card-gallery--anim-second_image_pulse .card-gallery__secondary-image img,
-  .card-gallery--anim-second_image_zoom .card-gallery__primary-image img,
-  .card-gallery--anim-second_image_pulse .card-gallery__primary-image img {
-    transform: scale(1) !important;
-    transform-origin: center center !important;
-    will-change: transform !important;
-    backface-visibility: hidden !important;
-    -webkit-backface-visibility: hidden !important;
+  .card-gallery--anim-second_image_pulse .card-gallery__secondary-image img {
+    transform-origin: center center;
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
 
-  /* When hovered: fade in second image and trigger the pulse animation */
+  /* When hovered: fade in second image */
   .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_zoom .card-gallery__secondary-image,
   .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_pulse .card-gallery__secondary-image,
   .product-card:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__secondary-image,
@@ -396,7 +391,7 @@
                 visibility 0s linear 0s !important;
   }
 
-  /* Pulse secondary image and primary image synchronously for perfectly aligned cross-fade */
+  /* Pulse the second image on products that have a secondary image */
   .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_zoom .card-gallery__secondary-image img,
   .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_pulse .card-gallery__secondary-image img,
   .product-card:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__secondary-image img,
@@ -404,16 +399,27 @@
   .card-gallery:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__secondary-image img,
   .card-gallery:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__secondary-image img,
   .resource-list__item:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__secondary-image img,
-  .resource-list__item:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__secondary-image img,
-  .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_zoom .card-gallery__primary-image img,
-  .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_pulse .card-gallery__primary-image img,
-  .product-card:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__primary-image img,
-  .product-card:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__primary-image img,
-  .card-gallery:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__primary-image img,
-  .card-gallery:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__primary-image img,
-  .resource-list__item:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__primary-image img,
-  .resource-list__item:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__primary-image img {
-    animation: card-image-pulse var(--gallery-anim-duration, 0.6s) both !important;
+  .resource-list__item:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__secondary-image img {
+    animation: card-image-pulse var(--gallery-anim-duration, 0.6s) both;
+  }
+
+  /* Fallback: On products with ONLY 1 image (no second image), pulse primary image on hover so all cards animate */
+  .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_zoom:not(.card-gallery--has-secondary) .card-gallery__primary-image img,
+  .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_pulse:not(.card-gallery--has-secondary) .card-gallery__primary-image img,
+  .product-card:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--has-secondary):not(.card-gallery--zoom-out) .card-gallery__primary-image img,
+  .product-card:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--has-secondary):not(.card-gallery--zoom-out) .card-gallery__primary-image img,
+  .card-gallery:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--has-secondary):not(.card-gallery--zoom-out) .card-gallery__primary-image img,
+  .card-gallery:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--has-secondary):not(.card-gallery--zoom-out) .card-gallery__primary-image img,
+  .resource-list__item:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--has-secondary):not(.card-gallery--zoom-out) .card-gallery__primary-image img,
+  .resource-list__item:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--has-secondary):not(.card-gallery--zoom-out) .card-gallery__primary-image img {
+    animation: card-image-pulse var(--gallery-anim-duration, 0.6s) both;
+  }
+
+  /* When product HAS a secondary image, primary image remains stationary */
+  .card-gallery--has-secondary.card-gallery--anim-second_image_zoom .card-gallery__primary-image img,
+  .card-gallery--has-secondary.card-gallery--anim-second_image_pulse .card-gallery__primary-image img {
+    transform: none;
+    animation: none;
   }
 
   /* Fade-out course: Cleanly dissolves secondary image back to primary image */
@@ -464,17 +470,16 @@
 
   /* 3. Animation: Pulse main image (zoom_image) */
   .card-gallery--anim-zoom_image .card-gallery__primary-image img {
-    transform: scale(1) !important;
-    transform-origin: center center !important;
-    will-change: transform !important;
-    backface-visibility: hidden !important;
-    -webkit-backface-visibility: hidden !important;
+    transform-origin: center center;
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
   .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-zoom_image .card-gallery__primary-image img,
   .product-card:hover .card-gallery--anim-zoom_image:not(.card-gallery--zoom-out) .card-gallery__primary-image img,
   .card-gallery:hover .card-gallery--anim-zoom_image:not(.card-gallery--zoom-out) .card-gallery__primary-image img,
   .resource-list__item:hover .card-gallery--anim-zoom_image:not(.card-gallery--zoom-out) .card-gallery__primary-image img {
-    animation: card-image-pulse var(--gallery-anim-duration, 0.6s) both !important;
+    animation: card-image-pulse var(--gallery-anim-duration, 0.6s) both;
   }
 
   /* 4. Animation: None */
