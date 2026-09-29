@@ -340,15 +340,15 @@
   /* Pulse Keyframes: Sudden tactile surge to peak scale, smooth gliding return to 1.0 */
   @keyframes card-image-pulse {
     0% {
-      transform: scale3d(1, 1, 1);
+      transform: scale(1);
       animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     }
     35% {
-      transform: scale3d(var(--gallery-zoom-scale, 1.06), var(--gallery-zoom-scale, 1.06), 1);
+      transform: scale(var(--gallery-zoom-scale, 1.06));
       animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
     }
     100% {
-      transform: scale3d(1, 1, 1);
+      transform: scale(1);
     }
   }
 
@@ -717,13 +717,14 @@
           if (wrapper._zoomCourseAttached) return;
           wrapper._zoomCourseAttached = true;
 
-          const card = wrapper.closest('product-card') || wrapper.closest('.resource-list__item') || wrapper;
+          const card = wrapper.closest('.resource-list__item') || wrapper.closest('.product-grid__item') || wrapper.closest('product-card') || wrapper;
           let enterTimestamp = 0;
           let isHovered = false;
           let exitTimer = null;
           let finishTimer = null;
 
-          card.addEventListener('mouseenter', function() {
+          function onEnter() {
+            if (isHovered) return;
             isHovered = true;
             enterTimestamp = Date.now();
             if (exitTimer) { clearTimeout(exitTimer); exitTimer = null; }
@@ -733,9 +734,10 @@
             wrapper.classList.remove('card-gallery--zoom-in');
             void wrapper.offsetWidth; // Force reflow to cleanly restart the pulse animation
             wrapper.classList.add('card-gallery--zoom-in');
-          });
+          }
 
-          card.addEventListener('mouseleave', function() {
+          function onLeave(e) {
+            if (e && e.relatedTarget && card.contains(e.relatedTarget)) return;
             isHovered = false;
             const durationSec = parseFloat(getComputedStyle(wrapper).getPropertyValue('--gallery-anim-duration')) || 0.6;
             const durationMs = durationSec * 1000;
@@ -753,7 +755,14 @@
                 wrapper.classList.remove('card-gallery--zoom-out');
               }, 380);
             }, delay);
-          });
+          }
+
+          card.addEventListener('mouseenter', onEnter);
+          card.addEventListener('mouseleave', onLeave);
+          if (card !== wrapper) {
+            wrapper.addEventListener('mouseenter', onEnter);
+            wrapper.addEventListener('mouseleave', onLeave);
+          }
         });
       }
 
