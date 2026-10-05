@@ -1,47 +1,604 @@
 {% doc %}
   Trust Features ("Why Kay Cosmetics") section.
   Communicates genuine wholesale background, nationwide delivery,
-  and Cash on Delivery without fabricated claims or inflated stats.
+  and Cash on Delivery with full merchant styling and responsive layouts.
 {% enddoc %}
 
+{% liquid
+  assign section_id = section.id | replace: '-', '_'
+  assign bg_style = section.settings.section_bg_style | default: 'canvas'
+  assign header_align = section.settings.header_alignment | default: 'left'
+  assign eyebrow_style = section.settings.eyebrow_style | default: 'uppercase'
+  assign heading_size = section.settings.heading_size | default: 'medium'
+  assign card_style = section.settings.card_style | default: 'elevated_card'
+  assign card_align = section.settings.card_alignment | default: 'left'
+  assign card_radius = section.settings.card_border_radius | default: 16
+  assign card_padding = section.settings.card_padding | default: 22
+  assign card_hover = section.settings.card_hover_effect | default: 'lift'
+  assign title_font = section.settings.title_font | default: 'heading'
+  assign title_size = section.settings.title_size | default: 'medium'
+  assign icon_shape = section.settings.icon_shape | default: 'squircle'
+  assign icon_size = section.settings.icon_size | default: 'medium'
+  assign icon_hover = section.settings.icon_hover_anim | default: 'scale'
+  assign cols_desktop = section.settings.columns_desktop | default: '5'
+  assign layout_mobile = section.settings.layout_mobile | default: 'carousel'
+  assign card_gap = section.settings.card_gap | default: 16
+  assign card_bg = section.settings.card_bg_color
+  assign card_border = section.settings.card_border_color
+  assign icon_color = section.settings.icon_color | default: '#BD7385'
+  assign icon_bg = section.settings.icon_bg_color | default: '#FDF2F4'
+  assign icon_border = section.settings.icon_border_color | default: '#F3D8DF'
+  assign heading_color = section.settings.heading_color
+  assign subtitle_color = section.settings.subtitle_color
+  assign eyebrow_color = section.settings.eyebrow_color
+  assign show_top_div = section.settings.show_top_divider
+  assign show_bottom_div = section.settings.show_bottom_divider
+  assign divider_color = section.settings.divider_color | default: '#EFE6E8'
+%}
+
 <div
-  class="section section--{{ section.settings.section_width }} trust-features-section spacing-style"
-  style="{% render 'spacing-style', settings: section.settings %}"
+  id="TrustFeatures-{{ section.id }}"
+  class="section section--{{ section.settings.section_width }} trust-features-section spacing-style trust-features-section--bg-{{ bg_style }} {% if show_top_div %}trust-features-section--top-divider{% endif %} {% if show_bottom_div %}trust-features-section--bottom-divider{% endif %}"
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    {% if bg_style == 'custom' and section.settings.section_bg_color != blank and section.settings.section_bg_color != 'rgba(0,0,0,0)' %}
+      background-color: {{ section.settings.section_bg_color }};
+    {% endif %}
+    --tf-card-radius: {{ card_radius }}px;
+    --tf-card-padding: {{ card_padding }}px;
+    --tf-card-gap: {{ card_gap }}px;
+    --tf-divider-color: {{ divider_color }};
+    {% if card_bg != blank and card_bg != 'rgba(0,0,0,0)' %}--tf-card-bg: {{ card_bg }};{% endif %}
+    {% if card_border != blank and card_border != 'rgba(0,0,0,0)' %}--tf-card-border: {{ card_border }};{% endif %}
+    --tf-icon-color: {{ icon_color }};
+    --tf-icon-bg: {{ icon_bg }};
+    --tf-icon-border: {{ icon_border }};
+  "
 >
-  <div class="category-grid-header">
+  {%- style -%}
+    #TrustFeatures-{{ section.id }} {
+      position: relative;
+    }
+
+    #TrustFeatures-{{ section.id }}.trust-features-section--bg-canvas {
+      background-color: var(--yozo-canvas, #FAF5F2);
+    }
+
+    #TrustFeatures-{{ section.id }}.trust-features-section--bg-warm_gradient {
+      background: linear-gradient(180deg, #FBF2F4 0%, #FAF5F2 100%);
+    }
+
+    #TrustFeatures-{{ section.id }}.trust-features-section--bg-white {
+      background-color: #FFFFFF;
+    }
+
+    #TrustFeatures-{{ section.id }}.trust-features-section--top-divider {
+      border-top: 1px solid var(--tf-divider-color, #EFE6E8);
+    }
+
+    #TrustFeatures-{{ section.id }}.trust-features-section--bottom-divider {
+      border-bottom: 1px solid var(--tf-divider-color, #EFE6E8);
+    }
+
+    /* Section Header */
+    #TrustFeatures-{{ section.id }} .trust-features-header {
+      margin-bottom: clamp(22px, 3.5vw, 36px);
+    }
+    #TrustFeatures-{{ section.id }} .trust-features-header--left {
+      text-align: left;
+    }
+    #TrustFeatures-{{ section.id }} .trust-features-header--center {
+      text-align: center;
+    }
+    #TrustFeatures-{{ section.id }} .trust-features-header--right {
+      text-align: right;
+    }
+
+    #TrustFeatures-{{ section.id }} .section-eyebrow {
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      margin-bottom: 8px;
+      color: {% if eyebrow_color != blank %}{{ eyebrow_color }}{% else %}var(--yozo-rosewood, #BD7385){% endif %};
+    }
+    #TrustFeatures-{{ section.id }} .section-eyebrow--uppercase {
+      text-transform: uppercase;
+    }
+    #TrustFeatures-{{ section.id }} .section-eyebrow--serif_italic {
+      font-family: var(--font-accent--family, var(--font-heading--family)), Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      text-transform: none;
+    }
+    #TrustFeatures-{{ section.id }} .section-eyebrow--pill_badge {
+      text-transform: uppercase;
+      padding: 4px 12px;
+      background: rgba(189, 115, 133, 0.12);
+      border-radius: 20px;
+      border: 1px solid rgba(189, 115, 133, 0.2);
+    }
+
+    #TrustFeatures-{{ section.id }} .section-title {
+      font-family: var(--font-heading--family), serif;
+      font-weight: var(--font-heading--weight, 500);
+      line-height: 1.22;
+      margin: 0 0 10px 0;
+      letter-spacing: -0.015em;
+      color: {% if heading_color != blank %}{{ heading_color }}{% else %}var(--yozo-plum-dark, #2C1E26){% endif %};
+    }
+    #TrustFeatures-{{ section.id }} .section-title--small { font-size: clamp(1.4rem, 2.5vw, 1.85rem); }
+    #TrustFeatures-{{ section.id }} .section-title--medium { font-size: clamp(1.75rem, 3.2vw, 2.35rem); }
+    #TrustFeatures-{{ section.id }} .section-title--large { font-size: clamp(2.1rem, 4vw, 3rem); }
+
+    #TrustFeatures-{{ section.id }} .section-subtitle {
+      font-size: 0.9375rem;
+      line-height: 1.55;
+      color: {% if subtitle_color != blank %}{{ subtitle_color }}{% else %}var(--yozo-text-muted, #6B5C65){% endif %};
+      max-width: {{ section.settings.subtitle_max_width | default: 580 }}px;
+      margin: 0;
+      {% if header_align == 'center' %}
+        margin-left: auto;
+        margin-right: auto;
+      {% elsif header_align == 'right' %}
+        margin-left: auto;
+      {% endif %}
+    }
+
+    /* Grid Layout */
+    #TrustFeatures-{{ section.id }} .trust-features-grid {
+      display: grid;
+      gap: var(--tf-card-gap, 16px);
+      align-items: stretch;
+      {% if cols_desktop == '5' %}
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      {% elsif cols_desktop == '4' %}
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      {% elsif cols_desktop == '3' %}
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      {% else %}
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      {% endif %}
+    }
+
+    @media screen and (max-width: 1100px) and (min-width: 769px) {
+      #TrustFeatures-{{ section.id }} .trust-features-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    /* Card Styling */
+    #TrustFeatures-{{ section.id }} .trust-feature-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: var(--tf-card-padding, 22px);
+      border-radius: var(--tf-card-radius, 16px);
+      text-decoration: none;
+      box-sizing: border-box;
+      transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+                  box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+                  border-color 0.28s ease,
+                  background-color 0.28s ease;
+    }
+
+    /* Card Alignments */
+    #TrustFeatures-{{ section.id }} .trust-feature-card--align-left {
+      text-align: left;
+      align-items: flex-start;
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-card--align-center {
+      text-align: center;
+      align-items: center;
+    }
+
+    /* Card Style: Elevated (Default Beauty standard) */
+    #TrustFeatures-{{ section.id }} .trust-feature-card--elevated_card {
+      background: var(--tf-card-bg, #FFFFFF);
+      border: 1px solid var(--tf-card-border, #EFE6E8);
+      box-shadow: 0 4px 18px -4px rgba(44, 30, 38, 0.05), 0 1px 3px 0 rgba(44, 30, 38, 0.02);
+    }
+
+    /* Card Style: Soft Blush */
+    #TrustFeatures-{{ section.id }} .trust-feature-card--soft_blush {
+      background: var(--tf-card-bg, #FDF7F8);
+      border: 1px solid var(--tf-card-border, #F3E5E8);
+      box-shadow: 0 2px 10px -2px rgba(189, 115, 133, 0.04);
+    }
+
+    /* Card Style: Bordered Minimal */
+    #TrustFeatures-{{ section.id }} .trust-feature-card--bordered {
+      background: var(--tf-card-bg, rgba(255, 255, 255, 0.7));
+      border: 1.5px solid var(--tf-card-border, #EFE6E8);
+      box-shadow: none;
+    }
+
+    /* Card Style: Glass */
+    #TrustFeatures-{{ section.id }} .trust-feature-card--glass {
+      background: var(--tf-card-bg, rgba(255, 255, 255, 0.85));
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--tf-card-border, rgba(255, 255, 255, 0.8));
+      box-shadow: 0 8px 32px 0 rgba(44, 30, 38, 0.06);
+    }
+
+    /* Card Hover Effects */
+    #TrustFeatures-{{ section.id }} .trust-feature-card--hover-lift:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 14px 28px -6px rgba(189, 115, 133, 0.16), 0 4px 10px 0 rgba(44, 30, 38, 0.04);
+      border-color: var(--yozo-rosewood, #BD7385);
+    }
+
+    #TrustFeatures-{{ section.id }} .trust-feature-card--hover-glow:hover {
+      border-color: var(--yozo-rosewood, #BD7385);
+      box-shadow: 0 0 0 3px rgba(189, 115, 133, 0.15), 0 8px 20px -4px rgba(189, 115, 133, 0.12);
+    }
+
+    #TrustFeatures-{{ section.id }} .trust-feature-card--hover-scale:hover {
+      transform: scale(1.025);
+      border-color: var(--yozo-rosewood, #BD7385);
+      box-shadow: 0 10px 24px -4px rgba(44, 30, 38, 0.1);
+    }
+
+    /* Sheen Effect */
+    #TrustFeatures-{{ section.id }} .trust-feature-card--hover-sheen {
+      overflow: hidden;
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-card--hover-sheen::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 50%;
+      height: 200%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.5) 50%,
+        transparent 100%
+      );
+      transform: rotate(25deg);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-card--hover-sheen:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 26px -6px rgba(189, 115, 133, 0.16);
+      border-color: var(--yozo-rosewood, #BD7385);
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-card--hover-sheen:hover::after {
+      opacity: 1;
+      animation: tf-sheen-sweep 0.75s ease forwards;
+    }
+
+    @keyframes tf-sheen-sweep {
+      0% { left: -60%; }
+      100% { left: 140%; }
+    }
+
+    /* Card Top Bar (Icon + Badge) */
+    #TrustFeatures-{{ section.id }} .trust-feature-card__top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 14px;
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-card--align-center .trust-feature-card__top {
+      justify-content: center;
+      position: relative;
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-card--align-center .trust-feature-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    /* Icon Box */
+    #TrustFeatures-{{ section.id }} .trust-feature-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: var(--tf-icon-bg, #FDF2F4);
+      color: var(--tf-icon-color, #BD7385);
+      border: 1px solid var(--tf-icon-border, #F3D8DF);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.25s ease,
+                  color 0.25s ease;
+    }
+
+    #TrustFeatures-{{ section.id }} .trust-feature-icon--shape-squircle {
+      border-radius: 12px;
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-icon--shape-circle {
+      border-radius: 50%;
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-icon--shape-soft_square {
+      border-radius: 8px;
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-icon--shape-minimal {
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+    }
+
+    /* Icon Sizes */
+    #TrustFeatures-{{ section.id }} .trust-feature-icon--size-small {
+      width: 38px;
+      height: 38px;
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-icon--size-small svg,
+    #TrustFeatures-{{ section.id }} .trust-feature-icon--size-small img {
+      width: 18px;
+      height: 18px;
+    }
+
+    #TrustFeatures-{{ section.id }} .trust-feature-icon--size-medium {
+      width: 46px;
+      height: 46px;
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-icon--size-medium svg,
+    #TrustFeatures-{{ section.id }} .trust-feature-icon--size-medium img {
+      width: 22px;
+      height: 22px;
+    }
+
+    #TrustFeatures-{{ section.id }} .trust-feature-icon--size-large {
+      width: 54px;
+      height: 54px;
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-icon--size-large svg,
+    #TrustFeatures-{{ section.id }} .trust-feature-icon--size-large img {
+      width: 26px;
+      height: 26px;
+    }
+
+    /* Icon Hover Animations */
+    #TrustFeatures-{{ section.id }} .trust-feature-card:hover .trust-feature-icon--hover-scale {
+      transform: scale(1.12);
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-card:hover .trust-feature-icon--hover-bounce {
+      transform: translateY(-3px);
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-card:hover .trust-feature-icon--hover-rotate {
+      transform: rotate(8deg) scale(1.08);
+    }
+
+    /* Custom Icon Image */
+    #TrustFeatures-{{ section.id }} .trust-feature-icon__img {
+      object-fit: contain;
+      display: block;
+    }
+
+    /* Micro-Badge */
+    #TrustFeatures-{{ section.id }} .trust-feature-badge {
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: var(--yozo-pastel-pink, #FDF2F4);
+      color: var(--yozo-rosewood, #BD7385);
+      border: 1px solid var(--yozo-border-subtle, #EFE6E8);
+      line-height: 1.2;
+    }
+
+    /* Card Content */
+    #TrustFeatures-{{ section.id }} .trust-feature-card__content {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-grow: 1;
+    }
+
+    #TrustFeatures-{{ section.id }} .trust-feature-title {
+      margin: 0;
+      line-height: 1.35;
+      letter-spacing: -0.01em;
+      color: var(--yozo-plum-dark, #2C1E26);
+    }
+
+    #TrustFeatures-{{ section.id }} .trust-feature-title--font-heading {
+      font-family: var(--font-heading--family), serif;
+      font-weight: 600;
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-title--font-body {
+      font-family: var(--font-body--family), sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    #TrustFeatures-{{ section.id }} .trust-feature-title--size-small { font-size: 0.9375rem; }
+    #TrustFeatures-{{ section.id }} .trust-feature-title--size-medium { font-size: 1.0625rem; }
+    #TrustFeatures-{{ section.id }} .trust-feature-title--size-large { font-size: 1.1875rem; }
+
+    #TrustFeatures-{{ section.id }} .trust-feature-desc {
+      font-family: var(--font-body--family), sans-serif;
+      font-size: 0.8125rem;
+      color: var(--yozo-text-muted, #6B5C65);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Optional Card Action Link Indicator */
+    #TrustFeatures-{{ section.id }} .trust-feature-card__action {
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--yozo-rosewood, #BD7385);
+      opacity: 0.85;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    #TrustFeatures-{{ section.id }} .trust-feature-card:hover .trust-feature-card__action {
+      opacity: 1;
+      transform: translateX(3px);
+    }
+
+    /* Mobile Responsive Layout */
+    @media screen and (max-width: 768px) {
+      {% if layout_mobile == 'carousel' %}
+        #TrustFeatures-{{ section.id }} .trust-features-grid {
+          display: flex;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          padding-bottom: 12px;
+          margin-left: calc(var(--page-gutter, 20px) * -1);
+          margin-right: calc(var(--page-gutter, 20px) * -1);
+          padding-left: var(--page-gutter, 20px);
+          padding-right: var(--page-gutter, 20px);
+          gap: var(--tf-card-gap, 14px);
+        }
+        #TrustFeatures-{{ section.id }} .trust-features-grid::-webkit-scrollbar {
+          display: none;
+        }
+        #TrustFeatures-{{ section.id }} .trust-feature-card {
+          flex: 0 0 76%;
+          max-width: 285px;
+          scroll-snap-align: start;
+        }
+      {% elsif layout_mobile == 'grid_2' %}
+        #TrustFeatures-{{ section.id }} .trust-features-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 12px;
+        }
+        #TrustFeatures-{{ section.id }} .trust-feature-card {
+          padding: 16px 14px;
+        }
+      {% else %}
+        #TrustFeatures-{{ section.id }} .trust-features-grid {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+      {% endif %}
+    }
+  {%- endstyle -%}
+
+  {%- comment -%} Section Header {%- endcomment -%}
+  <div class="category-grid-header trust-features-header trust-features-header--{{ header_align }}">
     {% if section.settings.eyebrow != blank %}
-      <span class="section-eyebrow">{{ section.settings.eyebrow }}</span>
+      <span class="section-eyebrow section-eyebrow--{{ eyebrow_style }}">{{ section.settings.eyebrow }}</span>
     {% endif %}
     {% if section.settings.title != blank %}
-      <h2 class="section-title">{{ section.settings.title }}</h2>
+      <h2 class="section-title section-title--{{ heading_size }}">{{ section.settings.title }}</h2>
     {% endif %}
     {% if section.settings.subtitle != blank %}
       <p class="section-subtitle">{{ section.settings.subtitle }}</p>
     {% endif %}
   </div>
 
+  {%- comment -%} Trust Features Grid / Carousel {%- endcomment -%}
   <div class="trust-features-grid">
     {% for block in section.blocks %}
-      <div class="trust-feature-card" {{ block.shopify_attributes }}>
-        <div class="trust-feature-icon" aria-hidden="true">
-          {% case block.settings.icon %}
-            {% when 'authentic' %}
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-            {% when 'wholesale' %}
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><rect width="20" height="5" x="2" y="7" rx="1"/></svg>
-            {% when 'delivery' %}
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="13" x="1" y="3" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-            {% when 'checkout' %}
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-            {% when 'support' %}
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      {% liquid
+        assign card_tag = 'div'
+        if block.settings.link != blank
+          assign card_tag = 'a'
+        endif
+      %}
+
+      <{{ card_tag }}
+        {% if block.settings.link != blank %}
+          href="{{ block.settings.link }}"
+        {% endif %}
+        class="trust-feature-card trust-feature-card--{{ card_style }} trust-feature-card--align-{{ card_align }} trust-feature-card--hover-{{ card_hover }}"
+        {{ block.shopify_attributes }}
+      >
+        <div class="trust-feature-card__top">
+          <div class="trust-feature-icon trust-feature-icon--shape-{{ icon_shape }} trust-feature-icon--size-{{ icon_size }} trust-feature-icon--hover-{{ icon_hover }}" aria-hidden="true">
+            {% if block.settings.custom_icon_image != blank %}
+              {{
+                block.settings.custom_icon_image
+                | image_url: width: 100
+                | image_tag:
+                  widths: '50, 100',
+                  class: 'trust-feature-icon__img',
+                  alt: block.settings.title,
+                  loading: 'lazy'
+              }}
+            {% elsif block.settings.custom_icon_svg != blank %}
+              {{ block.settings.custom_icon_svg }}
             {% else %}
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-          {% endcase %}
+              {% case block.settings.icon %}
+                {% when 'authentic' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                {% when 'wholesale' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><rect width="20" height="5" x="2" y="7" rx="1"/></svg>
+                {% when 'delivery' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="13" x="1" y="3" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                {% when 'checkout' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                {% when 'support' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                {% when 'quality' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                {% when 'award' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+                {% when 'return' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+                {% when 'heart' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                {% when 'leaf' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                {% when 'lock' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                {% else %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+              {% endcase %}
+            {% endif %}
+          </div>
+
+          {% if block.settings.badge_text != blank %}
+            <span
+              class="trust-feature-badge"
+              style="
+                {% if block.settings.badge_bg_color != blank and block.settings.badge_bg_color != 'rgba(0,0,0,0)' %}background-color: {{ block.settings.badge_bg_color }};{% endif %}
+                {% if block.settings.badge_text_color != blank %}color: {{ block.settings.badge_text_color }};{% endif %}
+              "
+            >
+              {{ block.settings.badge_text }}
+            </span>
+          {% endif %}
         </div>
-        <h3 class="trust-feature-title">{{ block.settings.title }}</h3>
-        <p class="trust-feature-desc">{{ block.settings.description }}</p>
-      </div>
+
+        <div class="trust-feature-card__content">
+          <h3
+            class="trust-feature-title trust-feature-title--font-{{ title_font }} trust-feature-title--size-{{ title_size }}"
+            {% if block.settings.title_color != blank %}
+              style="color: {{ block.settings.title_color }};"
+            {% endif %}
+          >
+            {{ block.settings.title }}
+          </h3>
+          <p
+            class="trust-feature-desc"
+            {% if block.settings.desc_color != blank %}
+              style="color: {{ block.settings.desc_color }};"
+            {% endif %}
+          >
+            {{ block.settings.description }}
+          </p>
+        </div>
+
+        {% if block.settings.link != blank and block.settings.link_label != blank %}
+          <div class="trust-feature-card__action">
+            <span>{{ block.settings.link_label }}</span>
+            <span aria-hidden="true">&rarr;</span>
+          </div>
+        {% endif %}
+      </{{ card_tag }}>
     {% endfor %}
   </div>
 </div>
@@ -53,10 +610,42 @@
   "class": "section-trust-features",
   "settings": [
     {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow text",
       "default": "Wholesale Heritage"
+    },
+    {
+      "type": "select",
+      "id": "eyebrow_style",
+      "label": "Eyebrow style",
+      "options": [
+        { "value": "uppercase", "label": "Clean Uppercase" },
+        { "value": "serif_italic", "label": "Editorial Italic" },
+        { "value": "pill_badge", "label": "Soft Pill Badge" }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow color",
+      "default": "#BD7385"
     },
     {
       "type": "text",
@@ -65,10 +654,269 @@
       "default": "Why Choose Kay Cosmetics"
     },
     {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#2C1E26"
+    },
+    {
       "type": "textarea",
       "id": "subtitle",
       "label": "Subtitle",
       "default": "Built on our cosmetics wholesale foundation, bringing reliable beauty products directly to online shoppers."
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#6B5C65"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_max_width",
+      "label": "Subtitle max width",
+      "min": 400,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "default": 580
+    },
+    {
+      "type": "header",
+      "content": "Card Aesthetic & Style"
+    },
+    {
+      "type": "select",
+      "id": "card_style",
+      "label": "Card style",
+      "options": [
+        { "value": "elevated_card", "label": "Elevated Soft Shadow (Beauty)" },
+        { "value": "soft_blush", "label": "Soft Blush Tint" },
+        { "value": "bordered", "label": "Crisp Minimal Border" },
+        { "value": "glass", "label": "Frosted Glass" }
+      ],
+      "default": "elevated_card"
+    },
+    {
+      "type": "select",
+      "id": "card_alignment",
+      "label": "Card text & icon alignment",
+      "options": [
+        { "value": "left", "label": "Left aligned" },
+        { "value": "center", "label": "Center aligned" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card corner radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card inner padding",
+      "min": 14,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border color",
+      "default": "#EFE6E8"
+    },
+    {
+      "type": "select",
+      "id": "card_hover_effect",
+      "label": "Card hover effect",
+      "options": [
+        { "value": "lift", "label": "Float Lift & Ambient Shadow" },
+        { "value": "glow", "label": "Rosewood Border Glow" },
+        { "value": "scale", "label": "Subtle Zoom Scale" },
+        { "value": "sheen", "label": "Luxury Light Sheen" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "lift"
+    },
+    {
+      "type": "select",
+      "id": "title_font",
+      "label": "Card title font",
+      "options": [
+        { "value": "heading", "label": "Editorial Serif (Besley)" },
+        { "value": "body", "label": "Modern Sans-serif (Figtree)" }
+      ],
+      "default": "heading"
+    },
+    {
+      "type": "select",
+      "id": "title_size",
+      "label": "Card title size",
+      "options": [
+        { "value": "small", "label": "Small (15px)" },
+        { "value": "medium", "label": "Medium (17px)" },
+        { "value": "large", "label": "Large (19px)" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "header",
+      "content": "Icon Styling"
+    },
+    {
+      "type": "select",
+      "id": "icon_shape",
+      "label": "Icon shape",
+      "options": [
+        { "value": "squircle", "label": "Smooth Squircle (12px)" },
+        { "value": "circle", "label": "Circular Badge" },
+        { "value": "soft_square", "label": "Soft Square (8px)" },
+        { "value": "minimal", "label": "Minimal (No Box)" }
+      ],
+      "default": "squircle"
+    },
+    {
+      "type": "select",
+      "id": "icon_size",
+      "label": "Icon badge size",
+      "options": [
+        { "value": "small", "label": "Small (38px)" },
+        { "value": "medium", "label": "Medium (46px)" },
+        { "value": "large", "label": "Large (54px)" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#BD7385"
+    },
+    {
+      "type": "color",
+      "id": "icon_bg_color",
+      "label": "Icon background tint",
+      "default": "#FDF2F4"
+    },
+    {
+      "type": "color",
+      "id": "icon_border_color",
+      "label": "Icon border tint",
+      "default": "#F3D8DF"
+    },
+    {
+      "type": "select",
+      "id": "icon_hover_anim",
+      "label": "Icon hover animation",
+      "options": [
+        { "value": "scale", "label": "Smooth Scale" },
+        { "value": "bounce", "label": "Gentle Float Up" },
+        { "value": "rotate", "label": "Subtle Tilt" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "scale"
+    },
+    {
+      "type": "header",
+      "content": "Grid & Responsiveness"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "options": [
+        { "value": "5", "label": "5 Columns" },
+        { "value": "4", "label": "4 Columns" },
+        { "value": "3", "label": "3 Columns" },
+        { "value": "auto", "label": "Auto-fit width" }
+      ],
+      "default": "5"
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between cards",
+      "min": 8,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "layout_mobile",
+      "label": "Mobile layout",
+      "options": [
+        { "value": "carousel", "label": "Swipeable Carousel (Recommended)" },
+        { "value": "grid_2", "label": "2 Columns Grid" },
+        { "value": "stacked", "label": "1 Column Stacked" }
+      ],
+      "default": "carousel"
+    },
+    {
+      "type": "header",
+      "content": "Section Background & Dividers"
+    },
+    {
+      "type": "select",
+      "id": "section_bg_style",
+      "label": "Section background",
+      "options": [
+        { "value": "canvas", "label": "Theme Canvas (#FAF5F2)" },
+        { "value": "warm_gradient", "label": "Yozo Ribbon Gradient" },
+        { "value": "white", "label": "Pure White (#FFFFFF)" },
+        { "value": "custom", "label": "Custom Background Color" }
+      ],
+      "default": "canvas"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Custom background color",
+      "default": "#FAF5F2"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_top_divider",
+      "label": "Show top divider line",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_divider",
+      "label": "Show bottom divider line",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider line color",
+      "default": "#EFE6E8"
     },
     {
       "type": "select",
@@ -109,15 +957,47 @@
         {
           "type": "select",
           "id": "icon",
-          "label": "Icon",
+          "label": "Preset icon",
           "options": [
-            { "value": "authentic", "label": "Authentic Products" },
-            { "value": "wholesale", "label": "Wholesale Sourcing" },
-            { "value": "delivery", "label": "Nationwide Delivery" },
-            { "value": "checkout", "label": "Cash on Delivery" },
-            { "value": "support", "label": "WhatsApp Support" }
+            { "value": "authentic", "label": "Shield Check (Authentic)" },
+            { "value": "wholesale", "label": "Storefront (Wholesale Heritage)" },
+            { "value": "delivery", "label": "Fast Delivery Truck" },
+            { "value": "checkout", "label": "Payment Card (Cash on Delivery)" },
+            { "value": "support", "label": "Chat Bubble (Order Support)" },
+            { "value": "quality", "label": "Sparkle Star (Premium Quality)" },
+            { "value": "award", "label": "Ribbon Award (Verified)" },
+            { "value": "return", "label": "Return Arrows (Easy Exchange)" },
+            { "value": "heart", "label": "Heart (Customer Loved)" },
+            { "value": "leaf", "label": "Leaf (Clean Beauty)" },
+            { "value": "lock", "label": "Lock (Secure Shopping)" }
           ],
           "default": "authentic"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon_image",
+          "label": "Custom icon image (optional)"
+        },
+        {
+          "type": "textarea",
+          "id": "custom_icon_svg",
+          "label": "Custom SVG code (optional)"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Corner micro-badge (e.g. '100%', 'COD', 'DIRECT')",
+          "info": "Optional highlight badge in top-right of card"
+        },
+        {
+          "type": "color",
+          "id": "badge_bg_color",
+          "label": "Badge background color"
+        },
+        {
+          "type": "color",
+          "id": "badge_text_color",
+          "label": "Badge text color"
         },
         {
           "type": "text",
@@ -126,10 +1006,30 @@
           "default": "Authentic Sourcing"
         },
         {
+          "type": "color",
+          "id": "title_color",
+          "label": "Title color override (optional)"
+        },
+        {
           "type": "textarea",
           "id": "description",
           "label": "Description",
-          "default": "All products are carefully sourced through authorized brand distributors."
+          "default": "All products are carefully sourced through authorized brand distributors and wholesale partners."
+        },
+        {
+          "type": "color",
+          "id": "desc_color",
+          "label": "Description color override (optional)"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Card link (optional)"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link label (optional, e.g. 'Learn more')"
         }
       ]
     }
@@ -137,11 +1037,31 @@
   "presets": [
     {
       "name": "Why Kay Cosmetics",
+      "settings": {
+        "header_alignment": "left",
+        "eyebrow": "Wholesale Heritage",
+        "eyebrow_style": "uppercase",
+        "title": "Why Choose Kay Cosmetics",
+        "heading_size": "medium",
+        "card_style": "elevated_card",
+        "card_alignment": "left",
+        "card_border_radius": 16,
+        "card_padding": 22,
+        "card_hover_effect": "lift",
+        "title_font": "heading",
+        "title_size": "medium",
+        "icon_shape": "squircle",
+        "icon_size": "medium",
+        "columns_desktop": "5",
+        "layout_mobile": "carousel",
+        "section_bg_style": "canvas"
+      },
       "blocks": [
         {
           "type": "feature",
           "settings": {
             "icon": "authentic",
+            "badge_text": "100% Genuine",
             "title": "Authentic Sourcing",
             "description": "Products sourced through authorized brand distributors and wholesale partners."
           }
@@ -150,6 +1070,7 @@
           "type": "feature",
           "settings": {
             "icon": "wholesale",
+            "badge_text": "Direct",
             "title": "Wholesale Heritage",
             "description": "Established wholesale operations provide genuine value directly to consumer orders."
           }
@@ -158,22 +1079,25 @@
           "type": "feature",
           "settings": {
             "icon": "delivery",
+            "badge_text": "Nationwide",
             "title": "Nationwide Delivery",
-            "description": "Courier delivery across all cities and regional areas in Pakistan."
+            "description": "Reliable courier delivery across all cities and regional areas in Pakistan."
           }
         },
         {
           "type": "feature",
           "settings": {
             "icon": "checkout",
+            "badge_text": "COD",
             "title": "Cash on Delivery",
-            "description": "Pay comfortably upon arrival with Cash on Delivery (COD) service."
+            "description": "Convenient cash payment upon arrival with Cash on Delivery (COD) service."
           }
         },
         {
           "type": "feature",
           "settings": {
             "icon": "support",
+            "badge_text": "WhatsApp",
             "title": "Order Support",
             "description": "Direct WhatsApp assistance for order questions and product information."
           }

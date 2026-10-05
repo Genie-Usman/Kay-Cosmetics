@@ -580,6 +580,7 @@
           "type": "feature",
           "settings": {
             "icon": "authentic",
+            "badge_text": "100% Genuine",
             "title": "Authentic Sourcing",
             "description": "Products sourced through authorized brand distributors and wholesale channels."
           }
@@ -588,6 +589,7 @@
           "type": "feature",
           "settings": {
             "icon": "wholesale",
+            "badge_text": "Direct",
             "title": "Wholesale Heritage",
             "description": "Established wholesale operations provide genuine value on everyday orders."
           }
@@ -596,6 +598,7 @@
           "type": "feature",
           "settings": {
             "icon": "delivery",
+            "badge_text": "Nationwide",
             "title": "Nationwide Delivery",
             "description": "Reliable courier delivery across all cities and regional areas in Pakistan."
           }
@@ -604,6 +607,7 @@
           "type": "feature",
           "settings": {
             "icon": "checkout",
+            "badge_text": "COD",
             "title": "Cash on Delivery",
             "description": "Convenient cash payment upon arrival with Cash on Delivery (COD) service."
           }
@@ -612,6 +616,7 @@
           "type": "feature",
           "settings": {
             "icon": "support",
+            "badge_text": "WhatsApp",
             "title": "Order Support",
             "description": "Direct WhatsApp assistance for order questions and product information."
           }
@@ -625,9 +630,27 @@
         "trust_support"
       ],
       "settings": {
+        "header_alignment": "left",
         "eyebrow": "Wholesale Heritage",
+        "eyebrow_style": "uppercase",
         "title": "Why Choose Kay Cosmetics",
+        "heading_size": "medium",
         "subtitle": "Built on our cosmetics wholesale foundation, bringing reliable beauty products directly to online shoppers.",
+        "card_style": "elevated_card",
+        "card_alignment": "left",
+        "card_border_radius": 16,
+        "card_padding": 22,
+        "card_hover_effect": "lift",
+        "title_font": "heading",
+        "title_size": "medium",
+        "icon_shape": "squircle",
+        "icon_size": "medium",
+        "icon_hover_anim": "scale",
+        "columns_desktop": "5",
+        "layout_mobile": "carousel",
+        "section_bg_style": "canvas",
+        "show_top_divider": false,
+        "show_bottom_divider": false,
         "section_width": "page-width",
         "padding-block-start": 44,
         "padding-block-end": 44
