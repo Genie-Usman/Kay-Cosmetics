@@ -356,20 +356,19 @@ body {
    Trust Features ("Why Kay Cosmetics" — Yozo Warm Ribbon Treatment)
    -------------------------------------------------------------------------- */
 .trust-features-section {
-  background: linear-gradient(180deg, #FBF2F4 0%, #FAF5F2 100%);
-  border-top: 1px solid var(--yozo-border-subtle, #EFE6E8);
-  border-bottom: 1px solid var(--yozo-border-subtle, #EFE6E8);
+  position: relative;
+  background-color: var(--yozo-canvas, #FAF5F2);
 }
 
 .trust-features-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--tf-card-gap, 16px);
 }
 
 @media screen and (max-width: 1024px) {
   .trust-features-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -384,42 +383,47 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 18px 16px;
-  background: var(--yozo-card-bg, #FFFFFF);
-  border: 1px solid var(--yozo-border-subtle, #EFE6E8);
-  border-radius: 4px;
-  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  padding: var(--tf-card-padding, 22px);
+  background: var(--tf-card-bg, #FFFFFF);
+  border: 1px solid var(--tf-card-border, #EFE6E8);
+  border-radius: var(--tf-card-radius, 16px);
+  box-shadow: 0 4px 18px -4px rgba(44, 30, 38, 0.05);
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .trust-feature-card:hover {
   border-color: var(--yozo-rosewood, #BD7385);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px -4px rgba(189, 115, 133, 0.12);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 26px -6px rgba(189, 115, 133, 0.16);
 }
 
 .trust-feature-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 4px;
-  background: var(--yozo-pastel-pink, #FDF2F4);
-  border: 1px solid var(--yozo-border-subtle, #EFE6E8);
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: var(--tf-icon-bg, #FDF2F4);
+  border: 1px solid var(--tf-icon-border, #F3D8DF);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--yozo-rosewood, #BD7385);
+  color: var(--tf-icon-color, #BD7385);
+  transition: transform 0.25s ease;
 }
 
 .trust-feature-title {
-  font-size: 0.875rem;
+  font-family: var(--font-heading--family), serif;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--yozo-plum-dark, #2C1E26);
   margin: 0;
+  line-height: 1.35;
 }
 
 .trust-feature-desc {
+  font-family: var(--font-body--family), sans-serif;
   font-size: 0.8125rem;
   color: var(--yozo-text-muted, #6B5C65);
-  line-height: 1.45;
+  line-height: 1.5;
   margin: 0;
 }
 
