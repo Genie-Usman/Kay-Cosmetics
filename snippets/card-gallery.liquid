@@ -405,8 +405,6 @@
   /* When hovered: fade in and smoothly zoom into 1.0 (Allure Beauty transition) */
   .card-gallery__media-wrapper.card-gallery--active.card-gallery--anim-second_image_zoom .card-gallery__secondary-image,
   .card-gallery__media-wrapper.card-gallery--active.card-gallery--anim-second_image_pulse .card-gallery__secondary-image,
-  .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_zoom .card-gallery__secondary-image,
-  .card-gallery__media-wrapper.card-gallery--zoom-in.card-gallery--anim-second_image_pulse .card-gallery__secondary-image,
   .product-card:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__secondary-image,
   .product-card:hover .card-gallery--anim-second_image_pulse:not(.card-gallery--zoom-out) .card-gallery__secondary-image,
   .card-gallery:hover .card-gallery--anim-second_image_zoom:not(.card-gallery--zoom-out) .card-gallery__secondary-image,
@@ -721,7 +719,13 @@
           if (wrapper._zoomCourseAttached) return;
           wrapper._zoomCourseAttached = true;
 
-          const card = wrapper.closest('.resource-list__item') || wrapper.closest('.product-grid__item') || wrapper.closest('product-card') || wrapper;
+          const rootElements = [
+            wrapper.closest('.resource-list__item'),
+            wrapper.closest('.product-grid__item'),
+            wrapper.closest('product-card'),
+            wrapper
+          ].filter(Boolean);
+
           let isHovered = false;
 
           function onEnter() {
@@ -729,23 +733,23 @@
             isHovered = true;
             wrapper.classList.remove('card-gallery--zoom-out');
             wrapper.classList.add('card-gallery--active');
-            wrapper.classList.add('card-gallery--zoom-in');
           }
 
           function onLeave(e) {
-            if (e && e.relatedTarget && card.contains(e.relatedTarget)) return;
+            const stillInside = rootElements.some(function(el) {
+              return (e && e.relatedTarget && el.contains(e.relatedTarget));
+            });
+            if (stillInside) return;
+
             isHovered = false;
             wrapper.classList.remove('card-gallery--active');
-            wrapper.classList.remove('card-gallery--zoom-in');
             wrapper.classList.add('card-gallery--zoom-out');
           }
 
-          card.addEventListener('mouseenter', onEnter);
-          card.addEventListener('mouseleave', onLeave);
-          if (card !== wrapper) {
-            wrapper.addEventListener('mouseenter', onEnter);
-            wrapper.addEventListener('mouseleave', onLeave);
-          }
+          rootElements.forEach(function(el) {
+            el.addEventListener('mouseenter', onEnter);
+            el.addEventListener('mouseleave', onLeave);
+          });
         });
       }
 
