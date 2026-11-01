@@ -1,0 +1,1093 @@
+{%- comment -%}
+  Featured Brand Ticker / Logo Carousel for Kay Cosmetics.
+  Recreates the continuous scrolling brand ticker as seen on Allure Beauty (allurebeauty.pk),
+  elevated with Kay Cosmetics design tokens and fully controllable through Shopify Theme Editor settings.
+{%- endcomment -%}
+
+{% liquid
+  assign section_id = section.id | replace: '-', '_'
+  assign bg_style = section.settings.section_bg_style | default: 'white'
+  assign header_align = section.settings.heading_alignment | default: 'center'
+  
+  assign eyebrow = section.settings.eyebrow
+  assign eyebrow_color = section.settings.eyebrow_color | default: '#BD7385'
+  assign eyebrow_size = section.settings.eyebrow_size | default: 11
+  assign eyebrow_style = section.settings.eyebrow_style | default: 'uppercase'
+  
+  assign heading = section.settings.title | default: 'Featured At Kay Cosmetics'
+  assign heading_tag = section.settings.heading_tag | default: 'h2'
+  assign heading_font = section.settings.heading_font | default: 'serif'
+  assign heading_size_desktop = section.settings.heading_size_desktop | default: 32
+  assign heading_size_mobile = section.settings.heading_size_mobile | default: 24
+  assign heading_color = section.settings.heading_color | default: '#2C1E26'
+  assign heading_letter_spacing = section.settings.heading_letter_spacing | default: 1.0
+  assign heading_margin_bottom = section.settings.heading_margin_bottom | default: 28
+  
+  assign subtitle = section.settings.subtitle
+  assign subtitle_color = section.settings.subtitle_color | default: '#6B5C65'
+  assign subtitle_size = section.settings.subtitle_size | default: 14.5
+  
+  assign scroll_direction = section.settings.scroll_direction | default: 'left'
+  assign animation_speed = section.settings.animation_speed | default: 25
+  assign pause_on_hover = section.settings.pause_on_hover
+  assign enable_edge_fade = section.settings.enable_edge_fade
+  assign edge_fade_width = section.settings.edge_fade_width | default: 60
+  
+  assign logo_max_h_desk = section.settings.logo_max_height_desktop | default: 46
+  assign logo_max_h_mob = section.settings.logo_max_height_mobile | default: 32
+  assign logo_max_w_desk = section.settings.logo_max_width_desktop | default: 160
+  assign item_spacing_desk = section.settings.item_spacing_desktop | default: 28
+  assign item_spacing_mob = section.settings.item_spacing_mobile | default: 16
+  assign hover_scale = section.settings.hover_scale | default: 105
+  assign hover_effect = section.settings.hover_effect | default: 'scale_and_opacity'
+  assign logo_filter = section.settings.logo_filter | default: 'none'
+  
+  assign show_top_div = section.settings.show_top_divider
+  assign show_bot_div = section.settings.show_bottom_divider
+  assign div_color = section.settings.divider_color | default: '#EFE6E8'
+  
+  assign custom_bg = section.settings.custom_bg_color
+  assign bg_css = '#FFFFFF'
+  if bg_style == 'canvas'
+    assign bg_css = '#FAF5F2'
+  elsif bg_style == 'soft_blush'
+    assign bg_css = '#FCF8F7'
+  elsif bg_style == 'transparent'
+    assign bg_css = 'transparent'
+  elsif bg_style == 'custom' and custom_bg != blank
+    assign bg_css = custom_bg
+  endif
+%}
+
+<div
+  id="BrandLogoTicker-{{ section.id }}"
+  class="brand-logo-ticker-section spacing-style"
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    --ticker-bg: {{ bg_css }};
+    --ticker-head-size-desk: {{ heading_size_desktop }}px;
+    --ticker-head-size-mob: {{ heading_size_mobile }}px;
+    --ticker-head-color: {{ heading_color }};
+    --ticker-head-ls: {{ heading_letter_spacing }}px;
+    --ticker-head-mb: {{ heading_margin_bottom }}px;
+    --ticker-head-align: {{ header_align }};
+    --ticker-duration: {{ animation_speed }}s;
+    --ticker-logo-h-desk: {{ logo_max_h_desk }}px;
+    --ticker-logo-h-mob: {{ logo_max_h_mob }}px;
+    --ticker-logo-w-desk: {{ logo_max_w_desk }}px;
+    --ticker-item-pad-desk: {{ item_spacing_desk }}px;
+    --ticker-item-pad-mob: {{ item_spacing_mob }}px;
+    --ticker-hover-scale: {{ hover_scale | times: 0.01 }};
+    --ticker-fade-w: {{ edge_fade_width }}px;
+    {% if show_top_div %}border-top: 1px solid {{ div_color }};{% endif %}
+    {% if show_bot_div %}border-bottom: 1px solid {{ div_color }};{% endif %}
+  "
+>
+  {% if eyebrow != blank or heading != blank or subtitle != blank %}
+    <div class="brand-ticker__header-wrap brand-ticker__header-wrap--{{ header_align }}">
+      <div class="brand-ticker__header-inner">
+        {% if eyebrow != blank %}
+          <span
+            class="brand-ticker__eyebrow"
+            style="
+              color: {{ eyebrow_color }};
+              font-size: {{ eyebrow_size }}px;
+              {% if eyebrow_style == 'uppercase' %}text-transform: uppercase; letter-spacing: 2px;{% endif %}
+            "
+          >
+            {{ eyebrow }}
+          </span>
+        {% endif %}
+
+        {% if heading != blank %}
+          <{{ heading_tag }}
+            class="brand-ticker__heading brand-ticker__heading--{{ heading_font }}"
+          >
+            {{ heading }}
+          </{{ heading_tag }}>
+        {% endif %}
+
+        {% if subtitle != blank %}
+          <p
+            class="brand-ticker__subtitle"
+            style="color: {{ subtitle_color }}; font-size: {{ subtitle_size }}px;"
+          >
+            {{ subtitle }}
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  {%- comment -%} Capture individual brand blocks {%- endcomment -%}
+  {%- capture brand_items -%}
+    {% for block in section.blocks %}
+      {% liquid
+        assign brand_name = block.settings.brand_name | default: 'Brand'
+        assign brand_link = block.settings.link
+        assign logo_img = block.settings.image
+        assign asset_img = block.settings.asset_image
+        assign cdn_img = block.settings.cdn_image
+        assign custom_h = block.settings.custom_height | default: 0
+        assign open_tab = block.settings.open_in_new_tab
+        assign item_style = nil
+        if custom_h > 0
+          assign item_style = '--item-custom-h: ' | append: custom_h | append: 'px;'
+        endif
+      %}
+
+      <div class="brand-ticker__item" {{ block.shopify_attributes }}>
+        {% if brand_link != blank %}
+          <a
+            href="{{ brand_link }}"
+            class="brand-ticker__link brand-ticker__link--hover-{{ hover_effect }} brand-ticker__link--filter-{{ logo_filter }}"
+            aria-label="{{ brand_name }}"
+            {% if open_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
+          >
+        {% else %}
+          <div
+            class="brand-ticker__link brand-ticker__link--static brand-ticker__link--hover-{{ hover_effect }} brand-ticker__link--filter-{{ logo_filter }}"
+            aria-label="{{ brand_name }}"
+          >
+        {% endif %}
+
+          {% if logo_img != blank %}
+            {{
+              logo_img
+              | image_url: width: 400
+              | image_tag:
+                class: 'brand-ticker__img',
+                alt: brand_name,
+                loading: 'eager',
+                widths: '160, 240, 320, 400',
+                style: item_style
+            }}
+          {% elsif asset_img != blank %}
+            <img
+              src="{{ asset_img | asset_url }}"
+              alt="{{ brand_name }}"
+              class="brand-ticker__img"
+              loading="eager"
+              width="180"
+              height="60"
+              {% if cdn_img != blank %}data-fallback="{{ cdn_img }}" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.removeAttribute('onerror');}"{% endif %}
+              {% if custom_h > 0 %}style="--item-custom-h: {{ custom_h }}px;"{% endif %}
+            >
+          {% elsif cdn_img != blank %}
+            <img
+              src="{{ cdn_img }}"
+              alt="{{ brand_name }}"
+              class="brand-ticker__img"
+              loading="eager"
+              width="180"
+              height="60"
+              {% if custom_h > 0 %}style="--item-custom-h: {{ custom_h }}px;"{% endif %}
+            >
+          {% else %}
+            <span class="brand-ticker__fallback-name">{{ brand_name }}</span>
+          {% endif %}
+
+        {% if brand_link != blank %}
+          </a>
+        {% else %}
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {%- endcapture -%}
+
+  {%- liquid
+    assign repeat_times = 1
+    if section.blocks.size < 6
+      assign repeat_times = 3
+    elsif section.blocks.size < 10
+      assign repeat_times = 2
+    endif
+  -%}
+
+  <div class="brand-ticker__container {% if section.settings.section_width == 'page-width' %}brand-ticker__container--contained{% endif %}">
+    <div
+      class="brand-ticker__track-wrapper {% if enable_edge_fade %}brand-ticker__track-wrapper--fade{% endif %}"
+    >
+      <div
+        class="brand-ticker__track brand-ticker__track--dir-{{ scroll_direction }} {% if pause_on_hover %}brand-ticker__track--pause{% endif %}"
+      >
+        {%- comment -%} Primary Track Set {%- endcomment -%}
+        <div class="brand-ticker__track-half">
+          {% for i in (1..repeat_times) %}
+            {{ brand_items }}
+          {% endfor %}
+        </div>
+
+        {%- comment -%} Duplicate Track Set for Seamless Infinite Motion {%- endcomment -%}
+        <div class="brand-ticker__track-half" aria-hidden="true">
+          {% for i in (1..repeat_times) %}
+            {{ brand_items }}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  #BrandLogoTicker-{{ section.id }} {
+    width: 100%;
+    background-color: var(--ticker-bg);
+    overflow: hidden;
+    position: relative;
+    padding-block-start: var(--padding-block-start, 36px);
+    padding-block-end: var(--padding-block-end, 36px);
+  }
+
+  /* Header */
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__header-wrap {
+    width: 100%;
+    max-width: var(--page-width, 1340px);
+    margin: 0 auto;
+    padding-left: clamp(16px, 4vw, 36px);
+    padding-right: clamp(16px, 4vw, 36px);
+    margin-bottom: var(--ticker-head-mb);
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__header-wrap--center {
+    text-align: center;
+  }
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__header-wrap--left {
+    text-align: left;
+  }
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__header-wrap--right {
+    text-align: right;
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__eyebrow {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__heading {
+    margin: 0;
+    font-size: var(--ticker-head-size-desk);
+    color: var(--ticker-head-color);
+    letter-spacing: var(--ticker-head-ls);
+    line-height: 1.25;
+    font-weight: 400;
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__heading--serif {
+    font-family: var(--font-heading--family, 'Besley', serif);
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__heading--sans {
+    font-family: var(--font-body--family, 'Figtree', sans-serif);
+    font-weight: 500;
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__subtitle {
+    margin: 10px 0 0 0;
+    line-height: 1.5;
+  }
+
+  /* Container */
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__container {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__container--contained {
+    max-width: var(--page-width, 1340px);
+    margin: 0 auto;
+    padding-left: clamp(16px, 4vw, 36px);
+    padding-right: clamp(16px, 4vw, 36px);
+  }
+
+  /* Edge Fade Mask for Luxury Look */
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__track-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__track-wrapper--fade {
+    mask-image: linear-gradient(to right, transparent 0, #000 var(--ticker-fade-w), #000 calc(100% - var(--ticker-fade-w)), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--ticker-fade-w), #000 calc(100% - var(--ticker-fade-w)), transparent 100%);
+  }
+
+  /* Ticker Track */
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__track {
+    display: flex;
+    width: max-content;
+    align-items: center;
+    will-change: transform;
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__track-half {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  /* Animation keyframes */
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__track--dir-left {
+    animation: brandLogoTickerScrollLeft-{{ section_id }} var(--ticker-duration) linear infinite;
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__track--dir-right {
+    animation: brandLogoTickerScrollRight-{{ section_id }} var(--ticker-duration) linear infinite;
+  }
+
+  @keyframes brandLogoTickerScrollLeft-{{ section_id }} {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    100% {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @keyframes brandLogoTickerScrollRight-{{ section_id }} {
+    0% {
+      transform: translate3d(-50%, 0, 0);
+    }
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  /* Pause on hover (Allure style) */
+  #BrandLogoTicker-{{ section.id }}:hover .brand-ticker__track--pause {
+    animation-play-state: paused;
+  }
+
+  /* Items */
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__item {
+    flex-shrink: 0;
+    padding: 0 var(--ticker-item-pad-desk);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(var(--ticker-logo-h-desk) + 10px);
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: opacity 0.3s ease, transform 0.3s ease, filter 0.3s ease;
+    cursor: pointer;
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__link--static {
+    cursor: default;
+  }
+
+  /* Hover interactions */
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__link--hover-scale_and_opacity:hover {
+    opacity: 0.8;
+    transform: scale(var(--ticker-hover-scale));
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__link--hover-scale:hover {
+    transform: scale(var(--ticker-hover-scale));
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__link--hover-opacity:hover {
+    opacity: 0.7;
+  }
+
+  /* Grayscale filter option */
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__link--filter-grayscale_hover {
+    filter: grayscale(100%) opacity(0.7);
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__link--filter-grayscale_hover:hover {
+    filter: grayscale(0%) opacity(1);
+  }
+
+  /* Logo Image */
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__img {
+    max-width: var(--ticker-logo-w-desk);
+    max-height: var(--item-custom-h, var(--ticker-logo-h-desk));
+    height: var(--item-custom-h, var(--ticker-logo-h-desk));
+    width: auto;
+    object-fit: contain;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  #BrandLogoTicker-{{ section.id }} .brand-ticker__fallback-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ticker-head-color);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 6px 12px;
+    border: 1px solid #EFE6E8;
+    border-radius: 4px;
+  }
+
+  /* Responsive styling */
+  @media screen and (max-width: 767px) {
+    #BrandLogoTicker-{{ section.id }} .brand-ticker__heading {
+      font-size: var(--ticker-head-size-mob);
+    }
+
+    #BrandLogoTicker-{{ section.id }} .brand-ticker__item {
+      padding: 0 var(--ticker-item-pad-mob);
+      min-height: calc(var(--ticker-logo-h-mob) + 8px);
+    }
+
+    #BrandLogoTicker-{{ section.id }} .brand-ticker__img {
+      max-height: var(--item-custom-h, var(--ticker-logo-h-mob));
+      height: var(--item-custom-h, var(--ticker-logo-h-mob));
+      max-width: calc(var(--ticker-logo-w-desk) * 0.75);
+    }
+
+    #BrandLogoTicker-{{ section.id }} .brand-ticker__track-wrapper--fade {
+      mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+    }
+  }
+
+  /* Reduced Motion Support (WCAG 2.2) */
+  @media (prefers-reduced-motion: reduce) {
+    #BrandLogoTicker-{{ section.id }} .brand-ticker__track {
+      animation: none !important;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Featured Brand Ticker",
+  "tag": "section",
+  "class": "featured-brand-ticker-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Layout & Spacing"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section container width",
+      "options": [
+        {
+          "value": "full-width",
+          "label": "Full edge-to-edge width"
+        },
+        {
+          "value": "page-width",
+          "label": "Constrained page width"
+        }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "select",
+      "id": "section_bg_style",
+      "label": "Background style",
+      "options": [
+        {
+          "value": "white",
+          "label": "Pure White (#FFFFFF)"
+        },
+        {
+          "value": "canvas",
+          "label": "Warm Porcelain Canvas (#FAF5F2)"
+        },
+        {
+          "value": "soft_blush",
+          "label": "Soft Blush (#FCF8F7)"
+        },
+        {
+          "value": "transparent",
+          "label": "Transparent"
+        },
+        {
+          "value": "custom",
+          "label": "Custom color below"
+        }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "color",
+      "id": "custom_bg_color",
+      "label": "Custom background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    },
+    {
+      "type": "checkbox",
+      "id": "show_top_divider",
+      "label": "Show top hairline divider",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_divider",
+      "label": "Show bottom hairline divider",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#EFE6E8"
+    },
+    {
+      "type": "header",
+      "content": "Heading & Text"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text (optional)"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow color",
+      "default": "#BD7385"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "min": 9,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Eyebrow font size",
+      "default": 11
+    },
+    {
+      "type": "select",
+      "id": "eyebrow_style",
+      "label": "Eyebrow style",
+      "options": [
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "normal",
+          "label": "Standard"
+        }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Heading",
+      "default": "Featured At Kay Cosmetics"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading HTML tag",
+      "options": [
+        {
+          "value": "h1",
+          "label": "h1"
+        },
+        {
+          "value": "h2",
+          "label": "h2"
+        },
+        {
+          "value": "h3",
+          "label": "h3"
+        },
+        {
+          "value": "p",
+          "label": "p"
+        }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Heading font style",
+      "options": [
+        {
+          "value": "serif",
+          "label": "Besley Editorial Serif"
+        },
+        {
+          "value": "sans",
+          "label": "Figtree Modern Sans"
+        }
+      ],
+      "default": "serif"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "min": 18,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size (desktop)",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 14,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size (mobile)",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading text color",
+      "default": "#2C1E26"
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "min": 0,
+      "max": 4,
+      "step": 0.5,
+      "unit": "px",
+      "label": "Heading letter spacing",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading bottom spacing",
+      "default": 26
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle (optional)"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#6B5C65"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 12,
+      "max": 20,
+      "step": 0.5,
+      "unit": "px",
+      "label": "Subtitle size",
+      "default": 14.5
+    },
+    {
+      "type": "header",
+      "content": "Ticker Animation"
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "s",
+      "label": "Scroll duration (seconds)",
+      "info": "Lower is faster, higher is slower and calmer. Allure default is 25s.",
+      "default": 25
+    },
+    {
+      "type": "select",
+      "id": "scroll_direction",
+      "label": "Scroll direction",
+      "options": [
+        {
+          "value": "left",
+          "label": "Right to Left (Standard)"
+        },
+        {
+          "value": "right",
+          "label": "Left to Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause scrolling when hovered",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_edge_fade",
+      "label": "Enable soft fade on left & right edges",
+      "info": "Creates an elegant gradient fade into the background.",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "edge_fade_width",
+      "min": 20,
+      "max": 140,
+      "step": 10,
+      "unit": "px",
+      "label": "Edge fade gradient width",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Logo Sizing & Effects"
+    },
+    {
+      "type": "range",
+      "id": "logo_max_height_desktop",
+      "min": 24,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Max logo height (desktop)",
+      "default": 46
+    },
+    {
+      "type": "range",
+      "id": "logo_max_height_mobile",
+      "min": 18,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Max logo height (mobile)",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "logo_max_width_desktop",
+      "min": 80,
+      "max": 240,
+      "step": 10,
+      "unit": "px",
+      "label": "Max logo width",
+      "default": 160
+    },
+    {
+      "type": "range",
+      "id": "item_spacing_desktop",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Horizontal spacing between logos (desktop)",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "item_spacing_mobile",
+      "min": 6,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Horizontal spacing between logos (mobile)",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "hover_effect",
+      "label": "Logo hover effect",
+      "options": [
+        {
+          "value": "scale_and_opacity",
+          "label": "Scale & Subtle Dim (Allure Style)"
+        },
+        {
+          "value": "scale",
+          "label": "Scale Zoom Only"
+        },
+        {
+          "value": "opacity",
+          "label": "Dim Opacity Only"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "scale_and_opacity"
+    },
+    {
+      "type": "range",
+      "id": "hover_scale",
+      "min": 100,
+      "max": 120,
+      "step": 1,
+      "unit": "%",
+      "label": "Hover scale magnification",
+      "default": 105
+    },
+    {
+      "type": "select",
+      "id": "logo_filter",
+      "label": "Logo color filter",
+      "options": [
+        {
+          "value": "none",
+          "label": "Original Colors"
+        },
+        {
+          "value": "grayscale_hover",
+          "label": "Muted Grayscale, Full Color on Hover"
+        }
+      ],
+      "default": "none"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand Logo",
+      "settings": [
+        {
+          "type": "text",
+          "id": "brand_name",
+          "label": "Brand name",
+          "default": "Brand"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Logo image"
+        },
+        {
+          "type": "text",
+          "id": "asset_image",
+          "label": "Theme asset filename (fallback)",
+          "info": "e.g. brand-logo-gucci.png from assets"
+        },
+        {
+          "type": "text",
+          "id": "cdn_image",
+          "label": "Online CDN image URL (failover)",
+          "info": "Optional fallback URL in case theme asset is missing"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Brand link",
+          "info": "Links to collection or brand page"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_in_new_tab",
+          "label": "Open link in new tab",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "custom_height",
+          "min": 0,
+          "max": 100,
+          "step": 2,
+          "unit": "px",
+          "label": "Custom logo height override",
+          "info": "Set to 0 to use section default height",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Brand Ticker",
+      "settings": {
+        "title": "Featured At Kay Cosmetics",
+        "section_bg_style": "white",
+        "animation_speed": 25,
+        "pause_on_hover": true,
+        "enable_edge_fade": true,
+        "logo_max_height_desktop": 46,
+        "logo_max_height_mobile": 32,
+        "item_spacing_desktop": 28,
+        "item_spacing_mobile": 16,
+        "padding-block-start": 36,
+        "padding-block-end": 36
+      },
+      "blocks": [
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Gucci",
+            "asset_image": "brand-logo-gucci.png",
+            "link": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Wet n Wild",
+            "asset_image": "brand-logo-wet-n-wild.png",
+            "link": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Dior",
+            "asset_image": "brand-logo-dior.png",
+            "link": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Huda Beauty",
+            "asset_image": "brand-logo-huda-beauty.png",
+            "link": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "L.A. Girl",
+            "asset_image": "brand-logo-la-girl.png",
+            "link": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Maybelline New York",
+            "asset_image": "brand-logo-maybelline.png",
+            "link": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "CeraVe",
+            "asset_image": "brand-logo-cerave.png",
+            "link": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Charlotte Tilbury",
+            "asset_image": "brand-logo-charlotte-tilbury.png",
+            "link": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Garnier",
+            "asset_image": "brand-logo-garnier.png",
+            "link": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "L'Oréal Paris",
+            "asset_image": "brand-logo-loreal.png",
+            "link": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Benefit Cosmetics",
+            "asset_image": "brand-logo-benefit.png",
+            "link": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Antonio Banderas",
+            "asset_image": "brand-logo-antonio-banderas.png",
+            "link": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Carolina Herrera",
+            "asset_image": "brand-logo-carolina-herrera.png",
+            "link": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Paco Rabanne",
+            "asset_image": "brand-logo-paco-rabanne.png",
+            "link": "shopify://collections/all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Jean Paul Gaultier",
+            "asset_image": "brand-logo-jean-paul-gaultier.png",
+            "link": "shopify://collections/all"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -23,6 +23,8 @@
   assign open_column_span = false
   assign column_count = 0
   assign links_before_wrap = 10
+  assign flat_links_limit = flat_links_limit | default: 5
+  assign flat_link_counter = 0
   assign max_menu_columns = grid_columns_count | default: 6
   assign max_menu_columns_tablet = grid_columns_count_tablet | default: 4
 
@@ -162,6 +164,12 @@
     </div>
 
     {% liquid
+      if link.links == blank
+        assign flat_link_counter = flat_link_counter | plus: 1
+      else
+        assign flat_link_counter = 0
+      endif
+
       # Check conditions for closing the span at the end of each iteration, then close the span if needed
       assign next_linklist = parent_link.links[forloop.index]
 
@@ -173,6 +181,9 @@
         assign open_column_span = false
       elsif link.links != blank and next_linklist.links == blank
         assign open_column_span = false
+      elsif link.links == blank and next_linklist.links == blank and flat_link_counter >= flat_links_limit
+        assign open_column_span = false
+        assign flat_link_counter = 0
       endif
 
       if open_column_span == false

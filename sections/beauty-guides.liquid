@@ -1,21 +1,339 @@
 {% doc %}
   Beauty & Shopping Guides section for Kay Cosmetics.
-  Supports linking to native Shopify blog articles or custom guide links.
+  Supports linking to native Shopify blog articles or custom curated guide cards.
+  Fully configurable through Shopify Theme Editor settings.
 {% enddoc %}
 
+{% liquid
+  assign section_id = section.id | replace: '-', '_'
+  assign bg_style = section.settings.section_bg_style | default: 'canvas'
+  assign header_align = section.settings.header_alignment | default: 'left'
+  
+  assign eyebrow = section.settings.eyebrow
+  assign eyebrow_color = section.settings.eyebrow_color | default: '#BD7385'
+  assign eyebrow_size = section.settings.eyebrow_size | default: 11
+  assign eyebrow_style = section.settings.eyebrow_style | default: 'uppercase'
+  
+  assign heading = section.settings.title
+  assign heading_tag = section.settings.heading_tag | default: 'h2'
+  assign heading_size = section.settings.heading_size | default: 'medium'
+  assign heading_size_desktop = section.settings.heading_size_desktop | default: 34
+  assign heading_color = section.settings.heading_color | default: '#2C1E26'
+  
+  assign subtitle = section.settings.subtitle
+  assign subtitle_color = section.settings.subtitle_color | default: '#6B5C65'
+  assign subtitle_size = section.settings.subtitle_size | default: 15
+  
+  assign cols_desktop = section.settings.columns_desktop | default: '3'
+  assign card_gap = section.settings.card_gap | default: 20
+  assign card_bg = section.settings.card_bg_color | default: '#FFFFFF'
+  assign card_border = section.settings.card_border_color | default: '#EFE6E8'
+  assign card_radius = section.settings.card_border_radius | default: 12
+  assign card_padding = section.settings.card_padding | default: 20
+  assign card_hover = section.settings.card_hover_effect | default: 'lift'
+  
+  assign image_ratio = section.settings.image_aspect_ratio | default: '16_10'
+  assign image_zoom = section.settings.image_zoom_on_hover
+  
+  assign tag_color = section.settings.card_tag_color | default: '#BD7385'
+  assign title_font = section.settings.card_title_font | default: 'heading'
+  assign title_size = section.settings.card_title_size | default: 17
+  assign title_color = section.settings.card_title_color | default: '#2C1E26'
+  assign summary_color = section.settings.card_summary_color | default: '#6B5C65'
+  assign summary_size = section.settings.card_summary_size | default: 13.5
+  assign show_read_more = section.settings.show_read_more
+  assign read_more_text = section.settings.read_more_text | default: 'Learn More'
+  assign read_more_color = section.settings.read_more_color | default: '#BD7385'
+  
+  assign mobile_layout = section.settings.mobile_layout | default: 'stacked'
+  
+  assign show_top_div = section.settings.show_top_divider
+  assign show_bottom_div = section.settings.show_bottom_divider
+  assign sec_div_color = section.settings.section_divider_color | default: '#EFE6E8'
+%}
+
 <div
-  class="section section--{{ section.settings.section_width }} beauty-guides-section spacing-style"
-  style="{% render 'spacing-style', settings: section.settings %}"
+  id="BeautyGuides-{{ section.id }}"
+  class="section section--{{ section.settings.section_width }} beauty-guides-section spacing-style beauty-guides-section--bg-{{ bg_style }} {% if show_top_div %}beauty-guides--top-divider{% endif %} {% if show_bottom_div %}beauty-guides--bottom-divider{% endif %}"
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    {% if bg_style == 'custom' and section.settings.section_bg_color != blank and section.settings.section_bg_color != 'rgba(0,0,0,0)' %}
+      background-color: {{ section.settings.section_bg_color }};
+    {% endif %}
+    --bg-card-radius: {{ card_radius }}px;
+    --bg-card-padding: {{ card_padding }}px;
+    --bg-card-gap: {{ card_gap }}px;
+    --bg-card-bg: {{ card_bg }};
+    --bg-card-border: {{ card_border }};
+    --bg-sec-divider: {{ sec_div_color }};
+  "
 >
-  <div class="category-grid-header">
-    {% if section.settings.eyebrow != blank %}
-      <span class="section-eyebrow">{{ section.settings.eyebrow }}</span>
+  {%- style -%}
+    #BeautyGuides-{{ section.id }} {
+      position: relative;
+    }
+
+    #BeautyGuides-{{ section.id }}.beauty-guides-section--bg-canvas {
+      background-color: var(--yozo-canvas, #FAF5F2);
+    }
+
+    #BeautyGuides-{{ section.id }}.beauty-guides-section--bg-warm_gradient {
+      background: linear-gradient(180deg, #FBF2F4 0%, #FAF5F2 100%);
+    }
+
+    #BeautyGuides-{{ section.id }}.beauty-guides-section--bg-white {
+      background-color: #FFFFFF;
+    }
+
+    #BeautyGuides-{{ section.id }}.beauty-guides--top-divider {
+      border-top: 1px solid var(--bg-sec-divider, #EFE6E8);
+    }
+
+    #BeautyGuides-{{ section.id }}.beauty-guides--bottom-divider {
+      border-bottom: 1px solid var(--bg-sec-divider, #EFE6E8);
+    }
+
+    /* Header Lockup */
+    #BeautyGuides-{{ section.id }} .beauty-guides-header {
+      margin-bottom: clamp(20px, 3.5vw, 34px);
+      text-align: {{ header_align }};
+    }
+
+    #BeautyGuides-{{ section.id }} .section-eyebrow {
+      display: inline-block;
+      font-size: {{ eyebrow_size }}px;
+      font-weight: 600;
+      letter-spacing: {% if eyebrow_style == 'uppercase' %}0.14em{% else %}normal{% endif %};
+      text-transform: {% if eyebrow_style == 'uppercase' %}uppercase{% else %}none{% endif %};
+      color: {{ eyebrow_color }};
+      margin-bottom: 8px;
+    }
+
+    #BeautyGuides-{{ section.id }} .section-title {
+      font-family: var(--font-heading--family), serif;
+      color: {{ heading_color }};
+      letter-spacing: -0.02em;
+      line-height: 1.22;
+      margin: 0 0 8px 0;
+      {% case heading_size %}
+        {% when 'small' %}
+          font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+        {% when 'large' %}
+          font-size: clamp(2rem, 3.8vw, 2.75rem);
+        {% when 'custom' %}
+          font-size: clamp(1.6rem, 3vw, {{ heading_size_desktop }}px);
+        {% else %}
+          font-size: clamp(1.6rem, 3vw, 2.25rem);
+      {% endcase %}
+    }
+
+    #BeautyGuides-{{ section.id }} .section-subtitle {
+      font-size: {{ subtitle_size }}px;
+      color: {{ subtitle_color }};
+      line-height: 1.55;
+      max-width: 580px;
+      margin: 0;
+      {% if header_align == 'center' %}
+        margin-left: auto;
+        margin-right: auto;
+      {% endif %}
+    }
+
+    /* Guides Grid */
+    #BeautyGuides-{{ section.id }} .guides-grid {
+      display: grid;
+      grid-template-columns: repeat({{ cols_desktop }}, 1fr);
+      gap: var(--bg-card-gap, 20px);
+    }
+
+    @media (max-width: 989px) and (min-width: 641px) {
+      #BeautyGuides-{{ section.id }} .guides-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      {% if mobile_layout == 'scroll' %}
+        #BeautyGuides-{{ section.id }} .guides-grid {
+          display: flex;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch;
+          gap: 14px;
+          padding-bottom: 12px;
+          scrollbar-width: none;
+        }
+        #BeautyGuides-{{ section.id }} .guides-grid::-webkit-scrollbar {
+          display: none;
+        }
+        #BeautyGuides-{{ section.id }} .guide-card {
+          flex: 0 0 82%;
+          scroll-snap-align: start;
+        }
+      {% else %}
+        #BeautyGuides-{{ section.id }} .guides-grid {
+          grid-template-columns: 1fr;
+          gap: 18px;
+        }
+      {% endif %}
+    }
+
+    /* Guide Card */
+    #BeautyGuides-{{ section.id }} .guide-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-card-bg, #FFFFFF);
+      border: 1px solid var(--bg-card-border, #EFE6E8);
+      border-radius: var(--bg-card-radius, 12px);
+      overflow: hidden;
+      text-decoration: none;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.3s ease;
+    }
+
+    #BeautyGuides-{{ section.id }} .guide-card:hover {
+      border-color: var(--yozo-rosewood, #BD7385);
+      {% case card_hover %}
+        {% when 'lift' %}
+          transform: translateY(-4px);
+          box-shadow: 0 12px 28px -4px rgba(44, 30, 38, 0.08), 0 2px 8px rgba(44, 30, 38, 0.04);
+        {% when 'subtle_zoom' %}
+          transform: scale(1.015);
+          box-shadow: 0 8px 20px -4px rgba(44, 30, 38, 0.06);
+        {% when 'border_glow' %}
+          box-shadow: 0 0 0 2px rgba(189, 115, 133, 0.25);
+        {% when 'none' %}
+          transform: none;
+      {% endcase %}
+    }
+
+    /* Card Media */
+    #BeautyGuides-{{ section.id }} .guide-card__media {
+      width: 100%;
+      background-color: var(--yozo-pastel-peach, #FBF1ED);
+      overflow: hidden;
+      position: relative;
+      {% case image_ratio %}
+        {% when '4_3' %}
+          aspect-ratio: 4 / 3;
+        {% when 'square' %}
+          aspect-ratio: 1 / 1;
+        {% when 'natural' %}
+          aspect-ratio: auto;
+        {% else %}
+          aspect-ratio: 16 / 10;
+      {% endcase %}
+    }
+
+    #BeautyGuides-{{ section.id }} .guide-card:nth-child(2) .guide-card__media {
+      background-color: var(--yozo-pastel-lilac, #F5F0FB);
+    }
+
+    #BeautyGuides-{{ section.id }} .guide-card:nth-child(3) .guide-card__media {
+      background-color: var(--yozo-pastel-blue, #EBF3F8);
+    }
+
+    #BeautyGuides-{{ section.id }} .guide-card__image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    {% if image_zoom %}
+      #BeautyGuides-{{ section.id }} .guide-card:hover .guide-card__image {
+        transform: scale(1.035);
+      }
     {% endif %}
-    {% if section.settings.title != blank %}
-      <h2 class="section-title">{{ section.settings.title }}</h2>
+
+    /* Card Content */
+    #BeautyGuides-{{ section.id }} .guide-card__content {
+      padding: var(--bg-card-padding, 20px);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-grow: 1;
+    }
+
+    /* Category Tag */
+    #BeautyGuides-{{ section.id }} .guide-card__tag {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: {{ tag_color }};
+      margin-bottom: 2px;
+    }
+
+    /* Card Title */
+    #BeautyGuides-{{ section.id }} .guide-card__title {
+      font-family: {% if title_font == 'heading' %}var(--font-heading--family), serif{% else %}var(--font-body--family), sans-serif{% endif %};
+      font-size: {{ title_size }}px;
+      font-weight: 600;
+      color: {{ title_color }};
+      line-height: 1.32;
+      letter-spacing: -0.015em;
+      margin: 0;
+      transition: color 0.25s ease;
+    }
+
+    #BeautyGuides-{{ section.id }} .guide-card:hover .guide-card__title {
+      color: var(--yozo-rosewood, #BD7385);
+    }
+
+    /* Card Summary */
+    #BeautyGuides-{{ section.id }} .guide-card__summary {
+      font-size: {{ summary_size }}px;
+      color: {{ summary_color }};
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+      margin: 0;
+      flex-grow: 1;
+    }
+
+    /* Read More */
+    #BeautyGuides-{{ section.id }} .guide-card__read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: {{ read_more_color }};
+      margin-top: 8px;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    #BeautyGuides-{{ section.id }} .guide-card__read-more-arrow {
+      display: inline-block;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #BeautyGuides-{{ section.id }} .guide-card:hover .guide-card__read-more {
+      color: var(--yozo-rosewood-hover, #A75D6F);
+    }
+
+    #BeautyGuides-{{ section.id }} .guide-card:hover .guide-card__read-more-arrow {
+      transform: translateX(4px);
+    }
+  {%- endstyle -%}
+
+  <div class="beauty-guides-header">
+    {% if eyebrow != blank %}
+      <span class="section-eyebrow">{{ eyebrow }}</span>
     {% endif %}
-    {% if section.settings.subtitle != blank %}
-      <p class="section-subtitle">{{ section.settings.subtitle }}</p>
+
+    {% if heading != blank %}
+      <{{ heading_tag }} class="section-title">
+        {{ heading }}
+      </{{ heading_tag }}>
+    {% endif %}
+
+    {% if subtitle != blank %}
+      <p class="section-subtitle">{{ subtitle }}</p>
     {% endif %}
   </div>
 
@@ -45,6 +363,11 @@
         if image == blank and article != blank and article.image != blank
           assign image = article.image
         endif
+
+        assign card_cta = block.settings.custom_read_more
+        if card_cta == blank
+          assign card_cta = read_more_text
+        endif
       %}
 
       <a href="{{ link }}" class="guide-card" {{ block.shopify_attributes }}>
@@ -52,9 +375,9 @@
           {% if image != blank %}
             {{
               image
-              | image_url: width: 600
+              | image_url: width: 800
               | image_tag:
-                widths: '300, 600',
+                widths: '350, 600, 800',
                 class: 'guide-card__image',
                 alt: title,
                 loading: 'lazy'
@@ -84,9 +407,12 @@
             <p class="guide-card__summary">{{ summary }}</p>
           {% endif %}
 
-          <span class="guide-card__read-more">
-            Learn More <span aria-hidden="true">&rarr;</span>
-          </span>
+          {% if show_read_more %}
+            <span class="guide-card__read-more">
+              <span>{{ card_cta }}</span>
+              <span class="guide-card__read-more-arrow" aria-hidden="true">&rarr;</span>
+            </span>
+          {% endif %}
         </div>
       </a>
     {% endfor %}
@@ -100,10 +426,93 @@
   "class": "section-beauty-guides",
   "settings": [
     {
+      "type": "header",
+      "content": "Section Appearance & Layout"
+    },
+    {
+      "type": "select",
+      "id": "section_bg_style",
+      "label": "Background style",
+      "options": [
+        { "value": "canvas", "label": "Warm Porcelain Canvas (#FAF5F2)" },
+        { "value": "white", "label": "Crisp White (#FFFFFF)" },
+        { "value": "warm_gradient", "label": "Warm Beauty Gradient" },
+        { "value": "custom", "label": "Custom color" }
+      ],
+      "default": "canvas"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Custom background color",
+      "default": "#FAF5F2"
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header alignment",
+      "options": [
+        { "value": "left", "label": "Left aligned" },
+        { "value": "center", "label": "Center aligned" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "options": [
+        { "value": "2", "label": "2 Columns" },
+        { "value": "3", "label": "3 Columns" },
+        { "value": "4", "label": "4 Columns" }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between cards",
+      "min": 12,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Header Typography"
+    },
+    {
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow text",
       "default": "Advice & Guides"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow color",
+      "default": "#BD7385"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "label": "Eyebrow font size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "select",
+      "id": "eyebrow_style",
+      "label": "Eyebrow case style",
+      "options": [
+        { "value": "uppercase", "label": "UPPERCASE (Editorial)" },
+        { "value": "normal", "label": "Normal Case" }
+      ],
+      "default": "uppercase"
     },
     {
       "type": "text",
@@ -112,10 +521,223 @@
       "default": "Beauty & Shopping Guides"
     },
     {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading HTML tag",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size preset",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" },
+        { "value": "custom", "label": "Custom (Desktop Slider)" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading custom desktop size",
+      "min": 24,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#2C1E26"
+    },
+    {
       "type": "textarea",
       "id": "subtitle",
       "label": "Subtitle",
       "default": "Helpful tips on selecting products and building everyday routines."
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#6B5C65"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Subtitle font size",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Card Appearance & Hover"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border color",
+      "default": "#EFE6E8"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card corner radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card content padding",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "card_hover_effect",
+      "label": "Card hover effect",
+      "options": [
+        { "value": "lift", "label": "Elevation Lift (Subtle Shadow)" },
+        { "value": "subtle_zoom", "label": "Subtle Zoom (1.015x)" },
+        { "value": "border_glow", "label": "Rosewood Border Glow" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "lift"
+    },
+    {
+      "type": "header",
+      "content": "Card Media & Aspect Ratio"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Card image aspect ratio",
+      "options": [
+        { "value": "16_10", "label": "Standard Landscape (16:10)" },
+        { "value": "4_3", "label": "Classic Photo (4:3)" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "natural", "label": "Natural Adapt" }
+      ],
+      "default": "16_10"
+    },
+    {
+      "type": "checkbox",
+      "id": "image_zoom_on_hover",
+      "label": "Subtle image zoom on hover",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Card Typography & Links"
+    },
+    {
+      "type": "color",
+      "id": "card_tag_color",
+      "label": "Category tag color",
+      "default": "#BD7385"
+    },
+    {
+      "type": "select",
+      "id": "card_title_font",
+      "label": "Card title font family",
+      "options": [
+        { "value": "heading", "label": "Besley Serif (Luxury Brand Heading)" },
+        { "value": "body", "label": "Figtree Sans (Body Font)" }
+      ],
+      "default": "heading"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "label": "Card title font size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Card title color",
+      "default": "#2C1E26"
+    },
+    {
+      "type": "color",
+      "id": "card_summary_color",
+      "label": "Card summary color",
+      "default": "#6B5C65"
+    },
+    {
+      "type": "range",
+      "id": "card_summary_size",
+      "label": "Card summary font size",
+      "min": 12,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "checkbox",
+      "id": "show_read_more",
+      "label": "Show 'Learn More' link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "read_more_text",
+      "label": "Default 'Learn More' text",
+      "default": "Learn More"
+    },
+    {
+      "type": "color",
+      "id": "read_more_color",
+      "label": "'Learn More' link color",
+      "default": "#BD7385"
+    },
+    {
+      "type": "header",
+      "content": "Mobile Layout"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile card arrangement",
+      "options": [
+        { "value": "stacked", "label": "Stacked vertical column" },
+        { "value": "scroll", "label": "Horizontal swipeable carousel" }
+      ],
+      "default": "stacked"
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing & Dividers"
     },
     {
       "type": "select",
@@ -128,11 +750,29 @@
       "default": "page-width"
     },
     {
+      "type": "checkbox",
+      "id": "show_top_divider",
+      "label": "Show top section divider",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_divider",
+      "label": "Show bottom section divider",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "section_divider_color",
+      "label": "Section divider color",
+      "default": "#EFE6E8"
+    },
+    {
       "type": "range",
       "id": "padding-block-start",
       "label": "Padding top",
       "min": 0,
-      "max": 100,
+      "max": 120,
       "step": 4,
       "unit": "px",
       "default": 48
@@ -142,7 +782,7 @@
       "id": "padding-block-end",
       "label": "Padding bottom",
       "min": 0,
-      "max": 100,
+      "max": 120,
       "step": 4,
       "unit": "px",
       "default": 48
@@ -156,13 +796,14 @@
         {
           "type": "article",
           "id": "article",
-          "label": "Link Blog Article (optional)"
+          "label": "Link Blog Article (optional)",
+          "info": "Automatically populates title, summary, image, and link from article if left blank below."
         },
         {
           "type": "text",
           "id": "title",
           "label": "Title",
-          "default": "Skincare Routines"
+          "default": "Daily Skincare Routines"
         },
         {
           "type": "text",
@@ -174,7 +815,7 @@
           "type": "textarea",
           "id": "summary",
           "label": "Summary",
-          "default": "Simple steps to build an effective daily skincare routine suited to your skin type."
+          "default": "Practical steps for morning and evening routines designed for humid and dry climates."
         },
         {
           "type": "image_picker",
@@ -184,13 +825,18 @@
         {
           "type": "text",
           "id": "image_asset",
-          "label": "Asset image name (optional)",
+          "label": "Asset image filename (fallback)",
           "default": "cat-skincare.jpg"
         },
         {
           "type": "url",
           "id": "link",
-          "label": "Link"
+          "label": "Card Link"
+        },
+        {
+          "type": "text",
+          "id": "custom_read_more",
+          "label": "Custom 'Learn More' label (optional)"
         }
       ]
     }

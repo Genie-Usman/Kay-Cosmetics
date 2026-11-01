@@ -1,127 +1,294 @@
+{{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer="defer"></script>
 
-
-{% if section.blocks.size > 1 %}
-  <script
-    src="{{ 'announcement-bar.js' | asset_url }}"
-    type="module"
-    fetchpriority="low"
-  ></script>
-{% endif %}
+{%- liquid
+  assign section_id = section.id
+  assign enable_autoplay = section.settings.enable_autoplay
+  if enable_autoplay == nil
+    assign enable_autoplay = true
+  endif
+  assign speed_sec = section.settings.speed | default: 6
+  assign autoplay_delay = speed_sec | times: 1000
+  assign transition_speed = section.settings.transition_speed | default: 700
+  assign pause_on_hover = section.settings.pause_on_hover
+  if pause_on_hover == nil
+    assign pause_on_hover = true
+  endif
+  assign show_arrows = section.settings.show_arrows
+  if show_arrows == nil
+    assign show_arrows = true
+  endif
+  assign arrows_style = section.settings.arrows_style | default: 'split'
+  assign transition_effect = section.settings.transition_effect | default: 'slide'
+  assign total_blocks = section.blocks.size
+  assign is_slider = false
+  if total_blocks > 1
+    assign is_slider = true
+  endif
+-%}
 
 {% render 'contrast-override', background_color: section.settings.background_color, text_color: section.settings.text_color, section_id: section.id %}
 
 <div class="section-background color-custom-{{ section.id }}"></div>
 <aside
   class="announcement-bar spacing-style section section--{{ section.settings.section_width }} color-custom-{{ section.id }}"
+  id="AnnouncementBar-{{ section_id }}"
   style="{% render 'spacing-padding', settings: section.settings %}; --border-bottom-width: {{ section.settings.divider_width }}px;{% if section.settings.divider_color != blank %} --color-border: {{ section.settings.divider_color }};{% endif %}"
 >
-  {% liquid
-    assign autoplay = false
-    assign show_arrows = false
-    if section.blocks.size > 1
-      assign autoplay = true
-      assign show_arrows = true
-    endif
-  %}
+  <div class="announcement-bar__outer announcement-bar__outer--{{ arrows_style }}">
+    {%- if is_slider and show_arrows != false and arrows_style != 'none' -%}
+      <button
+        type="button"
+        id="AnnouncementPrev-{{ section_id }}"
+        class="announcement-swiper__nav announcement-swiper__nav--prev"
+        aria-label="Previous announcement"
+      >
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+    {%- endif -%}
 
-  <announcement-bar-component
-    class="announcement-bar__slider"
-    {% if autoplay == true %}
-      autoplay="{{ section.settings.speed }}" aria-live="polite"
-    {% endif %}
-  >
-    {% if show_arrows %}
-      {% render 'slideshow-arrows', icon_style: 'chevron' %}
-    {% endif %}
-
-    <div class="announcement-bar__slides">
-      {% content_for 'blocks' %}
+    <div
+      class="swiper announcement-swiper"
+      id="AnnouncementSwiper-{{ section_id }}"
+      data-is-slider="{{ is_slider }}"
+    >
+      <div class="swiper-wrapper">
+        {% content_for 'blocks' %}
+      </div>
     </div>
-  </announcement-bar-component>
+
+    {%- if is_slider and show_arrows != false and arrows_style != 'none' -%}
+      <button
+        type="button"
+        id="AnnouncementNext-{{ section_id }}"
+        class="announcement-swiper__nav announcement-swiper__nav--next"
+        aria-label="Next announcement"
+      >
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    {%- endif -%}
+  </div>
 </aside>
+
+<script>
+  (function () {
+    function initAnnouncementSwiper() {
+      const container = document.getElementById('AnnouncementSwiper-{{ section_id }}');
+      if (!container) return;
+
+      if (typeof Swiper === 'undefined') {
+        setTimeout(initAnnouncementSwiper, 50);
+        return;
+      }
+
+      if (container.swiper) {
+        container.swiper.destroy(true, true);
+      }
+
+      const isSlider = container.dataset.isSlider === 'true';
+      if (!isSlider) return;
+
+      const effect = '{{ transition_effect | default: "slide" }}';
+      const speed = parseInt('{{ transition_speed | default: 700 }}', 10);
+      const enableAutoplay = {{ enable_autoplay }};
+      const autoplayDelay = parseInt('{{ autoplay_delay | default: 6000 }}', 10);
+      const pauseOnHover = {{ pause_on_hover }};
+
+      const swiperConfig = {
+        slidesPerView: 1,
+        spaceBetween: 0,
+        loop: true,
+        speed: speed,
+        effect: effect,
+        grabCursor: true,
+        watchSlidesProgress: true,
+        navigation: {
+          prevEl: '#AnnouncementPrev-{{ section_id }}',
+          nextEl: '#AnnouncementNext-{{ section_id }}',
+        },
+        keyboard: {
+          enabled: true,
+        },
+      };
+
+      if (effect === 'fade') {
+        swiperConfig.fadeEffect = {
+          crossFade: true,
+        };
+      }
+
+      if (enableAutoplay) {
+        swiperConfig.autoplay = {
+          delay: autoplayDelay,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: pauseOnHover,
+        };
+      }
+
+      const swiperInstance = new Swiper(container, swiperConfig);
+
+      // Theme editor live block select support
+      document.addEventListener('shopify:block:select', function (e) {
+        if (e.target && e.target.closest('#AnnouncementSwiper-{{ section_id }}')) {
+          const slideIndex = e.target.dataset.slideIndex;
+          if (slideIndex !== undefined && swiperInstance && swiperInstance.params) {
+            if (swiperInstance.params.loop) {
+              swiperInstance.slideToLoop(parseInt(slideIndex, 10));
+            } else {
+              swiperInstance.slideTo(parseInt(slideIndex, 10));
+            }
+          }
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAnnouncementSwiper);
+    } else {
+      initAnnouncementSwiper();
+    }
+
+    document.addEventListener('shopify:section:load', function (e) {
+      if (e.target && e.target.querySelector('#AnnouncementSwiper-{{ section_id }}')) {
+        initAnnouncementSwiper();
+      }
+    });
+  })();
+</script>
 
 {% stylesheet %}
   .announcement-bar {
     border-block-end: var(--border-bottom-width) solid var(--color-border);
-  }
-
-  .announcement-bar__slider {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
     position: relative;
-
-    @media screen and (max-width: 749px) {
-      grid-column: 1 / -1;
-    }
+    z-index: 10;
+    width: 100%;
   }
 
-  .announcement-bar__slides {
-    display: grid;
-    grid: [stack] auto / [stack] auto;
-    width: calc(100% - var(--button-size) * 2);
-    max-width: 680px;
+  .announcement-bar__outer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-inline: auto;
+    box-sizing: border-box;
+  }
+
+  .announcement-bar__outer--split {
+    justify-content: space-between;
+    gap: 12px;
+    padding-inline: clamp(12px, 2.5vw, 28px);
+  }
+
+  .announcement-bar__outer--inline {
+    justify-content: center;
+    gap: 14px;
+    padding-inline: 12px;
+  }
+
+  .announcement-swiper {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
     margin-inline: auto;
   }
 
-  .announcement-bar__slides > * {
-    grid-area: stack;
+  .announcement-bar__outer--split .announcement-swiper {
+    flex: 1 1 auto;
+    max-width: clamp(280px, 86vw, 920px);
+  }
+
+  .announcement-bar__outer--inline .announcement-swiper {
+    flex: 0 1 auto;
+    max-width: 680px;
+    width: auto;
+  }
+
+  .announcement-swiper .swiper-wrapper {
+    display: flex;
+    align-items: center;
+    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
 
   .announcement-bar__slide {
-    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
-    content-visibility: visible;
-
-    &[aria-hidden='true'] {
-      opacity: 0;
-      visibility: hidden;
-    }
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
   }
 
-  .announcement-bar__slider slideshow-arrows {
-    padding: 0;
-    mix-blend-mode: normal;
-  }
-
-  .announcement-bar__slider slideshow-arrows .slideshow-control {
-    color: var(--color-foreground);
-  }
-
-  .announcement-bar__slider .slideshow-control {
-    display: flex;
-    padding: 0;
-    width: var(--button-size);
-    height: var(--button-size);
+  .announcement-bar__slide-inner {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    opacity: 1;
-    animation: none;
-
-    @media screen and (min-width: 750px) {
-      --slideshow-control-offset: calc((var(--button-size) - var(--icon-size-xs)) / 2);
-
-      .section--page-width &.slideshow-control--previous {
-        transform: translateX(var(--slideshow-control-offset));
-      }
-    }
+    text-align: center;
+    position: relative;
+    max-width: 100%;
+    padding-inline: 4px;
   }
 
-  .announcement-bar__slider .slideshow-control .svg-wrapper {
-    width: var(--icon-size-xs);
-    height: var(--icon-size-xs);
-  }
-
-  .announcement-bar__slide {
-    place-content: center;
-  }
-
-  .announcement-bar__text:first-child {
-    margin: 0;
+  .announcement-bar__text {
+    margin: 0 !important;
+    padding: 0 !important;
+    color: inherit;
+    text-align: center;
+    line-height: 1.4;
+    transition: opacity 0.2s ease;
   }
 
   .announcement-bar__link {
-    position: absolute;
-    inset: 0;
+    color: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease;
+  }
+
+  .announcement-bar__link:hover .announcement-bar__text {
+    opacity: 0.9;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .announcement-swiper__nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+    width: 26px;
+    height: 26px;
+    color: inherit;
+    opacity: 0.82;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+    z-index: 5;
+    flex-shrink: 0;
+  }
+
+  .announcement-swiper__nav:hover {
+    opacity: 1;
+    transform: scale(1.15);
+    background-color: rgba(255, 255, 255, 0.14);
+  }
+
+  .announcement-swiper__nav:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  .announcement-swiper__nav svg {
+    display: block;
+    pointer-events: none;
   }
 {% endstylesheet %}
 
@@ -138,13 +305,83 @@
   },
   "settings": [
     {
+      "type": "header",
+      "content": "Announcement Slider (Swiper)"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_autoplay",
+      "label": "Enable autoplay",
+      "default": true
+    },
+    {
       "type": "range",
       "id": "speed",
-      "label": "t:settings.scroll_speed",
+      "label": "Autoplay interval (seconds)",
       "min": 2,
-      "max": 10,
-      "default": 5,
+      "max": 12,
+      "step": 1,
+      "default": 6,
       "unit": "sec"
+    },
+    {
+      "type": "range",
+      "id": "transition_speed",
+      "label": "Slide transition speed",
+      "min": 300,
+      "max": 1200,
+      "step": 50,
+      "default": 700,
+      "unit": "ms",
+      "info": "Speed of the smooth sliding animation."
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause autoplay on hover",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show navigation arrows",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "arrows_style",
+      "label": "Arrows position",
+      "options": [
+        {
+          "value": "split",
+          "label": "Container edges (Left & Right)"
+        },
+        {
+          "value": "inline",
+          "label": "Inline flanking text"
+        },
+        {
+          "value": "none",
+          "label": "Hidden"
+        }
+      ],
+      "default": "split"
+    },
+    {
+      "type": "select",
+      "id": "transition_effect",
+      "label": "Transition effect",
+      "options": [
+        {
+          "value": "slide",
+          "label": "Smooth Slide"
+        },
+        {
+          "value": "fade",
+          "label": "Smooth Fade"
+        }
+      ],
+      "default": "slide"
     },
     {
       "type": "header",

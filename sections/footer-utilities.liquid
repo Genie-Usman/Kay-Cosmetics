@@ -1,21 +1,123 @@
-
-
 {% liquid
-  if section.settings.background_color != blank
-    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  assign util_bg = section.settings.background_color | default: '#23171F'
+  assign bg_brightness = util_bg | color_brightness
+
+  if bg_brightness < 128
+    assign default_text = '#C7B8C2'
+    assign default_accent = '#BD7385'
+    assign default_divider = 'rgba(239, 230, 232, 0.12)'
+  else
+    assign default_text = '#6B5C65'
+    assign default_accent = '#BD7385'
+    assign default_divider = '#EFE6E8'
+  endif
+
+  assign util_text = section.settings.text_color
+  if util_text == blank or util_text == 'rgba(0,0,0,0)'
+    assign util_text = default_text
+  endif
+
+  assign util_accent = section.settings.link_hover_color
+  if util_accent == blank or util_accent == 'rgba(0,0,0,0)'
+    assign util_accent = default_accent
+  endif
+
+  assign util_divider = section.settings.divider_color
+  if util_divider == blank or util_divider == 'rgba(0,0,0,0)'
+    assign util_divider = default_divider
+  endif
+
+  if util_bg != blank
+    render 'contrast-override', background_color: util_bg, section_id: section.id
   endif
 %}
 
+{% style %}
+  .color-custom-{{ section.id }} {
+    --color-background: {{ util_bg }};
+    --color-background-rgb: {{ util_bg.rgb }};
+    --kc-util-bg: {{ util_bg }};
+    --kc-util-text: {{ util_text }};
+    --kc-util-accent: {{ util_accent }};
+    --kc-util-divider: {{ util_divider }};
+    background-color: var(--kc-util-bg) !important;
+  }
+
+  .footer-utilities-section--{{ section.id }} {
+    background-color: var(--kc-util-bg) !important;
+  }
+
+  .footer-utilities-section--{{ section.id }} .utilities {
+    border-top: {{ section.settings.divider_thickness | default: 1 }}px solid var(--kc-util-divider);
+    color: var(--kc-util-text);
+  }
+
+  .footer-utilities-section--{{ section.id }} .utilities a,
+  .footer-utilities-section--{{ section.id }} .utilities button {
+    color: var(--kc-util-text);
+    transition: color 0.2s ease;
+  }
+
+  .footer-utilities-section--{{ section.id }} .utilities a:hover,
+  .footer-utilities-section--{{ section.id }} .utilities button:hover {
+    color: var(--kc-util-accent);
+  }
+
+  /* Social Icons */
+  .footer-utilities-section--{{ section.id }} .social-icons__wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .footer-utilities-section--{{ section.id }} .social-icons__icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+  }
+
+  .footer-utilities-section--{{ section.id }} .social-icons__icon-wrapper a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--kc-util-text);
+  }
+
+  .footer-utilities-section--{{ section.id }} .social-icons__icon-wrapper:hover {
+    background: var(--kc-util-accent);
+    border-color: var(--kc-util-accent);
+    transform: translateY(-1px);
+  }
+
+  .footer-utilities-section--{{ section.id }} .social-icons__icon-wrapper:hover a {
+    color: #FFFFFF !important;
+  }
+
+  .footer-utilities-section--{{ section.id }} .social-icons__icon {
+    width: 14px;
+    height: 14px;
+  }
+{% endstyle %}
+
 <div
-  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  class="section-background{% if util_bg != blank %} color-custom-{{ section.id }}{% endif %}"
 ></div>
 <div
-  class="section section--{{ section.settings.section_width }}{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  class="section footer-utilities-section footer-utilities-section--{{ section.id }} section--{{ section.settings.section_width }}{% if util_bg != blank %} color-custom-{{ section.id }}{% endif %}"
   {{ section.shopify_attributes }}
 >
   <div
     class="utilities utilities--blocks-{{ section.blocks.size }} spacing-style"
-    style="{% render 'spacing-style', settings: section.settings %} --border-width: {{ section.settings.divider_thickness }}px;{% if section.settings.divider_color != blank %} --divider-color: {{ section.settings.divider_color }};{% endif %} --gap: {{ section.settings.gap }}px;"
+    style="{% render 'spacing-style', settings: section.settings %} --border-width: {{ section.settings.divider_thickness }}px; --divider-color: {{ util_divider }}; --gap: {{ section.settings.gap }}px;"
     data-testid="footer-utilities"
   >
     {% content_for 'blocks' %}
@@ -94,6 +196,16 @@
       justify-self: end;
       text-align: right;
     }
+
+    /* 4 blocks: Four columns */
+    .utilities--blocks-4 {
+      grid-template-columns: 1fr auto auto 1fr;
+    }
+
+    .utilities--blocks-4 > *:nth-child(4) {
+      justify-self: end;
+      text-align: right;
+    }
   }
 {% endstylesheet %}
 
@@ -102,47 +214,41 @@
   "name": "t:names.policies_and_links",
   "tag": "div",
   "class": "footer-utilities",
-  "max_blocks": 3,
+  "max_blocks": 4,
   "enabled_on": {
     "groups": ["footer"]
   },
   "settings": [
     {
-      "type": "select",
-      "id": "section_width",
-      "label": "t:settings.width",
-      "options": [
-        {
-          "value": "page-width",
-          "label": "t:options.page"
-        },
-        {
-          "value": "full-width",
-          "label": "t:options.full"
-        }
-      ],
-      "default": "page-width"
-    },
-    {
-      "type": "range",
-      "id": "gap",
-      "label": "t:settings.gap",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 24
+      "type": "header",
+      "content": "Appearance & Colors"
     },
     {
       "type": "color",
       "id": "background_color",
-      "label": "t:settings.background_color",
-      "default": "{{ settings.color_palette.foreground }}"
+      "label": "Background Color",
+      "default": "#23171F"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#C7B8C2"
+    },
+    {
+      "type": "color",
+      "id": "link_hover_color",
+      "label": "Link Hover Color",
+      "default": "#BD7385"
+    },
+    {
+      "type": "header",
+      "content": "Divider"
     },
     {
       "type": "range",
       "id": "divider_thickness",
-      "label": "t:settings.divider_thickness",
+      "label": "Divider Thickness",
       "min": 0,
       "max": 5,
       "step": 0.5,
@@ -152,17 +258,43 @@
     {
       "type": "color",
       "id": "divider_color",
-      "label": "t:settings.divider_color",
-      "visible_if": "{{ section.settings.divider_thickness > 0 }}"
+      "label": "Divider Color",
+      "default": "rgba(239, 230, 232, 0.12)"
     },
     {
       "type": "header",
-      "content": "t:content.padding"
+      "content": "Layout & Padding"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "Page Width"
+        },
+        {
+          "value": "full-width",
+          "label": "Full Width"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap Between Items",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 24
     },
     {
       "type": "range",
       "id": "padding-block-start",
-      "label": "t:settings.top",
+      "label": "Top Padding",
       "min": 0,
       "max": 100,
       "step": 1,
@@ -172,12 +304,12 @@
     {
       "type": "range",
       "id": "padding-block-end",
-      "label": "t:settings.bottom",
+      "label": "Bottom Padding",
       "min": 0,
       "max": 100,
       "step": 1,
       "unit": "px",
-      "default": 20
+      "default": 28
     }
   ],
   "blocks": [
@@ -189,6 +321,9 @@
     },
     {
       "type": "social-links"
+    },
+    {
+      "type": "payment-icons"
     }
   ],
   "presets": [

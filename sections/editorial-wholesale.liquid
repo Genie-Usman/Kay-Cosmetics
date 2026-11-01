@@ -1,12 +1,450 @@
 {% doc %}
   About / Wholesale Heritage section for Kay Cosmetics.
-  Shares the business background honestly without fabricated statistics.
+  Highlights the brand's authentic wholesale background and expansion into D2C.
+  Fully configurable through Shopify Theme Editor settings.
 {% enddoc %}
 
+{% liquid
+  assign section_id = section.id | replace: '-', '_'
+  assign bg_style = section.settings.section_bg_style | default: 'canvas'
+  assign card_style = section.settings.card_style | default: 'seamless'
+  assign image_pos = section.settings.image_position | default: 'left'
+  assign image_ratio = section.settings.image_aspect_ratio | default: 'portrait'
+  assign image_radius = section.settings.image_border_radius | default: 16
+  assign image_shadow = section.settings.image_shadow
+  assign col_split = section.settings.desktop_column_split | default: '45_55'
+  assign content_valign = section.settings.content_vertical_alignment | default: 'center'
+  assign col_gap = section.settings.column_gap | default: 56
+  
+  assign eyebrow = section.settings.eyebrow
+  assign eyebrow_color = section.settings.eyebrow_color | default: '#BD7385'
+  assign eyebrow_size = section.settings.eyebrow_size | default: 11
+  assign eyebrow_style = section.settings.eyebrow_style | default: 'uppercase'
+  
+  assign heading = section.settings.title
+  assign heading_tag = section.settings.heading_tag | default: 'h2'
+  assign heading_size = section.settings.heading_size | default: 'custom'
+  assign heading_size_desktop = section.settings.heading_size_desktop | default: 34
+  assign heading_color = section.settings.heading_color | default: '#2C1E26'
+  
+  assign body = section.settings.body
+  assign body_color = section.settings.body_color | default: '#574A52'
+  assign body_size = section.settings.body_size | default: 15
+  
+  assign show_divider = section.settings.show_divider
+  assign divider_color = section.settings.divider_color | default: '#EFE6E8'
+  assign divider_style = section.settings.divider_style | default: 'solid'
+  
+  assign point_title_color = section.settings.point_title_color | default: '#2C1E26'
+  assign point_title_size = section.settings.point_title_size | default: 16
+  assign point_text_color = section.settings.point_text_color | default: '#6B5C65'
+  assign point_text_size = section.settings.point_text_size | default: 14
+  assign point_spacing = section.settings.point_spacing | default: 18
+  
+  assign btn1_label = section.settings.button_1_label
+  assign btn1_link = section.settings.button_1_link | default: '/collections/all'
+  assign btn1_style = section.settings.button_1_style | default: 'primary_rosewood'
+  assign btn1_bg = section.settings.button_1_bg_color
+  assign btn1_text = section.settings.button_1_text_color
+  assign btn1_border = section.settings.button_1_border_color
+  
+  assign btn2_label = section.settings.button_2_label
+  assign btn2_link = section.settings.button_2_link | default: '/pages/contact'
+  assign btn2_style = section.settings.button_2_style | default: 'primary_rosewood'
+  assign btn2_bg = section.settings.button_2_bg_color
+  assign btn2_text = section.settings.button_2_text_color
+  assign btn2_border = section.settings.button_2_border_color
+  
+  assign btn_radius = section.settings.button_border_radius | default: 6
+  assign btn_stack_mobile = section.settings.buttons_stack_mobile
+  
+  assign show_top_div = section.settings.show_top_divider
+  assign show_bottom_div = section.settings.show_bottom_divider
+  assign sec_div_color = section.settings.section_divider_color | default: '#EFE6E8'
+%}
+
 <div
-  class="section section--{{ section.settings.section_width }} editorial-wholesale-section spacing-style"
-  style="{% render 'spacing-style', settings: section.settings %}"
+  id="EditorialWholesale-{{ section.id }}"
+  class="section section--{{ section.settings.section_width }} editorial-wholesale-section spacing-style editorial-wholesale-section--bg-{{ bg_style }} {% if show_top_div %}editorial-wholesale--top-divider{% endif %} {% if show_bottom_div %}editorial-wholesale--bottom-divider{% endif %}"
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    {% if bg_style == 'custom' and section.settings.section_bg_color != blank and section.settings.section_bg_color != 'rgba(0,0,0,0)' %}
+      background-color: {{ section.settings.section_bg_color }};
+    {% endif %}
+    --ew-col-gap: {{ col_gap }}px;
+    --ew-img-radius: {{ image_radius }}px;
+    --ew-btn-radius: {{ btn_radius }}px;
+    --ew-sec-divider-color: {{ sec_div_color }};
+  "
 >
+  {%- style -%}
+    #EditorialWholesale-{{ section.id }} {
+      position: relative;
+    }
+
+    #EditorialWholesale-{{ section.id }}.editorial-wholesale-section--bg-canvas {
+      background-color: var(--yozo-canvas, #FAF5F2);
+    }
+
+    #EditorialWholesale-{{ section.id }}.editorial-wholesale-section--bg-warm_gradient {
+      background: linear-gradient(180deg, #FBF2F4 0%, #FAF5F2 100%);
+    }
+
+    #EditorialWholesale-{{ section.id }}.editorial-wholesale-section--bg-white {
+      background-color: #FFFFFF;
+    }
+
+    #EditorialWholesale-{{ section.id }}.editorial-wholesale--top-divider {
+      border-top: 1px solid var(--ew-sec-divider-color, #EFE6E8);
+    }
+
+    #EditorialWholesale-{{ section.id }}.editorial-wholesale--bottom-divider {
+      border-bottom: 1px solid var(--ew-sec-divider-color, #EFE6E8);
+    }
+
+    /* Card Wrapper */
+    #EditorialWholesale-{{ section.id }} .editorial-card-wrapper {
+      display: grid;
+      gap: var(--ew-col-gap, 56px);
+      align-items: {% if content_valign == 'top' %}flex-start{% else %}center{% endif %};
+      {% if card_style == 'card_white' %}
+        background-color: #FFFFFF;
+        border: 1px solid var(--yozo-border-subtle, #EFE6E8);
+        border-radius: {{ section.settings.card_border_radius | default: 20 }}px;
+        padding: clamp(20px, 4vw, {{ section.settings.card_padding | default: 44 }}px);
+        box-shadow: 0 4px 24px rgba(44, 30, 38, 0.04);
+      {% elsif card_style == 'card_pastel' %}
+        background-color: #FDF2F4;
+        border: 1px solid #F3D8DF;
+        border-radius: {{ section.settings.card_border_radius | default: 20 }}px;
+        padding: clamp(20px, 4vw, {{ section.settings.card_padding | default: 44 }}px);
+      {% endif %}
+    }
+
+    @media (min-width: 990px) {
+      #EditorialWholesale-{{ section.id }} .editorial-card-wrapper {
+        {% if col_split == '50_50' %}
+          grid-template-columns: 1fr 1fr;
+        {% elsif col_split == '40_60' %}
+          grid-template-columns: 40fr 60fr;
+        {% else %}
+          grid-template-columns: 45fr 55fr;
+        {% endif %}
+      }
+
+      {% if image_pos == 'right' %}
+        #EditorialWholesale-{{ section.id }} .editorial-image-frame {
+          order: 2;
+        }
+        #EditorialWholesale-{{ section.id }} .editorial-content {
+          order: 1;
+        }
+      {% else %}
+        #EditorialWholesale-{{ section.id }} .editorial-image-frame {
+          order: 1;
+        }
+        #EditorialWholesale-{{ section.id }} .editorial-content {
+          order: 2;
+        }
+      {% endif %}
+    }
+
+    @media (max-width: 989px) {
+      #EditorialWholesale-{{ section.id }} .editorial-card-wrapper {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
+
+    /* Image Frame */
+    #EditorialWholesale-{{ section.id }} .editorial-image-frame {
+      position: relative;
+      width: 100%;
+      border-radius: var(--ew-img-radius, 16px);
+      overflow: hidden;
+      {% if image_shadow %}
+        box-shadow: 0 10px 32px -4px rgba(44, 30, 38, 0.08), 0 2px 8px rgba(44, 30, 38, 0.04);
+      {% endif %}
+      background-color: var(--yozo-pastel-peach, #FBF1ED);
+      {% case image_ratio %}
+        {% when 'square' %}
+          aspect-ratio: 1 / 1;
+        {% when 'tall' %}
+          aspect-ratio: 3 / 4;
+        {% when 'landscape' %}
+          aspect-ratio: 16 / 9;
+        {% when 'portrait' %}
+          aspect-ratio: 4 / 5;
+        {% else %}
+          aspect-ratio: 4 / 5;
+      {% endcase %}
+    }
+
+    #EditorialWholesale-{{ section.id }} .editorial-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #EditorialWholesale-{{ section.id }} .editorial-image-frame:hover .editorial-img {
+      transform: scale(1.02);
+    }
+
+    /* Content Area */
+    #EditorialWholesale-{{ section.id }} .editorial-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0;
+    }
+
+    /* Eyebrow */
+    #EditorialWholesale-{{ section.id }} .editorial-eyebrow {
+      display: inline-block;
+      font-size: {{ eyebrow_size }}px;
+      font-weight: 600;
+      letter-spacing: {% if eyebrow_style == 'uppercase' %}0.14em{% else %}normal{% endif %};
+      text-transform: {% if eyebrow_style == 'uppercase' %}uppercase{% else %}none{% endif %};
+      color: {{ eyebrow_color }};
+      margin-bottom: 8px;
+    }
+
+    /* Heading */
+    #EditorialWholesale-{{ section.id }} .editorial-title {
+      font-family: var(--font-heading--family), serif;
+      color: {{ heading_color }};
+      line-height: 1.22;
+      letter-spacing: -0.015em;
+      margin: 0 0 14px 0;
+      {% case heading_size %}
+        {% when 'small' %}
+          font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+        {% when 'large' %}
+          font-size: clamp(2rem, 3.8vw, 2.75rem);
+        {% when 'custom' %}
+          font-size: clamp(1.6rem, 3vw, {{ heading_size_desktop }}px);
+        {% else %}
+          font-size: clamp(1.75rem, 3.2vw, 2.25rem);
+      {% endcase %}
+    }
+
+    /* Subtitle / Paragraph Body */
+    #EditorialWholesale-{{ section.id }} .editorial-body {
+      color: {{ body_color }};
+      font-size: {{ body_size }}px;
+      line-height: 1.62;
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+
+    #EditorialWholesale-{{ section.id }} .editorial-body p {
+      margin: 0 0 10px 0;
+      color: inherit;
+      font-size: inherit;
+      line-height: inherit;
+    }
+
+    #EditorialWholesale-{{ section.id }} .editorial-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Divider */
+    #EditorialWholesale-{{ section.id }} .editorial-divider {
+      width: 100%;
+      height: 0;
+      border: none !important;
+      border-top: 1px {{ divider_style }} {{ divider_color }} !important;
+      margin: 22px 0 20px 0;
+    }
+
+    /* Core Values / Points List */
+    #EditorialWholesale-{{ section.id }} .editorial-points-list {
+      display: flex;
+      flex-direction: column;
+      gap: {{ point_spacing }}px;
+      margin-bottom: 26px;
+      border-top: none !important;
+      padding-top: 0 !important;
+    }
+
+    #EditorialWholesale-{{ section.id }} .editorial-point {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    #EditorialWholesale-{{ section.id }} .editorial-point__title {
+      font-size: {{ point_title_size }}px;
+      font-weight: 600;
+      color: {{ point_title_color }};
+      letter-spacing: -0.01em;
+      margin: 0 0 4px 0;
+      line-height: 1.35;
+    }
+
+    #EditorialWholesale-{{ section.id }} .editorial-point__text {
+      font-size: {{ point_text_size }}px;
+      line-height: 1.55;
+      color: {{ point_text_color }};
+      margin: 0;
+      letter-spacing: -0.005em;
+    }
+
+    /* CTA Buttons Group */
+    #EditorialWholesale-{{ section.id }} .editorial-cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #EditorialWholesale-{{ section.id }} .editorial-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px 24px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      border-radius: var(--ew-btn-radius, 6px);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      line-height: 1.3;
+    }
+
+    /* Button 1 Styles */
+    #EditorialWholesale-{{ section.id }} .editorial-btn--1 {
+      {% case btn1_style %}
+        {% when 'primary_rosewood' %}
+          background-color: var(--yozo-rosewood, #BD7385);
+          color: #FFFFFF;
+          border: 1px solid var(--yozo-rosewood, #BD7385);
+        {% when 'solid_plum' %}
+          background-color: var(--yozo-plum-dark, #2C1E26);
+          color: #FFFFFF;
+          border: 1px solid var(--yozo-plum-dark, #2C1E26);
+        {% when 'outline_rosewood' %}
+          background-color: transparent;
+          color: var(--yozo-rosewood, #BD7385);
+          border: 1px solid var(--yozo-rosewood, #BD7385);
+        {% when 'outline_plum' %}
+          background-color: transparent;
+          color: var(--yozo-plum-dark, #2C1E26);
+          border: 1px solid var(--yozo-plum-dark, #2C1E26);
+        {% when 'custom' %}
+          background-color: {{ btn1_bg | default: '#BD7385' }};
+          color: {{ btn1_text | default: '#FFFFFF' }};
+          border: 1px solid {{ btn1_border | default: '#BD7385' }};
+        {% else %}
+          background-color: var(--yozo-rosewood, #BD7385);
+          color: #FFFFFF;
+          border: 1px solid var(--yozo-rosewood, #BD7385);
+      {% endcase %}
+    }
+
+    #EditorialWholesale-{{ section.id }} .editorial-btn--1:hover {
+      {% case btn1_style %}
+        {% when 'primary_rosewood' %}
+          background-color: var(--yozo-rosewood-hover, #A75D6F);
+          border-color: var(--yozo-rosewood-hover, #A75D6F);
+          color: #FFFFFF;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 14px rgba(189, 115, 133, 0.3);
+        {% when 'solid_plum' %}
+          background-color: #422D3A;
+          border-color: #422D3A;
+          color: #FFFFFF;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 14px rgba(44, 30, 38, 0.25);
+        {% when 'outline_rosewood' %}
+          background-color: var(--yozo-rosewood, #BD7385);
+          color: #FFFFFF;
+          transform: translateY(-1px);
+        {% when 'outline_plum' %}
+          background-color: var(--yozo-plum-dark, #2C1E26);
+          color: #FFFFFF;
+          transform: translateY(-1px);
+        {% when 'custom' %}
+          opacity: 0.9;
+          transform: translateY(-1px);
+      {% endcase %}
+    }
+
+    /* Button 2 Styles */
+    #EditorialWholesale-{{ section.id }} .editorial-btn--2 {
+      {% case btn2_style %}
+        {% when 'primary_rosewood' %}
+          background-color: var(--yozo-rosewood, #BD7385);
+          color: #FFFFFF;
+          border: 1px solid var(--yozo-rosewood, #BD7385);
+        {% when 'solid_plum' %}
+          background-color: var(--yozo-plum-dark, #2C1E26);
+          color: #FFFFFF;
+          border: 1px solid var(--yozo-plum-dark, #2C1E26);
+        {% when 'outline_rosewood' %}
+          background-color: transparent;
+          color: var(--yozo-rosewood, #BD7385);
+          border: 1px solid var(--yozo-rosewood, #BD7385);
+        {% when 'outline_plum' %}
+          background-color: transparent;
+          color: var(--yozo-plum-dark, #2C1E26);
+          border: 1px solid var(--yozo-plum-dark, #2C1E26);
+        {% when 'custom' %}
+          background-color: {{ btn2_bg | default: '#BD7385' }};
+          color: {{ btn2_text | default: '#FFFFFF' }};
+          border: 1px solid {{ btn2_border | default: '#BD7385' }};
+        {% else %}
+          background-color: var(--yozo-rosewood, #BD7385);
+          color: #FFFFFF;
+          border: 1px solid var(--yozo-rosewood, #BD7385);
+      {% endcase %}
+    }
+
+    #EditorialWholesale-{{ section.id }} .editorial-btn--2:hover {
+      {% case btn2_style %}
+        {% when 'primary_rosewood' %}
+          background-color: var(--yozo-rosewood-hover, #A75D6F);
+          border-color: var(--yozo-rosewood-hover, #A75D6F);
+          color: #FFFFFF;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 14px rgba(189, 115, 133, 0.3);
+        {% when 'solid_plum' %}
+          background-color: #422D3A;
+          border-color: #422D3A;
+          color: #FFFFFF;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 14px rgba(44, 30, 38, 0.25);
+        {% when 'outline_rosewood' %}
+          background-color: var(--yozo-rosewood, #BD7385);
+          color: #FFFFFF;
+          transform: translateY(-1px);
+        {% when 'outline_plum' %}
+          background-color: var(--yozo-plum-dark, #2C1E26);
+          color: #FFFFFF;
+          transform: translateY(-1px);
+        {% when 'custom' %}
+          opacity: 0.9;
+          transform: translateY(-1px);
+      {% endcase %}
+    }
+
+    @media (max-width: 600px) {
+      {% if btn_stack_mobile %}
+        #EditorialWholesale-{{ section.id }} .editorial-cta-group {
+          flex-direction: column;
+          width: 100%;
+        }
+        #EditorialWholesale-{{ section.id }} .editorial-btn {
+          width: 100%;
+        }
+      {% endif %}
+    }
+  {%- endstyle -%}
+
   <div class="editorial-card-wrapper">
     <div class="editorial-image-frame">
       {% if section.settings.image != blank %}
@@ -26,74 +464,274 @@
           class="editorial-img"
           loading="lazy"
           width="800"
-          height="600"
+          height="1000"
         >
       {% else %}
-        {{ 'lifestyle-2' | placeholder_svg_tag: 'editorial-img' }}
+        <img
+          src="{{ 'editorial-wholesale.jpg' | asset_url }}"
+          alt="{{ section.settings.title }}"
+          class="editorial-img"
+          loading="lazy"
+          width="800"
+          height="1000"
+        >
       {% endif %}
     </div>
 
     <div class="editorial-content">
-      {% if section.settings.eyebrow != blank %}
-        <span class="section-eyebrow">{{ section.settings.eyebrow }}</span>
+      {% if eyebrow != blank %}
+        <span class="editorial-eyebrow">{{ eyebrow }}</span>
       {% endif %}
-      {% if section.settings.title != blank %}
-        <h2 class="section-title">{{ section.settings.title }}</h2>
+
+      {% if heading != blank %}
+        <{{ heading_tag }} class="editorial-title">
+          {{ heading }}
+        </{{ heading_tag }}>
       {% endif %}
-      {% if section.settings.body != blank %}
-        <div class="section-subtitle" style="max-width: 100%;">
-          {{ section.settings.body }}
+
+      {% if body != blank %}
+        <div class="editorial-body">
+          {{ body }}
         </div>
       {% endif %}
 
+      {% if show_divider %}
+        <hr class="editorial-divider" aria-hidden="true">
+      {% endif %}
+
       <div class="editorial-points-list">
-        {% if section.settings.point_1_title != blank %}
-          <div class="editorial-point">
-            <h3 class="editorial-point__title">{{ section.settings.point_1_title }}</h3>
-            <p class="editorial-point__text">{{ section.settings.point_1_text }}</p>
-          </div>
-        {% endif %}
-        {% if section.settings.point_2_title != blank %}
-          <div class="editorial-point">
-            <h3 class="editorial-point__title">{{ section.settings.point_2_title }}</h3>
-            <p class="editorial-point__text">{{ section.settings.point_2_text }}</p>
-          </div>
-        {% endif %}
-        {% if section.settings.point_3_title != blank %}
-          <div class="editorial-point">
-            <h3 class="editorial-point__title">{{ section.settings.point_3_title }}</h3>
-            <p class="editorial-point__text">{{ section.settings.point_3_text }}</p>
-          </div>
+        {% if section.blocks.size > 0 %}
+          {% for block in section.blocks %}
+            {% if block.type == 'point' %}
+              <div class="editorial-point" {{ block.shopify_attributes }}>
+                {% if block.settings.title != blank %}
+                  <h3 class="editorial-point__title">{{ block.settings.title }}</h3>
+                {% endif %}
+                {% if block.settings.text != blank %}
+                  <p class="editorial-point__text">{{ block.settings.text }}</p>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {% if section.settings.point_1_title != blank %}
+            <div class="editorial-point">
+              <h3 class="editorial-point__title">{{ section.settings.point_1_title }}</h3>
+              <p class="editorial-point__text">{{ section.settings.point_1_text }}</p>
+            </div>
+          {% endif %}
+          {% if section.settings.point_2_title != blank %}
+            <div class="editorial-point">
+              <h3 class="editorial-point__title">{{ section.settings.point_2_title }}</h3>
+              <p class="editorial-point__text">{{ section.settings.point_2_text }}</p>
+            </div>
+          {% endif %}
+          {% if section.settings.point_3_title != blank %}
+            <div class="editorial-point">
+              <h3 class="editorial-point__title">{{ section.settings.point_3_title }}</h3>
+              <p class="editorial-point__text">{{ section.settings.point_3_text }}</p>
+            </div>
+          {% endif %}
         {% endif %}
       </div>
 
-      <div class="hero-cta-group" style="margin-top: 20px;">
-        {% if section.settings.button_1_label != blank %}
-          <a href="{{ section.settings.button_1_link | default: '/collections/all' }}" class="button">
-            {{ section.settings.button_1_label }}
-          </a>
-        {% endif %}
-        {% if section.settings.button_2_label != blank %}
-          <a href="{{ section.settings.button_2_link | default: '/pages/contact' }}" class="button button--secondary">
-            {{ section.settings.button_2_label }}
-          </a>
-        {% endif %}
-      </div>
+      {% if btn1_label != blank or btn2_label != blank %}
+        <div class="editorial-cta-group">
+          {% if btn1_label != blank %}
+            <a href="{{ btn1_link }}" class="editorial-btn editorial-btn--1">
+              {{ btn1_label }}
+            </a>
+          {% endif %}
+          {% if btn2_label != blank %}
+            <a href="{{ btn2_link }}" class="editorial-btn editorial-btn--2">
+              {{ btn2_label }}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
     </div>
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "About Wholesale Heritage",
+  "name": "Wholesale Heritage Story",
   "tag": "section",
   "class": "section-editorial-wholesale",
   "settings": [
+    {
+      "type": "header",
+      "content": "Section Appearance & Layout"
+    },
+    {
+      "type": "select",
+      "id": "section_bg_style",
+      "label": "Background style",
+      "options": [
+        { "value": "canvas", "label": "Warm Porcelain Canvas (#FAF5F2)" },
+        { "value": "white", "label": "Crisp White (#FFFFFF)" },
+        { "value": "warm_gradient", "label": "Warm Beauty Gradient" },
+        { "value": "custom", "label": "Custom color" }
+      ],
+      "default": "canvas"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Custom background color",
+      "default": "#FAF5F2"
+    },
+    {
+      "type": "select",
+      "id": "card_style",
+      "label": "Container style",
+      "options": [
+        { "value": "seamless", "label": "Seamless (Flush with page background)" },
+        { "value": "card_white", "label": "Elevated white card with soft shadow" },
+        { "value": "card_pastel", "label": "Pastel pink card" }
+      ],
+      "default": "seamless"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card inner padding",
+      "min": 16,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Desktop image position",
+      "options": [
+        { "value": "left", "label": "Image on Left" },
+        { "value": "right", "label": "Image on Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "desktop_column_split",
+      "label": "Desktop column proportion",
+      "options": [
+        { "value": "45_55", "label": "Image 45% / Content 55% (Balanced)" },
+        { "value": "50_50", "label": "Image 50% / Content 50% (Equal)" },
+        { "value": "40_60", "label": "Image 40% / Content 60% (Compact Media)" }
+      ],
+      "default": "45_55"
+    },
+    {
+      "type": "select",
+      "id": "content_vertical_alignment",
+      "label": "Content vertical alignment",
+      "options": [
+        { "value": "center", "label": "Vertically Centered" },
+        { "value": "top", "label": "Top Aligned" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap (desktop)",
+      "min": 24,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "header",
+      "content": "Image & Media"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Story image"
+    },
+    {
+      "type": "text",
+      "id": "fallback_asset",
+      "label": "Fallback Asset Filename",
+      "default": "editorial-wholesale.jpg",
+      "info": "Loaded if no image is uploaded in the theme editor."
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        { "value": "portrait", "label": "Portrait (4:5)" },
+        { "value": "tall", "label": "Tall (3:4)" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "landscape", "label": "Landscape (16:9)" }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image corner radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "image_shadow",
+      "label": "Show subtle luxury shadow",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Typography & Headings"
+    },
     {
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow text",
       "default": "About Kay Cosmetics"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow color",
+      "default": "#BD7385"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "label": "Eyebrow font size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "select",
+      "id": "eyebrow_style",
+      "label": "Eyebrow case style",
+      "options": [
+        { "value": "uppercase", "label": "UPPERCASE (Editorial)" },
+        { "value": "normal", "label": "Normal Case" }
+      ],
+      "default": "uppercase"
     },
     {
       "type": "text",
@@ -102,25 +740,142 @@
       "default": "From Wholesale to Your Doorstep"
     },
     {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading HTML tag",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size preset",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" },
+        { "value": "custom", "label": "Custom (Desktop Slider)" }
+      ],
+      "default": "custom"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading custom desktop size",
+      "min": 24,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#2C1E26"
+    },
+    {
       "type": "richtext",
       "id": "body",
-      "label": "Body text",
+      "label": "Body paragraph",
       "default": "<p>Kay Cosmetics has operated in cosmetics wholesale across Pakistan, supplying retailers and beauty businesses. We are now expanding online to give customers direct access to an authentic multi-brand cosmetics collection, supported by nationwide delivery.</p>"
     },
     {
-      "type": "image_picker",
-      "id": "image",
-      "label": "Image"
+      "type": "color",
+      "id": "body_color",
+      "label": "Body text color",
+      "default": "#574A52"
     },
     {
-      "type": "text",
-      "id": "fallback_asset",
-      "label": "Fallback Asset Filename",
-      "default": "editorial-wholesale.jpg"
+      "type": "range",
+      "id": "body_size",
+      "label": "Body font size",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 15
     },
     {
       "type": "header",
-      "content": "Core Values"
+      "content": "Content Divider Line"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show divider below paragraph",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#EFE6E8"
+    },
+    {
+      "type": "select",
+      "id": "divider_style",
+      "label": "Divider line style",
+      "options": [
+        { "value": "solid", "label": "Solid" },
+        { "value": "dashed", "label": "Dashed" },
+        { "value": "dotted", "label": "Dotted" }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "header",
+      "content": "Core Value Points"
+    },
+    {
+      "type": "paragraph",
+      "content": "These default points are used unless blocks are added below."
+    },
+    {
+      "type": "color",
+      "id": "point_title_color",
+      "label": "Point title color",
+      "default": "#2C1E26"
+    },
+    {
+      "type": "range",
+      "id": "point_title_size",
+      "label": "Point title font size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "point_text_color",
+      "label": "Point description color",
+      "default": "#6B5C65"
+    },
+    {
+      "type": "range",
+      "id": "point_text_size",
+      "label": "Point description font size",
+      "min": 12,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "point_spacing",
+      "label": "Vertical gap between points",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 18
     },
     {
       "type": "text",
@@ -131,7 +886,7 @@
     {
       "type": "text",
       "id": "point_1_text",
-      "label": "Point 1 Text",
+      "label": "Point 1 Description",
       "default": "Products sourced through established wholesale channels with careful inventory handling."
     },
     {
@@ -143,7 +898,7 @@
     {
       "type": "text",
       "id": "point_2_text",
-      "label": "Point 2 Text",
+      "label": "Point 2 Description",
       "default": "Enjoy accessible retail pricing on multi-brand beauty products without middleman markups."
     },
     {
@@ -155,12 +910,12 @@
     {
       "type": "text",
       "id": "point_3_text",
-      "label": "Point 3 Text",
+      "label": "Point 3 Description",
       "default": "Orders delivered across Pakistan with Cash on Delivery available for peace of mind."
     },
     {
       "type": "header",
-      "content": "Call to Actions"
+      "content": "Call-to-Action Buttons"
     },
     {
       "type": "text",
@@ -172,6 +927,37 @@
       "type": "url",
       "id": "button_1_link",
       "label": "Primary Button Link"
+    },
+    {
+      "type": "select",
+      "id": "button_1_style",
+      "label": "Primary Button Style",
+      "options": [
+        { "value": "primary_rosewood", "label": "Solid Dusty Rosewood (#BD7385)" },
+        { "value": "solid_plum", "label": "Solid Deep Plum (#2C1E26)" },
+        { "value": "outline_rosewood", "label": "Outline Rosewood" },
+        { "value": "outline_plum", "label": "Outline Plum" },
+        { "value": "custom", "label": "Custom Colors (Set Below)" }
+      ],
+      "default": "primary_rosewood"
+    },
+    {
+      "type": "color",
+      "id": "button_1_bg_color",
+      "label": "Button 1 Custom Background",
+      "default": "#BD7385"
+    },
+    {
+      "type": "color",
+      "id": "button_1_text_color",
+      "label": "Button 1 Custom Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_1_border_color",
+      "label": "Button 1 Custom Border",
+      "default": "#BD7385"
     },
     {
       "type": "text",
@@ -186,6 +972,57 @@
     },
     {
       "type": "select",
+      "id": "button_2_style",
+      "label": "Secondary Button Style",
+      "options": [
+        { "value": "primary_rosewood", "label": "Solid Dusty Rosewood (#BD7385)" },
+        { "value": "solid_plum", "label": "Solid Deep Plum (#2C1E26)" },
+        { "value": "outline_rosewood", "label": "Outline Rosewood" },
+        { "value": "outline_plum", "label": "Outline Plum" },
+        { "value": "custom", "label": "Custom Colors (Set Below)" }
+      ],
+      "default": "primary_rosewood"
+    },
+    {
+      "type": "color",
+      "id": "button_2_bg_color",
+      "label": "Button 2 Custom Background",
+      "default": "#BD7385"
+    },
+    {
+      "type": "color",
+      "id": "button_2_text_color",
+      "label": "Button 2 Custom Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_2_border_color",
+      "label": "Button 2 Custom Border",
+      "default": "#BD7385"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button border radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "checkbox",
+      "id": "buttons_stack_mobile",
+      "label": "Stack buttons on mobile",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing & Dividers"
+    },
+    {
+      "type": "select",
       "id": "section_width",
       "label": "Section width",
       "options": [
@@ -195,29 +1032,90 @@
       "default": "page-width"
     },
     {
+      "type": "checkbox",
+      "id": "show_top_divider",
+      "label": "Show top section divider",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_divider",
+      "label": "Show bottom section divider",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "section_divider_color",
+      "label": "Section divider color",
+      "default": "#EFE6E8"
+    },
+    {
       "type": "range",
       "id": "padding-block-start",
       "label": "Padding top",
       "min": 0,
-      "max": 100,
+      "max": 120,
       "step": 4,
       "unit": "px",
-      "default": 48
+      "default": 56
     },
     {
       "type": "range",
       "id": "padding-block-end",
       "label": "Padding bottom",
       "min": 0,
-      "max": 100,
+      "max": 120,
       "step": 4,
       "unit": "px",
-      "default": 48
+      "default": 56
+    }
+  ],
+  "blocks": [
+    {
+      "type": "point",
+      "name": "Value Point",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Point Title",
+          "default": "Wholesale Sourcing"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Point Description",
+          "default": "Products sourced through established wholesale channels with careful inventory handling."
+        }
+      ]
     }
   ],
   "presets": [
     {
-      "name": "About Wholesale Heritage"
+      "name": "Wholesale Heritage Story",
+      "blocks": [
+        {
+          "type": "point",
+          "settings": {
+            "title": "Wholesale Sourcing",
+            "text": "Products sourced through established wholesale channels with careful inventory handling."
+          }
+        },
+        {
+          "type": "point",
+          "settings": {
+            "title": "Direct-to-Consumer",
+            "text": "Enjoy accessible retail pricing on multi-brand beauty products without middleman markups."
+          }
+        },
+        {
+          "type": "point",
+          "settings": {
+            "title": "Nationwide Reach",
+            "text": "Orders delivered across Pakistan with Cash on Delivery available for peace of mind."
+          }
+        }
+      ]
     }
   ]
 }

@@ -154,21 +154,103 @@
                       </a>
                     </h3>
                   </div>
-                  <div
-                    class="mega-menu__grid"
-                    data-menu-grid-id="{{ list_id }}"
-                  >
-                    {% render 'mega-menu-list',
-                      parent_link: link,
-                      id: list_id,
-                      section: section,
-                      grid_columns_count: 6,
-                      grid_columns_count_tablet: 4,
-                      grid_columns_count_collection_images: 8,
-                      menu_content_type: menu_content_type,
-                      content_aspect_ratio: ratio,
-                      image_border_radius: image_border_radius
-                    %}
+                  <div class="mega-menu__content-wrapper">
+                    <div
+                      class="mega-menu__grid"
+                      data-menu-grid-id="{{ list_id }}"
+                    >
+                      {% render 'mega-menu-list',
+                        parent_link: link,
+                        id: list_id,
+                        section: section,
+                        grid_columns_count: 6,
+                        grid_columns_count_tablet: 4,
+                        grid_columns_count_collection_images: 8,
+                        menu_content_type: menu_content_type,
+                        content_aspect_ratio: ratio,
+                        image_border_radius: image_border_radius,
+                        flat_links_limit: block_settings.flat_links_per_column | default: 5
+                      %}
+                    </div>
+
+                    {%- liquid
+                      assign link_handle = link.title | downcase | replace: ' ', '-' | replace: '&', '' | strip
+                      assign show_promo = false
+                      assign promo_img = blank
+                      assign promo_fallback = blank
+                      assign promo_badge = blank
+                      assign promo_title = blank
+                      assign promo_desc = blank
+                      assign promo_url = link.url
+                      assign promo_cta = 'Explore Collection'
+
+                      if block_settings.enable_editorial_promos != false
+                        if link_handle contains 'skin'
+                          assign show_promo = block_settings.show_skincare_promo | default: true
+                          assign promo_img = block_settings.skincare_promo_image
+                          assign promo_fallback = 'cat-skincare.jpg'
+                          assign promo_badge = block_settings.skincare_promo_badge | default: 'The Skincare Edit'
+                          assign promo_title = block_settings.skincare_promo_title | default: 'Personalized Daily Rituals'
+                          assign promo_desc = block_settings.skincare_promo_desc | default: 'Targeted serums, barrier creams, and clarifying cleansers.'
+                          assign promo_url = block_settings.skincare_promo_url | default: link.url
+                          assign promo_cta = block_settings.skincare_promo_cta | default: 'Explore Routines'
+                        elsif link_handle contains 'hair'
+                          assign show_promo = block_settings.show_haircare_promo | default: true
+                          assign promo_img = block_settings.haircare_promo_image
+                          assign promo_fallback = 'cat-haircare.jpg'
+                          assign promo_badge = block_settings.haircare_promo_badge | default: 'Hair Wellness'
+                          assign promo_title = block_settings.haircare_promo_title | default: 'Salon-Quality Hair Rituals'
+                          assign promo_desc = block_settings.haircare_promo_desc | default: 'Restorative masks, treatment oils, and everyday styling.'
+                          assign promo_url = block_settings.haircare_promo_url | default: link.url
+                          assign promo_cta = block_settings.haircare_promo_cta | default: 'Shop Hair Care'
+                        elsif link_handle contains 'fragrance'
+                          assign show_promo = block_settings.show_fragrance_promo | default: true
+                          assign promo_img = block_settings.fragrance_promo_image
+                          assign promo_fallback = 'brand-banner-fragrances.jpg'
+                          assign promo_badge = block_settings.fragrance_promo_badge | default: 'Signature Scents'
+                          assign promo_title = block_settings.fragrance_promo_title | default: 'Luxury & Niche Fragrances'
+                          assign promo_desc = block_settings.fragrance_promo_desc | default: 'Authentic Eau de Parfum and body mists from premier perfumers.'
+                          assign promo_url = block_settings.fragrance_promo_url | default: link.url
+                          assign promo_cta = block_settings.fragrance_promo_cta | default: 'Explore Scents'
+                        elsif link_handle contains 'makeup'
+                          assign show_promo = block_settings.show_makeup_promo | default: false
+                          assign promo_img = block_settings.makeup_promo_image
+                          assign promo_fallback = 'cat-makeup.jpg'
+                          assign promo_badge = block_settings.makeup_promo_badge | default: 'The Makeup Studio'
+                          assign promo_title = block_settings.makeup_promo_title | default: 'Cult-Favorite Beauty'
+                          assign promo_desc = block_settings.makeup_promo_desc | default: 'Explore radiant foundations, lip oils, and iconic palettes.'
+                          assign promo_url = block_settings.makeup_promo_url | default: link.url
+                          assign promo_cta = block_settings.makeup_promo_cta | default: 'Shop Makeup'
+                        endif
+                      endif
+                    -%}
+
+                    {%- if show_promo -%}
+                      <div class="mega-menu__promo-card">
+                        <a href="{{ promo_url }}" class="mega-menu__promo-link">
+                          <div class="mega-menu__promo-media">
+                            {%- if promo_img != blank -%}
+                              {{ promo_img | image_url: width: 600 | image_tag: class: 'mega-menu__promo-img', loading: 'lazy' }}
+                            {%- else -%}
+                              <img src="{{ promo_fallback | asset_url }}" alt="{{ promo_title }}" class="mega-menu__promo-img" loading="lazy">
+                            {%- endif -%}
+                          </div>
+                          <div class="mega-menu__promo-content">
+                            {%- if promo_badge != blank -%}
+                              <span class="mega-menu__promo-badge">{{ promo_badge }}</span>
+                            {%- endif -%}
+                            <h4 class="mega-menu__promo-title">{{ promo_title }}</h4>
+                            {%- if promo_desc != blank -%}
+                              <p class="mega-menu__promo-desc">{{ promo_desc }}</p>
+                            {%- endif -%}
+                            <span class="mega-menu__promo-cta">
+                              <span>{{ promo_cta }}</span>
+                              <span class="mega-menu__promo-cta-arrow" aria-hidden="true">&rarr;</span>
+                            </span>
+                          </div>
+                        </a>
+                      </div>
+                    {%- endif -%}
                   </div>
                 </div>
               </div>
@@ -1069,6 +1151,206 @@
       "id": "drawer_dividers",
       "label": "t:settings.dividers",
       "default": false
+    },
+    {
+      "type": "header",
+      "content": "Editorial Megamenu Promo Cards"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_editorial_promos",
+      "label": "Enable curated visual promo cards",
+      "default": true,
+      "info": "Displays editorial beauty cards for categories with fewer link columns (e.g. Skin Care, Hair Care, Fragrances)."
+    },
+    {
+      "type": "range",
+      "id": "flat_links_per_column",
+      "label": "Links per column for single-level categories",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Skin Care Promo Card"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_skincare_promo",
+      "label": "Show Skin Care promo card",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "skincare_promo_image",
+      "label": "Skin Care promo image",
+      "info": "Falls back to curated brand asset if empty."
+    },
+    {
+      "type": "text",
+      "id": "skincare_promo_badge",
+      "label": "Skin Care badge",
+      "default": "The Skincare Edit"
+    },
+    {
+      "type": "text",
+      "id": "skincare_promo_title",
+      "label": "Skin Care headline",
+      "default": "Personalized Daily Rituals"
+    },
+    {
+      "type": "text",
+      "id": "skincare_promo_desc",
+      "label": "Skin Care description",
+      "default": "Targeted serums, nourishing creams, and barrier care."
+    },
+    {
+      "type": "url",
+      "id": "skincare_promo_url",
+      "label": "Skin Care promo link"
+    },
+    {
+      "type": "text",
+      "id": "skincare_promo_cta",
+      "label": "Skin Care CTA button text",
+      "default": "Explore Routines"
+    },
+    {
+      "type": "header",
+      "content": "Hair Care Promo Card"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_haircare_promo",
+      "label": "Show Hair Care promo card",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "haircare_promo_image",
+      "label": "Hair Care promo image",
+      "info": "Falls back to curated brand asset if empty."
+    },
+    {
+      "type": "text",
+      "id": "haircare_promo_badge",
+      "label": "Hair Care badge",
+      "default": "Hair Wellness"
+    },
+    {
+      "type": "text",
+      "id": "haircare_promo_title",
+      "label": "Hair Care headline",
+      "default": "Salon-Quality Hair Care"
+    },
+    {
+      "type": "text",
+      "id": "haircare_promo_desc",
+      "label": "Hair Care description",
+      "default": "Restorative masks, treatment oils, and everyday styling."
+    },
+    {
+      "type": "url",
+      "id": "haircare_promo_url",
+      "label": "Hair Care promo link"
+    },
+    {
+      "type": "text",
+      "id": "haircare_promo_cta",
+      "label": "Hair Care CTA button text",
+      "default": "Shop Hair Care"
+    },
+    {
+      "type": "header",
+      "content": "Fragrances Promo Card"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_fragrance_promo",
+      "label": "Show Fragrances promo card",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "fragrance_promo_image",
+      "label": "Fragrances promo image",
+      "info": "Falls back to curated brand asset if empty."
+    },
+    {
+      "type": "text",
+      "id": "fragrance_promo_badge",
+      "label": "Fragrances badge",
+      "default": "Signature Scents"
+    },
+    {
+      "type": "text",
+      "id": "fragrance_promo_title",
+      "label": "Fragrances headline",
+      "default": "Luxury & Niche Fragrances"
+    },
+    {
+      "type": "text",
+      "id": "fragrance_promo_desc",
+      "label": "Fragrances description",
+      "default": "Authentic Eau de Parfum and body mists from premier perfumers."
+    },
+    {
+      "type": "url",
+      "id": "fragrance_promo_url",
+      "label": "Fragrances promo link"
+    },
+    {
+      "type": "text",
+      "id": "fragrance_promo_cta",
+      "label": "Fragrances CTA button text",
+      "default": "Explore Scents"
+    },
+    {
+      "type": "header",
+      "content": "Makeup Promo Card (Optional)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_makeup_promo",
+      "label": "Show Makeup promo card",
+      "default": false,
+      "info": "Disabled by default as Makeup has 5 full columns."
+    },
+    {
+      "type": "image_picker",
+      "id": "makeup_promo_image",
+      "label": "Makeup promo image"
+    },
+    {
+      "type": "text",
+      "id": "makeup_promo_badge",
+      "label": "Makeup badge",
+      "default": "The Makeup Studio"
+    },
+    {
+      "type": "text",
+      "id": "makeup_promo_title",
+      "label": "Makeup headline",
+      "default": "Cult-Favorite Beauty"
+    },
+    {
+      "type": "text",
+      "id": "makeup_promo_desc",
+      "label": "Makeup description",
+      "default": "Explore radiant foundations, lip oils, and iconic palettes."
+    },
+    {
+      "type": "url",
+      "id": "makeup_promo_url",
+      "label": "Makeup promo link"
+    },
+    {
+      "type": "text",
+      "id": "makeup_promo_cta",
+      "label": "Makeup CTA button text",
+      "default": "Shop Makeup"
     }
   ]
 }
