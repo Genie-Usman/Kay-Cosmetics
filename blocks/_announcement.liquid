@@ -22,7 +22,7 @@
     data-slide-index="{{ block_index }}"
     style="
       {% render 'typography-style', settings: block_settings, preset: 'custom' %}
-      {% if block_settings.text_color != blank %}--color: {{ block_settings.text_color }}; --color-rgb: {{ block_settings.text_color.rgb }};{% endif %}
+      {% if block_settings.text_color != blank %}--color: {{ block_settings.text_color }}; --color-rgb: {{ block_settings.text_color.rgb }}; color: {{ block_settings.text_color }} !important;{% else %}--color: #FFFFFF; color: #FFFFFF !important;{% endif %}
       --width: 100%;
       --text-align: center;
       --line-height: 1.4;

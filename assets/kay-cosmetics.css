@@ -80,15 +80,23 @@ body {
    -------------------------------------------------------------------------- */
 .announcement-bar {
   background-color: var(--announcement-bg, #BD7385);
-  color: #FFFFFF;
+  color: #FFFFFF !important;
   border-block-end: 1px solid rgba(255, 255, 255, 0.15);
 }
 
+.announcement-bar__outer,
 .announcement-bar__text,
-.announcement-bar a {
+.announcement-bar a,
+.announcement-bar__link,
+.announcement-swiper__nav {
   font-size: 0.75rem;
   letter-spacing: 0.02em;
   font-weight: 500;
+  color: #FFFFFF !important;
+}
+
+.announcement-swiper__nav svg {
+  stroke: #FFFFFF !important;
 }
 
 .header__logo-text {
