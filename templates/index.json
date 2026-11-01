@@ -760,11 +760,8 @@
         "button_border_radius": 6,
         "buttons_stack_mobile": false,
         "section_width": "page-width",
-        "show_top_divider": false,
-        "show_bottom_divider": false,
-        "section_divider_color": "#efe6e8",
-        "padding-block-start": 56,
-        "padding-block-end": 56
+        "padding-block-start": 48,
+        "padding-block-end": 48
       }
     },
     "beauty_shopping_guides": {
@@ -848,254 +845,14 @@
         "read_more_color": "#bd7385",
         "mobile_layout": "stacked",
         "section_width": "page-width",
-        "show_top_divider": false,
-        "show_bottom_divider": false,
-        "section_divider_color": "#efe6e8",
-        "padding-block-start": 48,
-        "padding-block-end": 48
-      }
-    },
-    "featured_brand_ticker": {
-      "type": "featured-brand-ticker",
-      "blocks": {
-        "ticker_gucci": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "Gucci",
-            "asset_image": "brand-logo-gucci.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/gucci_e3217287-bd1c-4458-adf2-73ecc83b195f.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        },
-        "ticker_wet_n_wild": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "Wet n Wild",
-            "asset_image": "brand-logo-wet-n-wild.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/wet-n-wild.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        },
-        "ticker_dior": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "Dior",
-            "asset_image": "brand-logo-dior.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/dior_1e12eb19-c748-4a22-b5fd-99c2a49c3a15.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        },
-        "ticker_huda_beauty": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "Huda Beauty",
-            "asset_image": "brand-logo-huda-beauty.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/huda_0a6d9447-5a85-49d8-ad90-80fab6abee57.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        },
-        "ticker_la_girl": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "L.A. Girl",
-            "asset_image": "brand-logo-la-girl.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/la-girl_6967b926-e05b-448b-9188-968818a37406.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        },
-        "ticker_maybelline": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "Maybelline New York",
-            "asset_image": "brand-logo-maybelline.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/mayb_e215e88b-72dd-4f1d-acc7-4d54fb7e9005.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        },
-        "ticker_cerave": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "CeraVe",
-            "asset_image": "brand-logo-cerave.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/cerave_2e208ed4-0e5e-42ff-a762-1f8f4adfcfc7.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        },
-        "ticker_charlotte_tilbury": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "Charlotte Tilbury",
-            "asset_image": "brand-logo-charlotte-tilbury.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/ct.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        },
-        "ticker_garnier": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "Garnier",
-            "asset_image": "brand-logo-garnier.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/garnier_aabb16f5-91f9-4ddb-8ada-2e85f0257d16.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        },
-        "ticker_loreal": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "L'Oréal Paris",
-            "asset_image": "brand-logo-loreal.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/loreal_c1d5f6db-9b68-4b1b-8b24-a4c1987f8574.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        },
-        "ticker_benefit": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "Benefit Cosmetics",
-            "asset_image": "brand-logo-benefit.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/benefit_93dfa6ec-2270-4c46-9afd-67d6fc1ae4d4.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        },
-        "ticker_antonio_banderas": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "Antonio Banderas",
-            "asset_image": "brand-logo-antonio-banderas.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/banderas-logo-_1.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        },
-        "ticker_carolina_herrera": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "Carolina Herrera",
-            "asset_image": "brand-logo-carolina-herrera.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/Carolina-Herrera-Logo-Desktop-_1.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        },
-        "ticker_paco_rabanne": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "Paco Rabanne",
-            "asset_image": "brand-logo-paco-rabanne.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/Paco-Rabanne-Logo.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        },
-        "ticker_jean_paul_gaultier": {
-          "type": "brand",
-          "settings": {
-            "brand_name": "Jean Paul Gaultier",
-            "asset_image": "brand-logo-jean-paul-gaultier.png",
-            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/Jean-Paul-Gaultier-logo_1.png",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "custom_height": 0
-          }
-        }
-      },
-      "block_order": [
-        "ticker_gucci",
-        "ticker_wet_n_wild",
-        "ticker_dior",
-        "ticker_huda_beauty",
-        "ticker_la_girl",
-        "ticker_maybelline",
-        "ticker_cerave",
-        "ticker_charlotte_tilbury",
-        "ticker_garnier",
-        "ticker_loreal",
-        "ticker_benefit",
-        "ticker_antonio_banderas",
-        "ticker_carolina_herrera",
-        "ticker_paco_rabanne",
-        "ticker_jean_paul_gaultier"
-      ],
-      "disabled": true,
-      "settings": {
-        "section_width": "full-width",
-        "section_bg_style": "white",
-        "custom_bg_color": "#ffffff",
-        "padding-block-start": 36,
-        "padding-block-end": 36,
-        "show_top_divider": false,
-        "show_bottom_divider": false,
-        "divider_color": "#efe6e8",
-        "eyebrow": "AUTHENTIC BRAND PARTNERS",
-        "eyebrow_color": "#bd7385",
-        "eyebrow_size": 11,
-        "eyebrow_style": "uppercase",
-        "title": "Featured At Kay Cosmetics",
-        "heading_tag": "h2",
-        "heading_font": "serif",
-        "heading_alignment": "center",
-        "heading_size_desktop": 32,
-        "heading_size_mobile": 24,
-        "heading_color": "#2c1e26",
-        "heading_letter_spacing": 1,
-        "heading_margin_bottom": 26,
-        "subtitle": "",
-        "subtitle_color": "#6b5c65",
-        "subtitle_size": 14.5,
-        "animation_speed": 25,
-        "scroll_direction": "left",
-        "pause_on_hover": true,
-        "enable_edge_fade": true,
-        "edge_fade_width": 60,
-        "logo_max_height_desktop": 46,
-        "logo_max_height_mobile": 32,
-        "logo_max_width_desktop": 160,
-        "item_spacing_desktop": 28,
-        "item_spacing_mobile": 16,
-        "hover_effect": "scale_and_opacity",
-        "hover_scale": 105,
-        "logo_filter": "none"
+        "padding-block-start": 44,
+        "padding-block-end": 44
       }
     },
     "whatsapp_vip_club": {
       "type": "whatsapp-vip-club",
       "settings": {
-        "card_max_width": "page_width",
-        "layout_alignment": "center",
-        "card_bg_style": "luxury_gradient",
-        "card_bg_color": "#f6edfa",
-        "card_border_color": "#ebe1f2",
-        "card_border_radius": 20,
-        "card_padding": 48,
-        "eyebrow": "Customer Care & Updates",
-        "eyebrow_color": "#bd7385",
-        "eyebrow_size": 11,
-        "eyebrow_style": "uppercase",
+        "eyebrow": "Customer Assistance",
         "title": "Order Help & Product Inquiries",
         "heading_tag": "h2",
         "heading_size": "medium",
@@ -1126,11 +883,8 @@
         "whatsapp_preset_message": "Hello Kay Cosmetics, I have an inquiry regarding products.",
         "whatsapp_btn_style": "primary_green",
         "section_width": "page-width",
-        "show_top_divider": false,
-        "show_bottom_divider": false,
-        "section_divider_color": "#efe6e8",
-        "padding-block-start": 48,
-        "padding-block-end": 48
+        "padding-block-start": 44,
+        "padding-block-end": 44
       }
     }
   },
