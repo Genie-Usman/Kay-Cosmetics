@@ -784,6 +784,7 @@
           "settings": {
             "brand_name": "Gucci",
             "asset_image": "brand-logo-gucci.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/gucci_e3217287-bd1c-4458-adf2-73ecc83b195f.png",
             "link": "shopify://collections/all"
           }
         },
@@ -792,6 +793,7 @@
           "settings": {
             "brand_name": "Wet n Wild",
             "asset_image": "brand-logo-wet-n-wild.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/wet-n-wild.png",
             "link": "shopify://collections/all"
           }
         },
@@ -800,6 +802,7 @@
           "settings": {
             "brand_name": "Dior",
             "asset_image": "brand-logo-dior.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/dior_1e12eb19-c748-4a22-b5fd-99c2a49c3a15.png",
             "link": "shopify://collections/all"
           }
         },
@@ -808,6 +811,7 @@
           "settings": {
             "brand_name": "Huda Beauty",
             "asset_image": "brand-logo-huda-beauty.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/huda_0a6d9447-5a85-49d8-ad90-80fab6abee57.png",
             "link": "shopify://collections/all"
           }
         },
@@ -816,6 +820,7 @@
           "settings": {
             "brand_name": "L.A. Girl",
             "asset_image": "brand-logo-la-girl.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/la-girl_6967b926-e05b-448b-9188-968818a37406.png",
             "link": "shopify://collections/all"
           }
         },
@@ -824,6 +829,7 @@
           "settings": {
             "brand_name": "Maybelline New York",
             "asset_image": "brand-logo-maybelline.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/mayb_e215e88b-72dd-4f1d-acc7-4d54fb7e9005.png",
             "link": "shopify://collections/all"
           }
         },
@@ -832,6 +838,7 @@
           "settings": {
             "brand_name": "CeraVe",
             "asset_image": "brand-logo-cerave.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/cerave_2e208ed4-0e5e-42ff-a762-1f8f4adfcfc7.png",
             "link": "shopify://collections/all"
           }
         },
@@ -840,6 +847,7 @@
           "settings": {
             "brand_name": "Charlotte Tilbury",
             "asset_image": "brand-logo-charlotte-tilbury.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/ct.png",
             "link": "shopify://collections/all"
           }
         },
@@ -848,6 +856,7 @@
           "settings": {
             "brand_name": "Garnier",
             "asset_image": "brand-logo-garnier.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/garnier_aabb16f5-91f9-4ddb-8ada-2e85f0257d16.png",
             "link": "shopify://collections/all"
           }
         },
@@ -856,6 +865,7 @@
           "settings": {
             "brand_name": "L'Oréal Paris",
             "asset_image": "brand-logo-loreal.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/loreal_c1d5f6db-9b68-4b1b-8b24-a4c1987f8574.png",
             "link": "shopify://collections/all"
           }
         },
@@ -864,6 +874,7 @@
           "settings": {
             "brand_name": "Benefit Cosmetics",
             "asset_image": "brand-logo-benefit.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/benefit_93dfa6ec-2270-4c46-9afd-67d6fc1ae4d4.png",
             "link": "shopify://collections/all"
           }
         },
@@ -872,6 +883,7 @@
           "settings": {
             "brand_name": "Antonio Banderas",
             "asset_image": "brand-logo-antonio-banderas.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/banderas-logo-_1.png",
             "link": "shopify://collections/all"
           }
         },
@@ -880,6 +892,7 @@
           "settings": {
             "brand_name": "Carolina Herrera",
             "asset_image": "brand-logo-carolina-herrera.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/Carolina-Herrera-Logo-Desktop-_1.png",
             "link": "shopify://collections/all"
           }
         },
@@ -888,6 +901,7 @@
           "settings": {
             "brand_name": "Paco Rabanne",
             "asset_image": "brand-logo-paco-rabanne.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/Paco-Rabanne-Logo.png",
             "link": "shopify://collections/all"
           }
         },
@@ -896,6 +910,7 @@
           "settings": {
             "brand_name": "Jean Paul Gaultier",
             "asset_image": "brand-logo-jean-paul-gaultier.png",
+            "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/Jean-Paul-Gaultier-logo_1.png",
             "link": "shopify://collections/all"
           }
         }
@@ -926,11 +941,11 @@
         "show_top_divider": false,
         "show_bottom_divider": false,
         "divider_color": "#efe6e8",
-        "eyebrow": "",
+        "eyebrow": "AUTHENTIC BRAND PARTNERS",
         "eyebrow_color": "#bd7385",
         "eyebrow_size": 11,
         "eyebrow_style": "uppercase",
-        "title": "Featured At Allure",
+        "title": "Featured At Kay Cosmetics",
         "heading_tag": "h2",
         "heading_font": "serif",
         "heading_alignment": "center",
