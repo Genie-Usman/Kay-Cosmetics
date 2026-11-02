@@ -159,6 +159,9 @@
                       class="mega-menu__grid"
                       data-menu-grid-id="{{ list_id }}"
                     >
+                      {% liquid
+                        assign flat_links_limit = block_settings.flat_links_per_column | default: 5
+                      %}
                       {% render 'mega-menu-list',
                         parent_link: link,
                         id: list_id,
@@ -169,7 +172,7 @@
                         menu_content_type: menu_content_type,
                         content_aspect_ratio: ratio,
                         image_border_radius: image_border_radius,
-                        flat_links_limit: block_settings.flat_links_per_column | default: 5
+                        flat_links_limit: flat_links_limit
                       %}
                     </div>
 
