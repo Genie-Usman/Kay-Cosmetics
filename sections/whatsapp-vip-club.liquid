@@ -145,7 +145,7 @@
 
     @media (max-width: 860px) {
       #WhatsappVip-{{ section.id }} .whatsapp-card-frame {
-        padding: clamp(32px, 6vw, 44px) 20px !important;
+        padding: clamp(28px, 5vw, 36px) 20px !important;
         {% if layout_align == 'center' %}
           display: flex !important;
           flex-direction: column !important;
@@ -159,13 +159,6 @@
           text-align: left !important;
           gap: 24px !important;
         {% endif %}
-      }
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        text-align: left !important;
-        gap: 24px !important;
-        padding: clamp(22px, 5vw, 32px) !important;
       }
 
       #WhatsappVip-{{ section.id }} .whatsapp-actions-box {
@@ -476,13 +469,49 @@
       {% endif %}
     }
 
-    /* Optional WhatsApp Direct Pill */
+    /* WhatsApp Placement & Pill Styles */
+    #WhatsappVip-{{ section.id }} .whatsapp-info-cta {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      {% if layout_align == 'center' %}
+        justify-content: center;
+      {% else %}
+        justify-content: flex-start;
+      {% endif %}
+    }
+
+    #WhatsappVip-{{ section.id }} .whatsapp-concierge-row {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px dashed rgba(226, 215, 236, 0.7);
+      width: 100%;
+    }
+
+    #WhatsappVip-{{ section.id }} .whatsapp-concierge-label {
+      font-size: 0.8125rem;
+      color: var(--yozo-body, #574A52);
+      font-weight: 500;
+    }
+
+    @media (max-width: 640px) {
+      #WhatsappVip-{{ section.id }} .whatsapp-concierge-row {
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+
     #WhatsappVip-{{ section.id }} .whatsapp-direct-pill {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 10px 18px;
+      padding: 10px 20px;
       border-radius: 999px;
       font-size: 0.8125rem;
       font-weight: 600;
@@ -490,25 +519,42 @@
       transition: all 0.25s ease;
       cursor: pointer;
       width: fit-content;
-      margin-bottom: 6px;
-      {% if section.settings.whatsapp_btn_style == 'primary_green' %}
-        background-color: #25D366;
-        color: #FFFFFF;
-        border: 1px solid #25D366;
-      {% elsif section.settings.whatsapp_btn_style == 'primary_rosewood' %}
-        background-color: var(--yozo-rosewood, #BD7385);
-        color: #FFFFFF;
-        border: 1px solid var(--yozo-rosewood, #BD7385);
-      {% else %}
-        background-color: #FFFFFF;
-        color: var(--yozo-plum-dark, #2C1E26);
-        border: 1px solid #E2D7EC;
-      {% endif %}
+    }
+
+    #WhatsappVip-{{ section.id }} .whatsapp-direct-pill--primary_green {
+      background-color: #25D366;
+      color: #FFFFFF;
+      border: 1px solid #25D366;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.22);
+    }
+
+    #WhatsappVip-{{ section.id }} .whatsapp-direct-pill--luxury_white {
+      background-color: #FFFFFF;
+      color: var(--yozo-plum-dark, #2C1E26);
+      border: 1px solid #E2D7EC;
+      box-shadow: 0 2px 10px rgba(44, 30, 38, 0.04);
+    }
+
+    #WhatsappVip-{{ section.id }} .whatsapp-direct-pill--luxury_white svg {
+      color: #25D366;
+    }
+
+    #WhatsappVip-{{ section.id }} .whatsapp-direct-pill--primary_rosewood {
+      background-color: var(--yozo-rosewood, #BD7385);
+      color: #FFFFFF;
+      border: 1px solid var(--yozo-rosewood, #BD7385);
+      box-shadow: 0 4px 14px rgba(189, 115, 133, 0.25);
+    }
+
+    #WhatsappVip-{{ section.id }} .whatsapp-direct-pill--outline {
+      background-color: transparent;
+      color: var(--yozo-plum-dark, #2C1E26);
+      border: 1px solid #D8CBE4;
     }
 
     #WhatsappVip-{{ section.id }} .whatsapp-direct-pill:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(44, 30, 38, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(44, 30, 38, 0.09);
     }
 
     #WhatsappVip-{{ section.id }} .vip-form-success {
@@ -526,6 +572,50 @@
     }
   {%- endstyle -%}
 
+  {% liquid
+    assign wa_placement = section.settings.whatsapp_placement | default: 'auto'
+    assign render_in_info = false
+    assign render_above_form = false
+    assign render_below_form = false
+
+    if wa_placement == 'info_column'
+      assign render_in_info = true
+    elsif wa_placement == 'above_form'
+      assign render_above_form = true
+    elsif wa_placement == 'below_form'
+      assign render_below_form = true
+    else
+      # 'auto' mode:
+      if layout_align == 'split'
+        assign render_in_info = true
+      else
+        assign render_below_form = true
+      endif
+    endif
+  %}
+
+  {%- capture whatsapp_pill_html -%}
+    {% if show_wa and wa_num != blank %}
+      {% liquid
+        assign clean_number = wa_num | remove: '+' | remove: ' ' | remove: '-'
+        assign preset_encoded = section.settings.whatsapp_preset_message | url_encode
+        assign wa_url = 'https://wa.me/' | append: clean_number | append: '?text=' | append: preset_encoded
+      %}
+
+      <a
+        href="{{ wa_url }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="whatsapp-direct-pill whatsapp-direct-pill--{{ section.settings.whatsapp_btn_style | default: 'primary_green' }}"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12.031 2C6.512 2 2.023 6.48 2.023 11.988c0 1.76.46 3.48 1.332 5l-1.417 5.176 5.313-1.393a9.92 9.92 0 0 0 4.78 1.226h.004c5.517 0 10.007-4.48 10.007-9.99A9.95 9.95 0 0 0 12.03 2zm0 18.28a8.28 8.28 0 0 1-4.223-1.154l-.303-.18-3.14.823.839-3.06-.197-.313a8.26 8.26 0 0 1-1.27-4.408c0-4.57 3.72-8.288 8.297-8.288 2.215 0 4.298.863 5.863 2.428a8.24 8.24 0 0 1 2.43 5.86c0 4.57-3.72 8.29-8.296 8.29zm4.545-6.208c-.249-.125-1.472-.726-1.7-.809-.229-.083-.395-.125-.561.125-.166.249-.644.81-.789.976-.145.166-.291.187-.54.062-.25-.125-1.053-.388-2.006-1.238-.742-.662-1.243-1.48-1.389-1.729-.145-.25-.015-.385.11-.51.112-.112.25-.29.374-.436.124-.145.166-.25.25-.415.083-.166.041-.312-.021-.436-.063-.125-.561-1.35-.769-1.85-.202-.486-.407-.42-.56-.428l-.478-.008c-.166 0-.436.062-.664.312-.228.249-.872.852-.872 2.077 0 1.226.893 2.41 1.018 2.576.125.166 1.756 2.68 4.254 3.758.594.257 1.058.41 1.42.525.597.19 1.14.163 1.57.099.479-.072 1.472-.602 1.68-1.184.208-.581.208-1.08.145-1.184-.062-.104-.228-.166-.477-.29z"/>
+        </svg>
+        <span>{{ section.settings.whatsapp_btn_label | default: 'Chat on WhatsApp' }}</span>
+      </a>
+    {% endif %}
+  {%- endcapture -%}
+
   <div class="whatsapp-vip-container">
     <div class="whatsapp-card-frame">
       <div class="whatsapp-vip-info">
@@ -542,27 +632,17 @@
         {% if subtitle != blank %}
           <p class="section-subtitle">{{ subtitle }}</p>
         {% endif %}
+
+        {% if render_in_info and whatsapp_pill_html != blank %}
+          <div class="whatsapp-info-cta">
+            {{ whatsapp_pill_html }}
+          </div>
+        {% endif %}
       </div>
 
       <div class="whatsapp-actions-box">
-        {% if show_wa and wa_num != blank %}
-          {% liquid
-            assign clean_number = wa_num | remove: '+' | remove: ' ' | remove: '-'
-            assign preset_encoded = section.settings.whatsapp_preset_message | url_encode
-            assign wa_url = 'https://wa.me/' | append: clean_number | append: '?text=' | append: preset_encoded
-          %}
-
-          <a
-            href="{{ wa_url }}"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="whatsapp-direct-pill"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M12.031 2C6.512 2 2.023 6.48 2.023 11.988c0 1.76.46 3.48 1.332 5l-1.417 5.176 5.313-1.393a9.92 9.92 0 0 0 4.78 1.226h.004c5.517 0 10.007-4.48 10.007-9.99A9.95 9.95 0 0 0 12.03 2zm0 18.28a8.28 8.28 0 0 1-4.223-1.154l-.303-.18-3.14.823.839-3.06-.197-.313a8.26 8.26 0 0 1-1.27-4.408c0-4.57 3.72-8.288 8.297-8.288 2.215 0 4.298.863 5.863 2.428a8.24 8.24 0 0 1 2.43 5.86c0 4.57-3.72 8.29-8.296 8.29zm4.545-6.208c-.249-.125-1.472-.726-1.7-.809-.229-.083-.395-.125-.561.125-.166.249-.644.81-.789.976-.145.166-.291.187-.54.062-.25-.125-1.053-.388-2.006-1.238-.742-.662-1.243-1.48-1.389-1.729-.145-.25-.015-.385.11-.51.112-.112.25-.29.374-.436.124-.145.166-.25.25-.415.083-.166.041-.312-.021-.436-.063-.125-.561-1.35-.769-1.85-.202-.486-.407-.42-.56-.428l-.478-.008c-.166 0-.436.062-.664.312-.228.249-.872.852-.872 2.077 0 1.226.893 2.41 1.018 2.576.125.166 1.756 2.68 4.254 3.758.594.257 1.058.41 1.42.525.597.19 1.14.163 1.57.099.479-.072 1.472-.602 1.68-1.184.208-.581.208-1.08.145-1.184-.062-.104-.228-.166-.477-.29z"/>
-            </svg>
-            <span>{{ section.settings.whatsapp_btn_label }}</span>
-          </a>
+        {% if render_above_form and whatsapp_pill_html != blank %}
+          {{ whatsapp_pill_html }}
         {% endif %}
 
         {% form 'customer', class: 'vip-form' %}
@@ -648,6 +728,15 @@
 
         {% if privacy_note != blank %}
           <div class="vip-privacy-note">{{ privacy_note }}</div>
+        {% endif %}
+
+        {% if render_below_form and whatsapp_pill_html != blank %}
+          <div class="whatsapp-concierge-row">
+            {% if section.settings.whatsapp_helper_text != blank %}
+              <span class="whatsapp-concierge-label">{{ section.settings.whatsapp_helper_text }}</span>
+            {% endif %}
+            {{ whatsapp_pill_html }}
+          </div>
         {% endif %}
       </div>
     </div>
@@ -965,6 +1054,25 @@
       "default": false
     },
     {
+      "type": "select",
+      "id": "whatsapp_placement",
+      "label": "WhatsApp button placement",
+      "options": [
+        { "value": "auto", "label": "Automatic (Smart Balance)" },
+        { "value": "info_column", "label": "Left Column (Under Subtitle)" },
+        { "value": "below_form", "label": "Below Form & Perks" },
+        { "value": "above_form", "label": "Above Newsletter Input" }
+      ],
+      "default": "auto",
+      "info": "Prevents the WhatsApp button from awkwardly cutting between the headline and newsletter input."
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_helper_text",
+      "label": "Prompt text (when placed below form)",
+      "default": "Need immediate order help?"
+    },
+    {
       "type": "text",
       "id": "whatsapp_number",
       "label": "WhatsApp number (international format)",
@@ -987,11 +1095,12 @@
       "id": "whatsapp_btn_style",
       "label": "WhatsApp button style",
       "options": [
+        { "value": "luxury_white", "label": "Elevated White Pill with Green Accent" },
         { "value": "primary_green", "label": "WhatsApp Green (#25D366)" },
         { "value": "primary_rosewood", "label": "Rosewood (#BD7385)" },
         { "value": "outline", "label": "Outline Card" }
       ],
-      "default": "primary_green"
+      "default": "luxury_white"
     },
     {
       "type": "header",

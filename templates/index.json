@@ -1100,7 +1100,7 @@
       "type": "whatsapp-vip-club",
       "settings": {
         "card_max_width": "page_width",
-        "layout_alignment": "center",
+        "layout_alignment": "split",
         "card_bg_style": "luxury_gradient",
         "card_bg_color": "#f6edfa",
         "card_border_color": "#ebe1f2",
@@ -1144,7 +1144,9 @@
         "show_bottom_divider": false,
         "section_divider_color": "#efe6e8",
         "padding-block-start": 48,
-        "padding-block-end": 48
+        "padding-block-end": 48,
+        "whatsapp_placement": "auto",
+        "whatsapp_helper_text": "Need immediate order help?"
       }
     }
   },
