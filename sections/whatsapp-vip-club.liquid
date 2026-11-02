@@ -41,7 +41,7 @@
   assign btn_text = section.settings.button_text_color | default: '#FFFFFF'
   assign btn_radius = section.settings.button_border_radius | default: 8
   assign capsule_shadow_style = section.settings.capsule_shadow_style | default: 'subtle_luxury'
-  assign capsule_radius = section.settings.capsule_border_radius | default: 999
+  assign capsule_radius = section.settings.capsule_border_radius | default: 'pill'
   
   assign show_perks = section.settings.show_perks
   assign perk_icon_style = section.settings.perks_icon_style | default: 'rosewood_badge'
@@ -74,7 +74,6 @@
     --winput-text: {{ input_text }};
     --winput-border: {{ input_border }};
     --wbtn-radius: {{ btn_radius }}px;
-    --wcapsule-radius: {{ capsule_radius }}px;
     --wsec-divider: {{ sec_div_color }};
   "
 >
@@ -281,7 +280,16 @@
       align-items: center;
       background: var(--winput-bg, #FFFFFF);
       border: 1px solid var(--winput-border, #E2D7EC);
-      border-radius: var(--wcapsule-radius, 999px);
+      {% case capsule_radius %}
+        {% when 'rounded_16' %}
+          border-radius: 16px;
+        {% when 'rounded_10' %}
+          border-radius: 10px;
+        {% when 'sharp' %}
+          border-radius: 4px;
+        {% else %}
+          border-radius: 999px;
+      {% endcase %}
       padding: 4px 4px 4px 18px;
       min-height: 52px;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -353,7 +361,16 @@
       gap: 7px;
       padding: 9px 20px;
       min-height: 42px;
-      border-radius: var(--wcapsule-radius, 999px);
+      {% case capsule_radius %}
+        {% when 'rounded_16' %}
+          border-radius: 12px;
+        {% when 'rounded_10' %}
+          border-radius: 7px;
+        {% when 'sharp' %}
+          border-radius: 2px;
+        {% else %}
+          border-radius: 999px;
+      {% endcase %}
       font-size: 0.8125rem;
       font-weight: 600;
       letter-spacing: 0.02em;
@@ -1069,14 +1086,16 @@
       "default": "subtle_luxury"
     },
     {
-      "type": "range",
+      "type": "select",
       "id": "capsule_border_radius",
-      "label": "Capsule corner radius",
-      "min": 8,
-      "max": 999,
-      "step": 2,
-      "unit": "px",
-      "default": 999
+      "label": "Capsule shape style",
+      "options": [
+        { "value": "pill", "label": "Full Pill Rounded Ends (999px)" },
+        { "value": "rounded_16", "label": "Modern Rounded (16px)" },
+        { "value": "rounded_10", "label": "Soft Rounded (10px)" },
+        { "value": "sharp", "label": "Crisp Minimal (4px)" }
+      ],
+      "default": "pill"
     },
     {
       "type": "text",

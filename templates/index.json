@@ -1124,7 +1124,7 @@
         "input_text_color": "#2c1e26",
         "input_border_color": "#e2d7ec",
         "capsule_shadow_style": "subtle_luxury",
-        "capsule_border_radius": 999,
+        "capsule_border_radius": "pill",
         "button_label": "Subscribe",
         "button_style": "primary_rosewood",
         "button_bg_color": "#bd7385",
