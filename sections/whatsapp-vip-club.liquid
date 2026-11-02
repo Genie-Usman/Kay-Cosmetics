@@ -548,7 +548,8 @@
         {% if show_wa and wa_num != blank %}
           {% liquid
             assign clean_number = wa_num | remove: '+' | remove: ' ' | remove: '-'
-            assign wa_url = 'https://wa.me/' | append: clean_number | append: '?text=' | append: section.settings.whatsapp_preset_message | url_encode
+            assign preset_encoded = section.settings.whatsapp_preset_message | url_encode
+            assign wa_url = 'https://wa.me/' | append: clean_number | append: '?text=' | append: preset_encoded
           %}
 
           <a

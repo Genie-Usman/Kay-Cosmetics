@@ -221,8 +221,8 @@
         "card_style": "scallop_flower",
         "badge_size": 180,
         "item_gap": 20,
-        "scallop_color_type": "custom",
-        "scallop_custom_color": "#ff5d5d",
+        "scallop_color_type": "rosewood",
+        "scallop_custom_color": "#bd7385",
         "show_arrows": true,
         "enable_autoplay": false,
         "autoplay_speed": 5,
@@ -341,11 +341,11 @@
           "settings": {
             "product_card_gap": 8,
             "hover_lift": "true",
-            "background_color": "#f8f8f8",
+            "background_color": "#ffffff",
             "border": "solid",
             "border_width": 1,
             "border_opacity": 100,
-            "border_color": "rgba(0,0,0,0)",
+            "border_color": "#efe6e8",
             "border_radius": 7,
             "padding-block-start": 0,
             "padding-block-end": 16,
@@ -358,7 +358,6 @@
               "name": "t:names.product_card_media",
               "settings": {
                 "image_ratio": "square",
-
                 "hover_animation": "use_section",
                 "hover_zoom_level": "use_section",
                 "hover_speed": "use_section",
@@ -480,7 +479,7 @@
         "layout_type": "grid",
         "carousel_on_mobile": true,
         "max_products": 8,
-        "columns": 5,
+        "columns": 4,
         "mobile_columns": "2",
         "mobile_card_size": "60cqw",
         "columns_gap": 16,
@@ -496,8 +495,6 @@
         "hover_animation": "second_image_zoom",
         "hover_zoom_level": "1.20",
         "hover_speed": "0.38s",
-        "hover_zoom_level": "1.20",
-        "hover_speed": "0.38s",
         "hover_lift": false,
         "hover_sheen": false
       }
@@ -508,7 +505,7 @@
         "brand_fragrances": {
           "type": "brand",
           "settings": {
-            "collection": "",
+            "collection": "fragrances",
             "brand_name": "Kay Luxe Parfums",
             "headline": "BOLD ICONIC FRAGRANCES",
             "bar_color": "#000000",
@@ -516,7 +513,7 @@
             "button_label": "SHOP NOW",
             "banner_image_asset": "brand-banner-fragrances.jpg",
             "show_brand_name_overlay": false,
-            "link": "shopify://collections/all"
+            "link": "shopify://collections/fragrances"
           }
         },
         "brand_miss_rose": {
@@ -756,9 +753,9 @@
         "button_1_border_color": "#bd7385",
         "button_2_label": "Wholesale Inquiries",
         "button_2_link": "shopify://pages/contact",
-        "button_2_style": "primary_rosewood",
-        "button_2_bg_color": "#bd7385",
-        "button_2_text_color": "#ffffff",
+        "button_2_style": "outline_rosewood",
+        "button_2_bg_color": "rgba(0,0,0,0)",
+        "button_2_text_color": "#bd7385",
         "button_2_border_color": "#bd7385",
         "button_border_radius": 6,
         "buttons_stack_mobile": false,
@@ -781,7 +778,7 @@
             "category_label": "Skincare",
             "summary": "Practical steps for morning and evening routines designed for humid and dry climates.",
             "image_asset": "cat-skincare.jpg",
-            "link": "shopify://collections/all",
+            "link": "shopify://collections/skin-care",
             "custom_read_more": ""
           }
         },
@@ -793,7 +790,7 @@
             "category_label": "Skin Guidance",
             "summary": "How to choose between hydrating serums, clarifying cleansers, and barrier creams.",
             "image_asset": "cat-makeup.jpg",
-            "link": "shopify://collections/all",
+            "link": "shopify://collections/skin-care",
             "custom_read_more": ""
           }
         },
@@ -805,7 +802,7 @@
             "category_label": "Makeup Guide",
             "summary": "Core cosmetics for a natural, long-wearing everyday look.",
             "image_asset": "cat-tools.jpg",
-            "link": "shopify://collections/all",
+            "link": "shopify://collections/makeup",
             "custom_read_more": ""
           }
         }
@@ -869,7 +866,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/gucci_e3217287-bd1c-4458-adf2-73ecc83b195f.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 0,
+            "custom_width": 0
           }
         },
         "ticker_wet_n_wild": {
@@ -880,7 +878,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/wet-n-wild.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 0,
+            "custom_width": 0
           }
         },
         "ticker_dior": {
@@ -891,7 +890,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/dior_1e12eb19-c748-4a22-b5fd-99c2a49c3a15.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 0,
+            "custom_width": 0
           }
         },
         "ticker_huda_beauty": {
@@ -902,7 +902,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/huda_0a6d9447-5a85-49d8-ad90-80fab6abee57.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 0,
+            "custom_width": 0
           }
         },
         "ticker_la_girl": {
@@ -913,7 +914,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/la-girl_6967b926-e05b-448b-9188-968818a37406.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 0,
+            "custom_width": 0
           }
         },
         "ticker_maybelline": {
@@ -924,7 +926,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/mayb_e215e88b-72dd-4f1d-acc7-4d54fb7e9005.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 0,
+            "custom_width": 0
           }
         },
         "ticker_cerave": {
@@ -935,7 +938,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/cerave_2e208ed4-0e5e-42ff-a762-1f8f4adfcfc7.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 0,
+            "custom_width": 0
           }
         },
         "ticker_charlotte_tilbury": {
@@ -946,7 +950,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/ct.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 0,
+            "custom_width": 0
           }
         },
         "ticker_garnier": {
@@ -957,7 +962,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/garnier_aabb16f5-91f9-4ddb-8ada-2e85f0257d16.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 0,
+            "custom_width": 0
           }
         },
         "ticker_loreal": {
@@ -968,7 +974,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/loreal_c1d5f6db-9b68-4b1b-8b24-a4c1987f8574.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 0,
+            "custom_width": 0
           }
         },
         "ticker_benefit": {
@@ -979,7 +986,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/benefit_93dfa6ec-2270-4c46-9afd-67d6fc1ae4d4.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 0,
+            "custom_width": 0
           }
         },
         "ticker_antonio_banderas": {
@@ -990,7 +998,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/banderas-logo-_1.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 0,
+            "custom_width": 210
           }
         },
         "ticker_carolina_herrera": {
@@ -1001,7 +1010,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/Carolina-Herrera-Logo-Desktop-_1.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 0,
+            "custom_width": 240
           }
         },
         "ticker_paco_rabanne": {
@@ -1012,7 +1022,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/Paco-Rabanne-Logo.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 0,
+            "custom_width": 0
           }
         },
         "ticker_jean_paul_gaultier": {
@@ -1023,7 +1034,8 @@
             "cdn_image": "https://cdn.shopify.com/s/files/1/0568/4635/2438/files/Jean-Paul-Gaultier-logo_1.png",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
-            "custom_height": 0
+            "custom_height": 36,
+            "custom_width": 0
           }
         }
       },
@@ -1044,7 +1056,6 @@
         "ticker_paco_rabanne",
         "ticker_jean_paul_gaultier"
       ],
-      "disabled": true,
       "settings": {
         "section_width": "full-width",
         "section_bg_style": "white",
@@ -1075,11 +1086,11 @@
         "pause_on_hover": true,
         "enable_edge_fade": true,
         "edge_fade_width": 60,
-        "logo_max_height_desktop": 46,
-        "logo_max_height_mobile": 32,
-        "logo_max_width_desktop": 160,
-        "item_spacing_desktop": 28,
-        "item_spacing_mobile": 16,
+        "logo_max_height_desktop": 30,
+        "logo_max_height_mobile": 22,
+        "logo_max_width_desktop": 200,
+        "item_spacing_desktop": 36,
+        "item_spacing_mobile": 20,
         "hover_effect": "scale_and_opacity",
         "hover_scale": 105,
         "logo_filter": "none"
@@ -1123,8 +1134,8 @@
         "perk_2_text": "Direct Wholesale Pricing",
         "perk_3_text": "Nationwide Delivery",
         "privacy_note": "No spam. Unsubscribe at any time.",
-        "show_whatsapp": false,
-        "whatsapp_number": "",
+        "show_whatsapp": true,
+        "whatsapp_number": "923001234567",
         "whatsapp_btn_label": "Chat on WhatsApp",
         "whatsapp_preset_message": "Hello Kay Cosmetics, I have an inquiry regarding products.",
         "whatsapp_btn_style": "primary_green",
@@ -1145,7 +1156,6 @@
     "why_kay_cosmetics",
     "editorial_wholesale_story",
     "beauty_shopping_guides",
-    "featured_brand_ticker",
     "featured_brand_ticker",
     "whatsapp_vip_club"
   ]

@@ -129,10 +129,17 @@
         assign asset_img = block.settings.asset_image
         assign cdn_img = block.settings.cdn_image
         assign custom_h = block.settings.custom_height | default: 0
+        assign custom_w = block.settings.custom_width | default: 0
         assign open_tab = block.settings.open_in_new_tab
         assign item_style = nil
-        if custom_h > 0
-          assign item_style = '--item-custom-h: ' | append: custom_h | append: 'px;'
+        if custom_h > 0 or custom_w > 0
+          assign item_style = ''
+          if custom_h > 0
+            assign item_style = item_style | append: '--item-custom-h: ' | append: custom_h | append: 'px; '
+          endif
+          if custom_w > 0
+            assign item_style = item_style | append: '--item-custom-w: ' | append: custom_w | append: 'px; '
+          endif
         endif
       %}
 
@@ -168,10 +175,8 @@
               alt="{{ brand_name }}"
               class="brand-ticker__img"
               loading="eager"
-              width="180"
-              height="60"
               {% if cdn_img != blank %}data-fallback="{{ cdn_img }}" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.removeAttribute('onerror');}"{% endif %}
-              {% if custom_h > 0 %}style="--item-custom-h: {{ custom_h }}px;"{% endif %}
+              {% if item_style != blank %}style="{{ item_style }}"{% endif %}
             >
           {% elsif cdn_img != blank %}
             <img
@@ -179,9 +184,8 @@
               alt="{{ brand_name }}"
               class="brand-ticker__img"
               loading="eager"
-              width="180"
-              height="60"
-              {% if custom_h > 0 %}style="--item-custom-h: {{ custom_h }}px;"{% endif %}
+              {% if cdn_img != blank %}data-fallback="{{ cdn_img }}" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.removeAttribute('onerror');}"{% endif %}
+              {% if item_style != blank %}style="{{ item_style }}"{% endif %}
             >
           {% else %}
             <span class="brand-ticker__fallback-name">{{ brand_name }}</span>
@@ -409,9 +413,9 @@
 
   /* Logo Image */
   #BrandLogoTicker-{{ section.id }} .brand-ticker__img {
-    max-width: var(--ticker-logo-w-desk);
+    max-width: var(--item-custom-w, var(--ticker-logo-w-desk));
     max-height: var(--item-custom-h, var(--ticker-logo-h-desk));
-    height: var(--item-custom-h, var(--ticker-logo-h-desk));
+    height: auto;
     width: auto;
     object-fit: contain;
     display: block;
@@ -444,8 +448,8 @@
 
     #BrandLogoTicker-{{ section.id }} .brand-ticker__img {
       max-height: var(--item-custom-h, var(--ticker-logo-h-mob));
-      height: var(--item-custom-h, var(--ticker-logo-h-mob));
-      max-width: calc(var(--ticker-logo-w-desk) * 0.75);
+      height: auto;
+      max-width: var(--item-custom-w, calc(var(--ticker-logo-w-desk) * 0.75));
     }
 
     #BrandLogoTicker-{{ section.id }} .brand-ticker__track-wrapper--fade {
@@ -797,52 +801,52 @@
     {
       "type": "range",
       "id": "logo_max_height_desktop",
-      "min": 24,
-      "max": 100,
+      "min": 20,
+      "max": 80,
       "step": 2,
       "unit": "px",
       "label": "Max logo height (desktop)",
-      "default": 46
+      "default": 30
     },
     {
       "type": "range",
       "id": "logo_max_height_mobile",
-      "min": 18,
-      "max": 60,
+      "min": 16,
+      "max": 50,
       "step": 2,
       "unit": "px",
       "label": "Max logo height (mobile)",
-      "default": 32
+      "default": 22
     },
     {
       "type": "range",
       "id": "logo_max_width_desktop",
-      "min": 80,
-      "max": 240,
+      "min": 100,
+      "max": 300,
       "step": 10,
       "unit": "px",
       "label": "Max logo width",
-      "default": 160
+      "default": 200
     },
     {
       "type": "range",
       "id": "item_spacing_desktop",
-      "min": 10,
+      "min": 12,
       "max": 60,
       "step": 2,
       "unit": "px",
       "label": "Horizontal spacing between logos (desktop)",
-      "default": 28
+      "default": 36
     },
     {
       "type": "range",
       "id": "item_spacing_mobile",
-      "min": 6,
-      "max": 30,
+      "min": 8,
+      "max": 36,
       "step": 2,
       "unit": "px",
       "label": "Horizontal spacing between logos (mobile)",
-      "default": 16
+      "default": 20
     },
     {
       "type": "select",
@@ -944,6 +948,17 @@
           "unit": "px",
           "label": "Custom logo height override",
           "info": "Set to 0 to use section default height",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "custom_width",
+          "min": 0,
+          "max": 320,
+          "step": 10,
+          "unit": "px",
+          "label": "Custom logo max width override",
+          "info": "Set to 0 to use section default max width",
           "default": 0
         }
       ]
