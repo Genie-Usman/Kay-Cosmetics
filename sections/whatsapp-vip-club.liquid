@@ -40,12 +40,19 @@
   assign btn_bg = section.settings.button_bg_color | default: '#BD7385'
   assign btn_text = section.settings.button_text_color | default: '#FFFFFF'
   assign btn_radius = section.settings.button_border_radius | default: 8
+  assign capsule_shadow_style = section.settings.capsule_shadow_style | default: 'subtle_luxury'
+  assign capsule_radius = section.settings.capsule_border_radius | default: 999
   
   assign show_perks = section.settings.show_perks
+  assign perk_icon_style = section.settings.perks_icon_style | default: 'rosewood_badge'
   assign perk_1 = section.settings.perk_1_text | default: '100% Authentic Brands'
   assign perk_2 = section.settings.perk_2_text | default: 'Direct Wholesale Pricing'
   assign perk_3 = section.settings.perk_3_text | default: 'Nationwide Delivery'
   assign privacy_note = section.settings.privacy_note | default: 'No spam. Unsubscribe at any time.'
+  assign show_privacy_icon = section.settings.show_privacy_icon
+  if show_privacy_icon == nil
+    assign show_privacy_icon = true
+  endif
   
   assign show_wa = section.settings.show_whatsapp
   assign wa_num = section.settings.whatsapp_number
@@ -67,6 +74,7 @@
     --winput-text: {{ input_text }};
     --winput-border: {{ input_border }};
     --wbtn-radius: {{ btn_radius }}px;
+    --wcapsule-radius: {{ capsule_radius }}px;
     --wsec-divider: {{ sec_div_color }};
   "
 >
@@ -256,8 +264,9 @@
         margin: 0 auto;
         align-items: center;
       {% else %}
-        max-width: 500px;
+        max-width: 480px;
         justify-self: end;
+        align-items: stretch;
       {% endif %}
     }
 
@@ -272,24 +281,40 @@
       align-items: center;
       background: var(--winput-bg, #FFFFFF);
       border: 1px solid var(--winput-border, #E2D7EC);
-      border-radius: 999px;
-      padding: 5px 6px 5px 18px;
-      box-shadow: 0 4px 20px rgba(44, 30, 38, 0.05);
+      border-radius: var(--wcapsule-radius, 999px);
+      padding: 4px 4px 4px 18px;
+      min-height: 52px;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
+      box-sizing: border-box;
+      {% if layout_align == 'center' %}
+        max-width: 480px;
+        margin: 0 auto;
+      {% else %}
+        max-width: 100%;
+        margin: 0;
+      {% endif %}
+
+      {% case capsule_shadow_style %}
+        {% when 'hairline_crisp' %}
+          box-shadow: none;
+        {% when 'elevated_card' %}
+          box-shadow: 0 4px 16px rgba(44, 30, 38, 0.06), 0 1px 3px rgba(44, 30, 38, 0.03);
+        {% else %}
+          /* subtle_luxury */
+          box-shadow: 0 2px 8px rgba(44, 30, 38, 0.035), 0 1px 2px rgba(44, 30, 38, 0.02);
+      {% endcase %}
     }
 
     #WhatsappVip-{{ section.id }} .vip-form-capsule:focus-within {
       border-color: var(--yozo-rosewood, #BD7385);
       background: #FFFFFF;
       box-shadow: 0 0 0 3px rgba(189, 115, 133, 0.16),
-                  0 8px 24px rgba(44, 30, 38, 0.06);
+                  0 4px 14px rgba(44, 30, 38, 0.04);
     }
 
     #WhatsappVip-{{ section.id }} .vip-capsule-icon {
-      color: #A3969E;
+      color: #9D8E97;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -308,33 +333,36 @@
       border: none !important;
       outline: none !important;
       background: transparent !important;
-      padding: 10px 0;
-      font-size: 0.9375rem;
+      padding: 8px 10px 8px 0;
+      font-size: 0.9rem;
       color: var(--winput-text, #2C1E26);
       letter-spacing: -0.01em;
       box-shadow: none !important;
+      line-height: 1.4;
     }
 
     #WhatsappVip-{{ section.id }} .vip-capsule-input::placeholder {
-      color: #9D8E97;
-      opacity: 0.85;
+      color: #A3969E;
+      opacity: 0.9;
     }
 
     #WhatsappVip-{{ section.id }} .vip-capsule-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 11px 22px;
-      border-radius: 999px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      letter-spacing: 0.01em;
+      gap: 7px;
+      padding: 9px 20px;
+      min-height: 42px;
+      border-radius: var(--wcapsule-radius, 999px);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
       cursor: pointer;
       text-decoration: none;
       border: none;
       outline: none;
       flex-shrink: 0;
+      box-sizing: border-box;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       {% case btn_style %}
         {% when 'primary_rosewood' %}
@@ -357,11 +385,11 @@
         {% when 'primary_rosewood' %}
           background-color: var(--yozo-rosewood-hover, #A75D6F);
           transform: translateY(-1px);
-          box-shadow: 0 4px 14px rgba(189, 115, 133, 0.32);
+          box-shadow: 0 4px 12px rgba(189, 115, 133, 0.3);
         {% when 'solid_plum' %}
           background-color: #422D3A;
           transform: translateY(-1px);
-          box-shadow: 0 4px 14px rgba(44, 30, 38, 0.25);
+          box-shadow: 0 4px 12px rgba(44, 30, 38, 0.22);
         {% when 'custom' %}
           opacity: 0.92;
           transform: translateY(-1px);
@@ -372,7 +400,9 @@
     }
 
     #WhatsappVip-{{ section.id }} .vip-capsule-btn-arrow {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -413,18 +443,20 @@
 
     @media (max-width: 520px) {
       #WhatsappVip-{{ section.id }} .vip-form-capsule {
-        border-radius: 12px;
+        border-radius: 14px;
         flex-direction: column;
         padding: 10px;
         gap: 8px;
         align-items: stretch;
+        min-height: auto;
       }
       #WhatsappVip-{{ section.id }} .vip-capsule-input {
-        padding: 6px 8px;
+        padding: 8px 10px;
       }
       #WhatsappVip-{{ section.id }} .vip-capsule-btn {
         width: 100%;
-        border-radius: 8px;
+        border-radius: 10px;
+        min-height: 44px;
       }
       #WhatsappVip-{{ section.id }} .vip-capsule-icon {
         display: none;
@@ -436,37 +468,53 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 14px 18px;
-      margin-top: 10px;
+      gap: 10px 18px;
+      margin-top: 14px;
       {% if layout_align == 'center' %}
         justify-content: center;
+      {% else %}
+        justify-content: flex-start;
       {% endif %}
     }
 
     #WhatsappVip-{{ section.id }} .vip-perk-item {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.75rem;
+      gap: 7px;
+      font-size: 0.78125rem;
       font-weight: 500;
-      color: #6B5C65;
+      color: #574A52;
       letter-spacing: -0.005em;
     }
 
     #WhatsappVip-{{ section.id }} .vip-perk-icon {
       color: var(--yozo-rosewood, #BD7385);
-      font-size: 0.8125rem;
-      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
     #WhatsappVip-{{ section.id }} .vip-privacy-note {
-      font-size: 0.6875rem;
-      color: #94848D;
-      margin-top: 4px;
-      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.71875rem;
+      color: #8C7E87;
+      margin-top: 8px;
+      letter-spacing: 0.005em;
       {% if layout_align == 'center' %}
+        justify-content: center;
         text-align: center;
+      {% else %}
+        justify-content: flex-start;
+        text-align: left;
       {% endif %}
+    }
+
+    #WhatsappVip-{{ section.id }} .vip-privacy-note svg {
+      color: #A3969E;
+      flex-shrink: 0;
     }
 
     /* WhatsApp Placement & Pill Styles */
@@ -651,7 +699,7 @@
           {% if form_design == 'integrated_capsule' %}
             <div class="vip-form-capsule">
               <span class="vip-capsule-icon" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                   <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                 </svg>
@@ -669,7 +717,11 @@
               >
               <button type="submit" class="vip-capsule-btn">
                 <span>{{ btn_label }}</span>
-                <span class="vip-capsule-btn-arrow" aria-hidden="true">&rarr;</span>
+                <span class="vip-capsule-btn-arrow" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 8h10m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
               </button>
             </div>
           {% else %}
@@ -707,19 +759,52 @@
           <div class="vip-perks-row">
             {% if perk_1 != blank %}
               <div class="vip-perk-item">
-                <span class="vip-perk-icon" aria-hidden="true">&#10003;</span>
+                <span class="vip-perk-icon" aria-hidden="true">
+                  {% if perk_icon_style == 'rosewood_badge' %}
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <circle cx="8" cy="8" r="7.25" stroke="currentColor" stroke-width="1.2" fill="rgba(189, 115, 133, 0.09)"/>
+                      <path d="M4.8 8.2l2.2 2.2 4.2-4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  {% else %}
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                      <path d="M3 8.5l3.5 3.5 6.5-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  {% endif %}
+                </span>
                 <span>{{ perk_1 }}</span>
               </div>
             {% endif %}
             {% if perk_2 != blank %}
               <div class="vip-perk-item">
-                <span class="vip-perk-icon" aria-hidden="true">&#10003;</span>
+                <span class="vip-perk-icon" aria-hidden="true">
+                  {% if perk_icon_style == 'rosewood_badge' %}
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <circle cx="8" cy="8" r="7.25" stroke="currentColor" stroke-width="1.2" fill="rgba(189, 115, 133, 0.09)"/>
+                      <path d="M4.8 8.2l2.2 2.2 4.2-4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  {% else %}
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                      <path d="M3 8.5l3.5 3.5 6.5-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  {% endif %}
+                </span>
                 <span>{{ perk_2 }}</span>
               </div>
             {% endif %}
             {% if perk_3 != blank %}
               <div class="vip-perk-item">
-                <span class="vip-perk-icon" aria-hidden="true">&#10003;</span>
+                <span class="vip-perk-icon" aria-hidden="true">
+                  {% if perk_icon_style == 'rosewood_badge' %}
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <circle cx="8" cy="8" r="7.25" stroke="currentColor" stroke-width="1.2" fill="rgba(189, 115, 133, 0.09)"/>
+                      <path d="M4.8 8.2l2.2 2.2 4.2-4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  {% else %}
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                      <path d="M3 8.5l3.5 3.5 6.5-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  {% endif %}
+                </span>
                 <span>{{ perk_3 }}</span>
               </div>
             {% endif %}
@@ -727,7 +812,15 @@
         {% endif %}
 
         {% if privacy_note != blank %}
-          <div class="vip-privacy-note">{{ privacy_note }}</div>
+          <div class="vip-privacy-note">
+            {% if show_privacy_icon %}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            {% endif %}
+            <span>{{ privacy_note }}</span>
+          </div>
         {% endif %}
 
         {% if render_below_form and whatsapp_pill_html != blank %}
@@ -965,6 +1058,27 @@
       "default": "#E2D7EC"
     },
     {
+      "type": "select",
+      "id": "capsule_shadow_style",
+      "label": "Capsule shadow style",
+      "options": [
+        { "value": "subtle_luxury", "label": "Subtle Luxury (Soft Depth)" },
+        { "value": "hairline_crisp", "label": "Crisp Hairline (No Shadow)" },
+        { "value": "elevated_card", "label": "Elevated Card Shadow" }
+      ],
+      "default": "subtle_luxury"
+    },
+    {
+      "type": "range",
+      "id": "capsule_border_radius",
+      "label": "Capsule corner radius",
+      "min": 8,
+      "max": 999,
+      "step": 2,
+      "unit": "px",
+      "default": 999
+    },
+    {
       "type": "text",
       "id": "button_label",
       "label": "Subscribe button label",
@@ -1020,6 +1134,16 @@
       "default": true
     },
     {
+      "type": "select",
+      "id": "perks_icon_style",
+      "label": "Trust perks icon style",
+      "options": [
+        { "value": "rosewood_badge", "label": "Rosewood Badge Check" },
+        { "value": "rosewood_check", "label": "Minimal Checkmark" }
+      ],
+      "default": "rosewood_badge"
+    },
+    {
       "type": "text",
       "id": "perk_1_text",
       "label": "Perk 1 text",
@@ -1042,6 +1166,12 @@
       "id": "privacy_note",
       "label": "Privacy note",
       "default": "No spam. Unsubscribe at any time."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_privacy_icon",
+      "label": "Show security lock icon beside note",
+      "default": true
     },
     {
       "type": "header",
