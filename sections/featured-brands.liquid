@@ -14,11 +14,17 @@
   assign view_all_link = section.settings.view_all_link | default: '/pages/brands'
   assign view_all_style = section.settings.view_all_style | default: 'link_arrow'
   assign header_align = section.settings.header_alignment | default: 'left'
-  assign slides_desktop = section.settings.slides_desktop | default: '2.3'
-  assign slides_tablet = section.settings.slides_tablet | default: '1.75'
-  assign slides_mobile = section.settings.slides_mobile | default: '1.15'
+  assign slides_desktop = section.settings.slides_desktop | default: '2.8'
+  assign slides_tablet = section.settings.slides_tablet | default: '2'
+  assign slides_mobile = section.settings.slides_mobile | default: '1.2'
+  assign slide_gap = section.settings.slide_gap | default: 20
   assign card_radius = section.settings.card_border_radius | default: 12
   assign banner_ratio = section.settings.banner_aspect_ratio | default: '16_9'
+  assign bar_layout = section.settings.bar_layout | default: 'split'
+  assign bar_padding_y = section.settings.bar_padding_vertical | default: 12
+  assign headline_font = section.settings.headline_font | default: 'serif'
+  assign headline_case = section.settings.headline_casing | default: 'uppercase'
+  assign arrow_style = section.settings.arrow_style | default: 'luxury_white'
   assign autoplay_enabled = section.settings.enable_autoplay
   assign autoplay_speed = section.settings.autoplay_speed | default: 5
   assign show_arrows = section.settings.show_arrows
@@ -168,7 +174,7 @@
                 </div>
 
                 <div
-                  class="brand-banner-card__bar"
+                  class="brand-banner-card__bar brand-banner-card__bar--{{ bar_layout }}"
                   style="
                     background-color: {{ bar_bg }};
                     color: {{ bar_text }};
@@ -179,8 +185,11 @@
                       {{ headline }}
                     </h3>
                     {% if btn_label != blank %}
-                      <span class="brand-banner-card__btn-link" style="color: {{ bar_text }};">
-                        <u>{{ btn_label }}</u>
+                      <span class="brand-banner-card__cta" style="color: {{ bar_text }};">
+                        <span class="brand-banner-card__cta-label">{{ btn_label }}</span>
+                        <svg class="brand-banner-card__cta-arrow" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M3 8h10M9 4l4 4-4 4"/>
+                        </svg>
                       </span>
                     {% endif %}
                   </div>
@@ -193,19 +202,19 @@
         {% if show_arrows and section.blocks.size > 1 %}
           <button
             type="button"
-            class="brand-swiper__nav brand-swiper__nav--prev"
+            class="brand-swiper__nav brand-swiper__nav--prev brand-swiper__nav--{{ arrow_style }}"
             aria-label="Previous brand slide"
           >
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M15 18l-6-6 6-6"/>
             </svg>
           </button>
           <button
             type="button"
-            class="brand-swiper__nav brand-swiper__nav--next"
+            class="brand-swiper__nav brand-swiper__nav--next brand-swiper__nav--{{ arrow_style }}"
             aria-label="Next brand slide"
           >
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M9 18l6-6-6-6"/>
             </svg>
           </button>
@@ -390,14 +399,17 @@
     overflow: hidden;
     text-decoration: none;
     background: #FFFFFF;
-    box-shadow: 0 4px 18px rgba(44, 30, 38, 0.08);
+    border: 1px solid var(--brand-card-border, #EFE6E8);
+    box-shadow: 0 3px 14px rgba(44, 30, 38, 0.06);
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.35s ease;
+                box-shadow 0.35s ease,
+                border-color 0.3s ease;
   }
 
   #FeaturedBrands-{{ section.id }} .brand-banner-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 14px 32px rgba(44, 30, 38, 0.16);
+    box-shadow: 0 12px 28px rgba(44, 30, 38, 0.12);
+    border-color: rgba(189, 115, 133, 0.35);
   }
 
   /* Upper Media / Banner */
@@ -405,7 +417,7 @@
     position: relative;
     width: 100%;
     overflow: hidden;
-    background: #111111;
+    background: #FAF5F2;
   }
 
   #FeaturedBrands-{{ section.id }} .brand-banner-card__media--ratio-16_9 {
@@ -413,6 +425,9 @@
   }
   #FeaturedBrands-{{ section.id }} .brand-banner-card__media--ratio-2_1 {
     aspect-ratio: 2 / 1;
+  }
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__media--ratio-21_9 {
+    aspect-ratio: 21 / 9;
   }
   #FeaturedBrands-{{ section.id }} .brand-banner-card__media--ratio-3_2 {
     aspect-ratio: 3 / 2;
@@ -427,7 +442,7 @@
   }
 
   #FeaturedBrands-{{ section.id }} .brand-banner-card:hover .brand-banner-card__image {
-    transform: scale(1.05);
+    transform: scale(1.04);
   }
 
   #FeaturedBrands-{{ section.id }} .brand-banner-card__image--placeholder {
@@ -458,10 +473,10 @@
     top: 16px;
     right: 16px;
     z-index: 2;
-    font-family: var(--font-heading--family), serif;
+    font-family: var(--font-heading--family), Georgia, serif;
     font-size: 1.15rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: #FFFFFF;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
@@ -469,80 +484,154 @@
 
   /* Lower Solid Color Callout Bar */
   #FeaturedBrands-{{ section.id }} .brand-banner-card__bar {
-    padding: 16px 20px 18px;
+    padding: {{ bar_padding_y }}px 18px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     box-sizing: border-box;
-    min-height: 78px;
+    min-height: {% if bar_layout == 'split' %}54px{% else %}62px{% endif %};
+    transition: background-color 0.25s ease;
   }
 
-  #FeaturedBrands-{{ section.id }} .brand-banner-card__bar-content {
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__bar--split .brand-banner-card__bar-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__bar--stacked .brand-banner-card__bar-content {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 4px;
   }
 
   #FeaturedBrands-{{ section.id }} .brand-banner-card__headline {
-    font-family: var(--font-body--family), sans-serif;
-    font-size: clamp(0.9375rem, 1.25vw, 1.125rem);
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    line-height: 1.25;
+    font-family: {% if headline_font == 'serif' %}var(--font-heading--family), Georgia, serif{% else %}var(--font-body--family), sans-serif{% endif %};
+    font-size: clamp(0.875rem, 1.05vw, 1.025rem);
+    font-weight: {% if headline_font == 'serif' %}500{% else %}700{% endif %};
+    letter-spacing: {% if headline_font == 'serif' %}0.03em{% else %}0.05em{% endif %};
+    text-transform: {{ headline_case }};
+    line-height: 1.3;
     margin: 0;
   }
 
-  #FeaturedBrands-{{ section.id }} .brand-banner-card__btn-link {
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-family: var(--font-body--family), sans-serif;
-    font-size: 0.8125rem;
-    font-weight: 700;
+    font-size: 0.75rem;
+    font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    text-decoration: none;
+    opacity: 0.94;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__cta-label {
+    position: relative;
+    padding-bottom: 1px;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__cta-label::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0%;
+    height: 1px;
+    background: currentColor;
+    transition: width 0.25s ease;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card:hover .brand-banner-card__cta-label::after {
+    width: 100%;
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-banner-card__cta-arrow {
     display: inline-block;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  #FeaturedBrands-{{ section.id }} .brand-banner-card:hover .brand-banner-card__btn-link {
-    opacity: 0.9;
+  #FeaturedBrands-{{ section.id }} .brand-banner-card:hover .brand-banner-card__cta {
+    opacity: 1;
   }
 
-  /* Floating Circular Arrow Navigation */
+  #FeaturedBrands-{{ section.id }} .brand-banner-card:hover .brand-banner-card__cta-arrow {
+    transform: translateX(4px);
+  }
+
+  /* Floating Arrow Navigation */
   #FeaturedBrands-{{ section.id }} .brand-swiper__nav {
     position: absolute;
-    top: 40%;
+    top: 42%;
     transform: translateY(-50%);
     z-index: 10;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: rgba(44, 30, 38, 0.65);
-    color: #FFFFFF;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-    transition: all 0.25s ease;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  #FeaturedBrands-{{ section.id }} .brand-swiper__nav:hover {
+  #FeaturedBrands-{{ section.id }} .brand-swiper__nav--luxury_white {
+    background: #FFFFFF;
+    color: var(--yozo-plum-dark, #2C1E26);
+    border: 1px solid var(--yozo-border, #EFE6E8);
+    box-shadow: 0 4px 14px rgba(44, 30, 38, 0.12);
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-swiper__nav--luxury_white:hover {
+    background: var(--yozo-rosewood, #BD7385);
+    border-color: var(--yozo-rosewood, #BD7385);
+    color: #FFFFFF;
+    transform: translateY(-50%) scale(1.08);
+    box-shadow: 0 6px 18px rgba(189, 115, 133, 0.32);
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-swiper__nav--glass_dark {
+    background: rgba(44, 30, 38, 0.72);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-swiper__nav--glass_dark:hover {
     background: rgba(44, 30, 38, 0.95);
-    border-color: rgba(255, 255, 255, 0.6);
+    border-color: rgba(255, 255, 255, 0.7);
     transform: translateY(-50%) scale(1.08);
   }
 
+  #FeaturedBrands-{{ section.id }} .brand-swiper__nav--rosewood {
+    background: var(--yozo-rosewood, #BD7385);
+    color: #FFFFFF;
+    border: 1px solid var(--yozo-rosewood, #BD7385);
+    box-shadow: 0 4px 14px rgba(189, 115, 133, 0.28);
+  }
+
+  #FeaturedBrands-{{ section.id }} .brand-swiper__nav--rosewood:hover {
+    background: var(--yozo-rosewood-hover, #A75D6F);
+    border-color: var(--yozo-rosewood-hover, #A75D6F);
+    transform: translateY(-50%) scale(1.08);
+    box-shadow: 0 6px 18px rgba(189, 115, 133, 0.4);
+  }
+
   #FeaturedBrands-{{ section.id }} .brand-swiper__nav--prev {
-    left: 12px;
+    left: 8px;
   }
 
   #FeaturedBrands-{{ section.id }} .brand-swiper__nav--next {
-    right: 12px;
+    right: 8px;
   }
 
   #FeaturedBrands-{{ section.id }} .brand-swiper__nav.swiper-button-disabled {
@@ -552,14 +641,14 @@
 
   @media screen and (max-width: 749px) {
     #FeaturedBrands-{{ section.id }} .brand-swiper__nav {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
     }
     #FeaturedBrands-{{ section.id }} .brand-swiper__nav--prev {
-      left: 6px;
+      left: 4px;
     }
     #FeaturedBrands-{{ section.id }} .brand-swiper__nav--next {
-      right: 6px;
+      right: 4px;
     }
   }
 
@@ -620,7 +709,7 @@
           },
           1024: {
             slidesPerView: {{ slides_desktop }},
-            spaceBetween: 22,
+            spaceBetween: {{ slide_gap }},
           }
         }
       });
@@ -666,11 +755,14 @@
       "label": "Slides on desktop",
       "options": [
         { "value": "2", "label": "2 slides" },
-        { "value": "2.3", "label": "2.3 slides (Peeking)" },
-        { "value": "2.5", "label": "2.5 slides (Peeking)" },
-        { "value": "3", "label": "3 slides" }
+        { "value": "2.3", "label": "2.3 slides" },
+        { "value": "2.5", "label": "2.5 slides" },
+        { "value": "2.75", "label": "2.75 slides" },
+        { "value": "2.8", "label": "2.8 slides (Recommended)" },
+        { "value": "3", "label": "3 slides" },
+        { "value": "3.2", "label": "3.2 slides" }
       ],
-      "default": "2.3"
+      "default": "2.8"
     },
     {
       "type": "select",
@@ -678,10 +770,11 @@
       "label": "Slides on tablet",
       "options": [
         { "value": "1.5", "label": "1.5 slides" },
-        { "value": "1.75", "label": "1.75 slides (Peeking)" },
-        { "value": "2", "label": "2 slides" }
+        { "value": "1.75", "label": "1.75 slides" },
+        { "value": "2", "label": "2 slides (Recommended)" },
+        { "value": "2.25", "label": "2.25 slides" }
       ],
-      "default": "1.75"
+      "default": "2"
     },
     {
       "type": "select",
@@ -689,10 +782,21 @@
       "label": "Slides on mobile",
       "options": [
         { "value": "1", "label": "1 slide" },
-        { "value": "1.15", "label": "1.15 slides (Peeking)" },
-        { "value": "1.3", "label": "1.3 slides (Peeking)" }
+        { "value": "1.15", "label": "1.15 slides" },
+        { "value": "1.2", "label": "1.2 slides (Recommended)" },
+        { "value": "1.3", "label": "1.3 slides" }
       ],
-      "default": "1.15"
+      "default": "1.2"
+    },
+    {
+      "type": "range",
+      "id": "slide_gap",
+      "label": "Space between cards",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
     },
     {
       "type": "select",
@@ -701,6 +805,7 @@
       "options": [
         { "value": "16_9", "label": "16:9 (Standard wide)" },
         { "value": "2_1", "label": "2:1 (Ultra wide)" },
+        { "value": "21_9", "label": "21:9 (Cinematic wide)" },
         { "value": "3_2", "label": "3:2 (Classic)" }
       ],
       "default": "16_9"
@@ -717,6 +822,50 @@
     },
     {
       "type": "header",
+      "content": "Card Callout Bar"
+    },
+    {
+      "type": "select",
+      "id": "bar_layout",
+      "label": "Bottom bar layout",
+      "options": [
+        { "value": "split", "label": "Inline split (Headline & action)" },
+        { "value": "stacked", "label": "Stacked (Headline above action)" }
+      ],
+      "default": "split"
+    },
+    {
+      "type": "range",
+      "id": "bar_padding_vertical",
+      "label": "Bottom bar vertical padding",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "headline_font",
+      "label": "Headline font style",
+      "options": [
+        { "value": "serif", "label": "Besley Serif (Luxury editorial)" },
+        { "value": "sans", "label": "Figtree Sans (Modern clean)" }
+      ],
+      "default": "serif"
+    },
+    {
+      "type": "select",
+      "id": "headline_casing",
+      "label": "Headline text case",
+      "options": [
+        { "value": "uppercase", "label": "Uppercase (ALL CAPS)" },
+        { "value": "normal", "label": "Natural (As typed)" }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "header",
       "content": "Slider Controls"
     },
     {
@@ -724,6 +873,17 @@
       "id": "show_arrows",
       "label": "Show navigation arrows",
       "default": true
+    },
+    {
+      "type": "select",
+      "id": "arrow_style",
+      "label": "Arrow button style",
+      "options": [
+        { "value": "luxury_white", "label": "Porcelain white with rosewood" },
+        { "value": "glass_dark", "label": "Glassmorphism deep plum" },
+        { "value": "rosewood", "label": "Dusty rosewood filled" }
+      ],
+      "default": "luxury_white"
     },
     {
       "type": "checkbox",
@@ -920,7 +1080,7 @@
             "collection": "miss-rose",
             "brand_name": "Miss Rose",
             "headline": "PROFESSIONAL COLOR COSMETICS",
-            "bar_color": "#942948",
+            "bar_color": "#8E4A5B",
             "button_label": "SHOP NOW",
             "banner_image_asset": "brand-banner-miss-rose.jpg"
           }
@@ -931,7 +1091,7 @@
             "collection": "dr-oz",
             "brand_name": "Dr.Oz",
             "headline": "ADVANCED DERMA & WELLNESS",
-            "bar_color": "#0F3A3A",
+            "bar_color": "#1F3833",
             "button_label": "SHOP NOW",
             "banner_image_asset": "brand-banner-dr-oz.jpg"
           }
@@ -941,7 +1101,7 @@
           "settings": {
             "brand_name": "Kay Luxe Parfums",
             "headline": "BOLD ICONIC FRAGRANCES",
-            "bar_color": "#000000",
+            "bar_color": "#2C1E26",
             "button_label": "SHOP NOW",
             "banner_image_asset": "brand-banner-fragrances.jpg"
           }
