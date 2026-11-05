@@ -2,47 +2,7 @@
   Renders an editorial promo card inside a mega menu dropdown.
 {%- enddoc -%}
 
-{%- liquid
-  assign b_set = block.settings
-  assign promo_card_bg = b_set.card_bg | default: '#FAF5F2'
-  assign promo_badge_color = b_set.badge_color | default: '#BD7385'
-  assign promo_url = b_set.link | default: '#'
-  assign promo_cta = b_set.button_label | default: 'Explore Collection'
-  assign promo_title = b_set.title | default: 'Featured Collection'
-  assign promo_badge = b_set.badge
-  assign promo_desc = b_set.description
-  assign promo_img = b_set.image
-  assign promo_fallback = b_set.image_asset
--%}
-
-<div
-  class="mega-menu__promo-card"
-  style="background: {{ promo_card_bg }} !important;"
-  {{ block.shopify_attributes }}
->
-  <a href="{{ promo_url }}" class="mega-menu__promo-link">
-    <div class="mega-menu__promo-media">
-      {%- if promo_img != blank -%}
-        {{ promo_img | image_url: width: 600 | image_tag: class: 'mega-menu__promo-img', loading: 'lazy' }}
-      {%- elsif promo_fallback != blank -%}
-        <img src="{{ promo_fallback | asset_url }}" alt="{{ promo_title }}" class="mega-menu__promo-img" loading="lazy" width="350" height="155">
-      {%- endif -%}
-    </div>
-    <div class="mega-menu__promo-content">
-      {%- if promo_badge != blank -%}
-        <span class="mega-menu__promo-badge" style="color: {{ promo_badge_color }} !important;">{{ promo_badge }}</span>
-      {%- endif -%}
-      <h4 class="mega-menu__promo-title">{{ promo_title }}</h4>
-      {%- if promo_desc != blank -%}
-        <p class="mega-menu__promo-desc">{{ promo_desc }}</p>
-      {%- endif -%}
-      <span class="mega-menu__promo-cta">
-        <span>{{ promo_cta }}</span>
-        <span class="mega-menu__promo-cta-arrow" aria-hidden="true">&rarr;</span>
-      </span>
-    </div>
-  </a>
-</div>
+{% render 'mega-menu-promo-card', block: block %}
 
 {% schema %}
 {
@@ -54,37 +14,37 @@
       "id": "menu_item",
       "label": "Target menu item",
       "info": "Dropdown title e.g. Skin Care, Hair Care, Fragrances, Makeup, Brands",
-      "default": "Skin Care"
+      "default": "Hair Care"
     },
     {
       "type": "image_picker",
       "id": "image",
       "label": "Promo image",
-      "info": "Upload custom image or use fallback below."
+      "info": "Upload custom image or use fallback asset."
     },
     {
       "type": "text",
       "id": "image_asset",
       "label": "Fallback image asset",
-      "info": "Asset filename e.g. cat-skincare.jpg, cat-haircare.jpg, brand-banner-fragrances.jpg"
+      "info": "Asset filename e.g. cat-haircare.jpg, cat-shampoo.jpg, cat-skincare.jpg, cat-fragrance.jpg"
     },
     {
       "type": "text",
       "id": "badge",
       "label": "Badge text",
-      "default": "The Skincare Edit"
+      "default": "Hair Wellness"
     },
     {
       "type": "text",
       "id": "title",
       "label": "Headline",
-      "default": "Personalized Daily Rituals"
+      "default": "Salon-Quality Hair Rituals"
     },
     {
       "type": "textarea",
       "id": "description",
       "label": "Description",
-      "default": "Targeted serums, barrier creams, and clarifying cleansers."
+      "default": "Restorative masks, treatment oils, and everyday styling."
     },
     {
       "type": "url",
@@ -95,13 +55,13 @@
       "type": "text",
       "id": "button_label",
       "label": "Button text",
-      "default": "Explore Routines"
+      "default": "Shop Hair Care"
     },
     {
       "type": "color",
       "id": "card_bg",
       "label": "Card background color",
-      "default": "#FAF5F2"
+      "default": "#FFFFFF"
     },
     {
       "type": "color",

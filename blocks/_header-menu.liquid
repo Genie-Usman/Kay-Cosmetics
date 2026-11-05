@@ -143,81 +143,6 @@
 
                     {%- liquid
                       assign link_handle = link.title | downcase | replace: ' ', '-' | replace: '&', '' | strip
-                      assign promo_block = blank
-
-                      # 1. Search block.blocks (attached directly to Menu block)
-                      for b in block.blocks
-                        assign target = b.settings.menu_item | default: b.settings.title | downcase | replace: ' ', '-' | replace: '&', '' | strip
-                        if target != blank
-                          if target == link_handle or link_handle contains target or target contains link_handle
-                            assign promo_block = b
-                            break
-                          elsif link_handle contains 'skin' and target contains 'skin'
-                            assign promo_block = b
-                            break
-                          elsif link_handle contains 'hair' and target contains 'hair'
-                            assign promo_block = b
-                            break
-                          elsif link_handle contains 'fragran' and target contains 'fragran'
-                            assign promo_block = b
-                            break
-                          elsif link_handle contains 'makeup' and target contains 'makeup'
-                            assign promo_block = b
-                            break
-                          endif
-                        endif
-                      endfor
-
-                      # 2. Search section.blocks (attached to Header section)
-                      if promo_block == blank and section.blocks != blank
-                        for b in section.blocks
-                          assign target = b.settings.menu_item | default: b.settings.title | downcase | replace: ' ', '-' | replace: '&', '' | strip
-                          if target != blank
-                            if target == link_handle or link_handle contains target or target contains link_handle
-                              assign promo_block = b
-                              break
-                            elsif link_handle contains 'skin' and target contains 'skin'
-                              assign promo_block = b
-                              break
-                            elsif link_handle contains 'hair' and target contains 'hair'
-                              assign promo_block = b
-                              break
-                            elsif link_handle contains 'fragran' and target contains 'fragran'
-                              assign promo_block = b
-                              break
-                            elsif link_handle contains 'makeup' and target contains 'makeup'
-                              assign promo_block = b
-                              break
-                            endif
-                          endif
-                        endfor
-                      endif
-
-                      # 3. Search section_blocks parameter (if passed from header.liquid)
-                      if promo_block == blank and section_blocks != blank
-                        for b in section_blocks
-                          assign target = b.settings.menu_item | default: b.settings.title | downcase | replace: ' ', '-' | replace: '&', '' | strip
-                          if target != blank
-                            if target == link_handle or link_handle contains target or target contains link_handle
-                              assign promo_block = b
-                              break
-                            elsif link_handle contains 'skin' and target contains 'skin'
-                              assign promo_block = b
-                              break
-                            elsif link_handle contains 'hair' and target contains 'hair'
-                              assign promo_block = b
-                              break
-                            elsif link_handle contains 'fragran' and target contains 'fragran'
-                              assign promo_block = b
-                              break
-                            elsif link_handle contains 'makeup' and target contains 'makeup'
-                              assign promo_block = b
-                              break
-                            endif
-                          endif
-                        endfor
-                      endif
-
                       assign enable_promos = section.settings.enable_editorial_promos
                       if enable_promos == nil
                         assign enable_promos = block_settings.enable_editorial_promos
@@ -225,97 +150,125 @@
                       if enable_promos == nil
                         assign enable_promos = true
                       endif
-
-                      assign render_card = false
-                      assign card_attributes = ''
-                      if enable_promos
-                        if promo_block != blank
-                          assign render_card = true
-                          assign card_attributes = promo_block.shopify_attributes
-                          assign b_set = promo_block.settings
-                          assign promo_card_bg = b_set.card_bg | default: section.settings.promo_card_bg | default: '#FAF5F2'
-                          assign promo_badge_color = b_set.badge_color | default: section.settings.promo_badge_color | default: '#BD7385'
-                          assign promo_url = b_set.link | default: link.url
-                          assign promo_cta = b_set.button_label | default: 'Explore Collection'
-                          assign promo_title = b_set.title | default: link.title
-                          assign promo_badge = b_set.badge
-                          assign promo_desc = b_set.description
-                          assign promo_img = b_set.image
-                          assign promo_fallback = b_set.image_asset
-                          if promo_fallback == blank
-                            if link_handle contains 'skin'
-                              assign promo_fallback = 'cat-skincare.jpg'
-                            elsif link_handle contains 'hair'
-                              assign promo_fallback = 'cat-haircare.jpg'
-                            elsif link_handle contains 'fragran'
-                              assign promo_fallback = 'brand-banner-fragrances.jpg'
-                            elsif link_handle contains 'makeup'
-                              assign promo_fallback = 'cat-makeup.jpg'
-                            endif
-                          endif
-                        elsif link_handle contains 'skin'
-                          assign render_card = true
-                          assign promo_card_bg = section.settings.promo_card_bg | default: '#FAF5F2'
-                          assign promo_badge_color = section.settings.promo_badge_color | default: '#BD7385'
-                          assign promo_url = link.url
-                          assign promo_cta = 'Explore Routines'
-                          assign promo_title = 'Personalized Daily Rituals'
-                          assign promo_badge = 'The Skincare Edit'
-                          assign promo_desc = 'Targeted serums, barrier creams, and clarifying cleansers.'
-                          assign promo_fallback = 'cat-skincare.jpg'
-                        elsif link_handle contains 'hair'
-                          assign render_card = true
-                          assign promo_card_bg = section.settings.promo_card_bg | default: '#FAF5F2'
-                          assign promo_badge_color = section.settings.promo_badge_color | default: '#BD7385'
-                          assign promo_url = link.url
-                          assign promo_cta = 'Shop Hair Care'
-                          assign promo_title = 'Salon-Quality Hair Rituals'
-                          assign promo_badge = 'Hair Wellness'
-                          assign promo_desc = 'Restorative masks, treatment oils, and everyday styling.'
-                          assign promo_fallback = 'cat-haircare.jpg'
-                        elsif link_handle contains 'fragran'
-                          assign render_card = true
-                          assign promo_card_bg = section.settings.promo_card_bg | default: '#FAF5F2'
-                          assign promo_badge_color = section.settings.promo_badge_color | default: '#BD7385'
-                          assign promo_url = link.url
-                          assign promo_cta = 'Explore Scents'
-                          assign promo_title = 'Luxury & Niche Fragrances'
-                          assign promo_badge = 'Signature Scents'
-                          assign promo_desc = 'Authentic Eau de Parfum and body mists from premier perfumers.'
-                          assign promo_fallback = 'brand-banner-fragrances.jpg'
-                        endif
-                      endif
                     -%}
 
-                    {%- if render_card -%}
-                      <div
-                        class="mega-menu__promo-card"
-                        style="background: {{ promo_card_bg }} !important;"
-                        {{ card_attributes }}
-                      >
-                        <a href="{{ promo_url }}" class="mega-menu__promo-link">
-                          <div class="mega-menu__promo-media">
-                            {%- if promo_img != blank -%}
-                              {{ promo_img | image_url: width: 600 | image_tag: class: 'mega-menu__promo-img', loading: 'lazy' }}
-                            {%- elsif promo_fallback != blank -%}
-                              <img src="{{ promo_fallback | asset_url }}" alt="{{ promo_title }}" class="mega-menu__promo-img" loading="lazy" width="350" height="155">
+                    {%- if enable_promos -%}
+                      {%- liquid
+                        assign promo_count = 0
+                        assign processed_block_ids = ''
+                      -%}
+
+                      {%- capture promo_cards_html -%}
+                        {%- comment -%} 1. Search block.blocks (attached directly to Menu block) {%- endcomment -%}
+                        {%- for b in block.blocks -%}
+                          {%- if b.type == 'mega-menu-promo' or b.type == 'promo_card' or b.type == 'mega_menu_promo' -%}
+                            {%- liquid
+                              assign target = b.settings.menu_item | default: b.settings.title | downcase | replace: ' ', '-' | replace: '&', '' | strip
+                              assign is_match = false
+                              if target != blank
+                                if target == link_handle or link_handle contains target or target contains link_handle
+                                  assign is_match = true
+                                elsif link_handle contains 'skin' and target contains 'skin'
+                                  assign is_match = true
+                                elsif link_handle contains 'hair' and target contains 'hair'
+                                  assign is_match = true
+                                elsif link_handle contains 'fragran' and target contains 'fragran'
+                                  assign is_match = true
+                                elsif link_handle contains 'makeup' and target contains 'makeup'
+                                  assign is_match = true
+                                endif
+                              endif
+                            -%}
+                            {%- if is_match -%}
+                              {%- assign b_id_token = b.id | prepend: '|' | append: '|' -%}
+                              {%- unless processed_block_ids contains b_id_token -%}
+                                {%- liquid
+                                  assign processed_block_ids = processed_block_ids | append: b_id_token
+                                  assign promo_count = promo_count | plus: 1
+                                  render 'mega-menu-promo-card', block: b, link_url: link.url
+                                -%}
+                              {%- endunless -%}
                             {%- endif -%}
-                          </div>
-                          <div class="mega-menu__promo-content">
-                            {%- if promo_badge != blank -%}
-                              <span class="mega-menu__promo-badge" style="color: {{ promo_badge_color }} !important;">{{ promo_badge }}</span>
+                          {%- endif -%}
+                        {%- endfor -%}
+
+                        {%- comment -%} 2. Search section.blocks (attached to Header section) {%- endcomment -%}
+                        {%- if section.blocks != blank -%}
+                          {%- for b in section.blocks -%}
+                            {%- if b.type == 'mega-menu-promo' or b.type == 'promo_card' or b.type == 'mega_menu_promo' -%}
+                              {%- liquid
+                                assign target = b.settings.menu_item | default: b.settings.title | downcase | replace: ' ', '-' | replace: '&', '' | strip
+                                assign is_match = false
+                                if target != blank
+                                  if target == link_handle or link_handle contains target or target contains link_handle
+                                    assign is_match = true
+                                  elsif link_handle contains 'skin' and target contains 'skin'
+                                    assign is_match = true
+                                  elsif link_handle contains 'hair' and target contains 'hair'
+                                    assign is_match = true
+                                  elsif link_handle contains 'fragran' and target contains 'fragran'
+                                    assign is_match = true
+                                  elsif link_handle contains 'makeup' and target contains 'makeup'
+                                    assign is_match = true
+                                  endif
+                                endif
+                              -%}
+                              {%- if is_match -%}
+                                {%- assign b_id_token = b.id | prepend: '|' | append: '|' -%}
+                                {%- unless processed_block_ids contains b_id_token -%}
+                                  {%- liquid
+                                    assign processed_block_ids = processed_block_ids | append: b_id_token
+                                    assign promo_count = promo_count | plus: 1
+                                    render 'mega-menu-promo-card', block: b, link_url: link.url
+                                  -%}
+                                {%- endunless -%}
+                              {%- endif -%}
                             {%- endif -%}
-                            <h4 class="mega-menu__promo-title">{{ promo_title }}</h4>
-                            {%- if promo_desc != blank -%}
-                              <p class="mega-menu__promo-desc">{{ promo_desc }}</p>
-                            {%- endif -%}
-                            <span class="mega-menu__promo-cta">
-                              <span>{{ promo_cta }}</span>
-                              <span class="mega-menu__promo-cta-arrow" aria-hidden="true">&rarr;</span>
-                            </span>
-                          </div>
-                        </a>
-                      </div>
+                          {%- endfor -%}
+                        {%- endif -%}
+
+                        {%- comment -%} 4. Default Curated Fallback if NO custom blocks were added for this category {%- endcomment -%}
+                        {%- if promo_count == 0 -%}
+                          {%- if link_handle contains 'skin' -%}
+                            {%- assign promo_count = 1 -%}
+                            {%- render 'mega-menu-promo-card',
+                              link_url: link.url,
+                              fallback_title: 'Personalized Daily Rituals',
+                              fallback_badge: 'The Skincare Edit',
+                              fallback_desc: 'Targeted serums, barrier creams, and clarifying cleansers.',
+                              fallback_cta: 'Explore Routines',
+                              fallback_asset: 'cat-skincare.jpg'
+                            -%}
+                          {%- elsif link_handle contains 'hair' -%}
+                            {%- assign promo_count = 1 -%}
+                            {%- render 'mega-menu-promo-card',
+                              link_url: link.url,
+                              fallback_title: 'Salon-Quality Hair Rituals',
+                              fallback_badge: 'Hair Wellness',
+                              fallback_desc: 'Restorative masks, treatment oils, and everyday styling.',
+                              fallback_cta: 'Shop Hair Care',
+                              fallback_asset: 'cat-haircare.jpg'
+                            -%}
+                          {%- elsif link_handle contains 'fragran' -%}
+                            {%- assign promo_count = 1 -%}
+                            {%- render 'mega-menu-promo-card',
+                              link_url: link.url,
+                              fallback_title: 'Luxury & Niche Fragrances',
+                              fallback_badge: 'Signature Scents',
+                              fallback_desc: 'Authentic Eau de Parfum and body mists from premier perfumers.',
+                              fallback_cta: 'Explore Scents',
+                              fallback_asset: 'brand-banner-fragrances.jpg'
+                            -%}
+                          {%- endif -%}
+                        {%- endif -%}
+                      {%- endcapture -%}
+
+                      {%- assign promo_cards_trimmed = promo_cards_html | strip -%}
+                      {%- if promo_cards_trimmed != blank -%}
+                        <div class="mega-menu__promos mega-menu__promos--count-{{ promo_count | at_least: 1 }}">
+                          {{ promo_cards_trimmed }}
+                        </div>
+                      {%- endif -%}
                     {%- endif -%}
                   </div>
                 </div>

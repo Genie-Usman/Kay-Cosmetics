@@ -112,7 +112,7 @@
                 "description": "Targeted serums, barrier creams, and clarifying cleansers.",
                 "link": "shopify://collections/all",
                 "button_label": "Explore Routines",
-                "card_bg": "#FAF5F2",
+                "card_bg": "#FFFFFF",
                 "badge_color": "#BD7385"
               }
             },
@@ -126,7 +126,21 @@
                 "description": "Restorative masks, treatment oils, and everyday styling.",
                 "link": "shopify://collections/all",
                 "button_label": "Shop Hair Care",
-                "card_bg": "#FAF5F2",
+                "card_bg": "#FFFFFF",
+                "badge_color": "#BD7385"
+              }
+            },
+            "promo_haircare_2": {
+              "type": "mega-menu-promo",
+              "settings": {
+                "menu_item": "Hair Care",
+                "image_asset": "cat-shampoo.jpg",
+                "badge": "Intensive Care",
+                "title": "Restorative Treatment Oils",
+                "description": "Deep repair formulas infused with botanical argan and rosehip.",
+                "link": "shopify://collections/all",
+                "button_label": "Discover Treatments",
+                "card_bg": "#FFFFFF",
                 "badge_color": "#BD7385"
               }
             },
@@ -140,7 +154,7 @@
                 "description": "Authentic Eau de Parfum and body mists from premier perfumers.",
                 "link": "shopify://collections/all",
                 "button_label": "Explore Scents",
-                "card_bg": "#FAF5F2",
+                "card_bg": "#FFFFFF",
                 "badge_color": "#BD7385"
               }
             }
@@ -148,6 +162,7 @@
           "block_order": [
             "promo_skincare",
             "promo_haircare",
+            "promo_haircare_2",
             "promo_fragrance"
           ]
         },
@@ -161,7 +176,7 @@
             "description": "Targeted serums, barrier creams, and clarifying cleansers.",
             "link": "shopify://collections/all",
             "button_label": "Explore Routines",
-            "card_bg": "#FAF5F2",
+            "card_bg": "#FFFFFF",
             "badge_color": "#BD7385"
           }
         },
@@ -175,7 +190,21 @@
             "description": "Restorative masks, treatment oils, and everyday styling.",
             "link": "shopify://collections/all",
             "button_label": "Shop Hair Care",
-            "card_bg": "#FAF5F2",
+            "card_bg": "#FFFFFF",
+            "badge_color": "#BD7385"
+          }
+        },
+        "promo_haircare_2": {
+          "type": "mega-menu-promo",
+          "settings": {
+            "menu_item": "Hair Care",
+            "image_asset": "cat-shampoo.jpg",
+            "badge": "Intensive Care",
+            "title": "Restorative Treatment Oils",
+            "description": "Deep repair formulas infused with botanical argan and rosehip.",
+            "link": "shopify://collections/all",
+            "button_label": "Discover Treatments",
+            "card_bg": "#FFFFFF",
             "badge_color": "#BD7385"
           }
         },
@@ -189,7 +218,7 @@
             "description": "Authentic Eau de Parfum and body mists from premier perfumers.",
             "link": "shopify://collections/all",
             "button_label": "Explore Scents",
-            "card_bg": "#FAF5F2",
+            "card_bg": "#FFFFFF",
             "badge_color": "#BD7385"
           }
         }
@@ -197,6 +226,7 @@
       "block_order": [
         "promo_skincare",
         "promo_haircare",
+        "promo_haircare_2",
         "promo_fragrance"
       ],
       "settings": {
@@ -218,7 +248,7 @@
         "flat_links_per_column": 5,
         "mega_menu_bg": "#FFFFFF",
         "mega_menu_heading_font": "serif",
-        "promo_card_bg": "#FAF5F2",
+        "promo_card_bg": "#FFFFFF",
         "promo_badge_color": "#BD7385",
         "show_country": false,
         "country_selector_style": false,

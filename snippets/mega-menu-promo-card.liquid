@@ -1,0 +1,75 @@
+{%- doc -%}
+  Renders an elevated luxury editorial promo card for mega menu dropdowns.
+  @param {object} [block] - The promo card block
+  @param {string} [link_url] - Fallback URL
+  @param {string} [fallback_title] - Fallback title
+  @param {string} [fallback_badge] - Fallback badge
+  @param {string} [fallback_desc] - Fallback description
+  @param {string} [fallback_cta] - Fallback button label
+  @param {string} [fallback_asset] - Fallback image asset filename
+{%- enddoc -%}
+
+{%- liquid
+  if block != blank
+    assign b_set = block.settings
+    assign promo_card_bg = b_set.card_bg | default: section.settings.promo_card_bg | default: '#FFFFFF'
+    assign promo_badge_color = b_set.badge_color | default: section.settings.promo_badge_color | default: '#BD7385'
+    assign promo_url = b_set.link | default: link_url | default: '#'
+    assign promo_cta = b_set.button_label | default: fallback_cta | default: 'Explore Collection'
+    assign promo_title = b_set.title | default: fallback_title | default: 'Featured Collection'
+    assign promo_badge = b_set.badge | default: fallback_badge
+    assign promo_desc = b_set.description | default: fallback_desc
+    assign promo_img = b_set.image
+    assign promo_fallback = b_set.image_asset | default: fallback_asset
+    assign card_attrs = block.shopify_attributes
+  else
+    assign promo_card_bg = section.settings.promo_card_bg | default: '#FFFFFF'
+    assign promo_badge_color = section.settings.promo_badge_color | default: '#BD7385'
+    assign promo_url = link_url | default: '#'
+    assign promo_cta = fallback_cta | default: 'Explore Collection'
+    assign promo_title = fallback_title | default: 'Featured Collection'
+    assign promo_badge = fallback_badge
+    assign promo_desc = fallback_desc
+    assign promo_img = blank
+    assign promo_fallback = fallback_asset
+    assign card_attrs = ''
+  endif
+-%}
+
+<div
+  class="mega-menu__promo-card"
+  style="background: {{ promo_card_bg }} !important;"
+  {{ card_attrs }}
+>
+  <a href="{{ promo_url }}" class="mega-menu__promo-link">
+    <div class="mega-menu__promo-media">
+      {%- if promo_img != blank -%}
+        {{ promo_img | image_url: width: 600 | image_tag: class: 'mega-menu__promo-img', loading: 'lazy' }}
+      {%- elsif promo_fallback != blank -%}
+        <img
+          src="{{ promo_fallback | asset_url }}"
+          alt="{{ promo_title | escape }}"
+          class="mega-menu__promo-img"
+          loading="lazy"
+          width="320"
+          height="190"
+        >
+      {%- endif -%}
+    </div>
+    <div class="mega-menu__promo-content">
+      {%- if promo_badge != blank -%}
+        <span class="mega-menu__promo-badge" style="color: {{ promo_badge_color }} !important;">
+          {{- promo_badge -}}
+        </span>
+      {%- endif -%}
+      <h4 class="mega-menu__promo-title">{{ promo_title }}</h4>
+      {%- if promo_desc != blank -%}
+        <p class="mega-menu__promo-desc">{{ promo_desc }}</p>
+      {%- endif -%}
+      <span class="mega-menu__promo-cta">
+        <span>{{ promo_cta }}</span>
+        <span class="mega-menu__promo-cta-arrow" aria-hidden="true">&rarr;</span>
+      </span>
+    </div>
+  </a>
+</div>
