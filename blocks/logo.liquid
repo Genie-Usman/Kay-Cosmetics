@@ -9,7 +9,7 @@
   endif
 %}
 
-{%- if image -%}
+{%- if image != blank -%}
   {% capture logo_image %}
     {{-
       image
@@ -22,6 +22,24 @@
         alt: shop.name,
         sizes: '(min-width: 750px) calc(var(--logo-width)), 100vw'
     -}}
+  {% endcapture %}
+{%- else -%}
+  {% liquid
+    if block_settings.inverse
+      assign fallback_asset = 'kay-cosmetics-logo-inverse.png'
+    else
+      assign fallback_asset = 'kay-cosmetics-logo.png'
+    endif
+  %}
+  {% capture logo_image %}
+    <img
+      src="{{ fallback_asset | asset_url }}"
+      alt="{{ shop.name }}"
+      width="594"
+      height="340"
+      loading="lazy"
+      class="logo-block__image logo-block__image--brand-asset"
+    >
   {% endcapture %}
 {%- endif -%}
 
@@ -37,7 +55,7 @@
       {% if image %}
         --logo-width: {{ image.width | times: 1.00 | divided_by: image.height | times: block_settings.pixel_height }}px;
       {% else %}
-        --logo-width: {{ shop.name.size | times: 0.65 }}em;
+        --logo-width: {{ 1.747 | times: block_settings.pixel_height }}px;
         --logo-height: {{ block_settings.pixel_height }}px;
       {% endif %}
     {% endif %}
@@ -50,7 +68,7 @@
         {% if image %}
           --logo-width-mobile: {{ image.width | times: 1.00 | divided_by: image.height | times: block_settings.pixel_height_mobile }}px;
           {% else %}
-            --logo-width-mobile: {{ shop.name.size | times: 0.65 }}em;
+            --logo-width-mobile: {{ 1.747 | times: block_settings.pixel_height_mobile }}px;
             --logo-height-mobile: {{ block_settings.pixel_height_mobile }}px;
         {% endif %}
       {% endif %}

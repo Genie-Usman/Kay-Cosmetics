@@ -40,6 +40,21 @@
             "padding-inline-end": 0
           },
           "blocks": {
+            "footer_logo": {
+              "type": "logo",
+              "settings": {
+                "inverse": true,
+                "unit": "pixel",
+                "pixel_height": 52,
+                "custom_mobile_size": true,
+                "unit_mobile": "pixel",
+                "pixel_height_mobile": 42,
+                "padding-block-start": 0,
+                "padding-block-end": 6,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            },
             "about_heading": {
               "type": "text",
               "settings": {
@@ -73,7 +88,7 @@
             }
           },
           "block_order": [
-            "about_heading",
+            "footer_logo",
             "about_text"
           ]
         },
