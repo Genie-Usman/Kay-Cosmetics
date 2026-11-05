@@ -43,8 +43,8 @@
   {{ block.shopify_attributes }}
 >
   {% liquid
-    assign logo_aspect = settings.logo.aspect_ratio | default: 1.747
-    assign inverse_logo_aspect = inverse_logo.aspect_ratio | default: 1.747
+    assign logo_aspect = settings.logo.aspect_ratio | default: 1.812
+    assign inverse_logo_aspect = inverse_logo.aspect_ratio | default: 1.812
     assign logo_width = settings.logo_height | times: logo_aspect | ceil
     assign logo_width_mobile = settings.logo_height_mobile | times: logo_aspect | ceil
     assign inverse_logo_width = settings.logo_height | times: inverse_logo_aspect | ceil
@@ -72,8 +72,8 @@
       <img
         src="{{ 'kay-cosmetics-logo.png' | asset_url }}"
         alt="{{ alt_text_fallback }}"
-        width="594"
-        height="340"
+        width="567"
+        height="313"
         loading="eager"
         fetchpriority="high"
         class="header-logo__image header-logo__image--brand-asset"
@@ -100,8 +100,8 @@
         <img
           src="{{ 'kay-cosmetics-logo-inverse.png' | asset_url }}"
           alt="{{ alt_text_fallback }}"
-          width="594"
-          height="340"
+          width="567"
+          height="313"
           loading="eager"
           fetchpriority="high"
           class="header-logo__image header-logo__image--brand-asset"

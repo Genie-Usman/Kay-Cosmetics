@@ -45,10 +45,10 @@
               "settings": {
                 "inverse": true,
                 "unit": "pixel",
-                "pixel_height": 48,
+                "pixel_height": 80,
                 "custom_mobile_size": true,
                 "unit_mobile": "pixel",
-                "pixel_height_mobile": 40,
+                "pixel_height_mobile": 56,
                 "padding-block-start": 0,
                 "padding-block-end": 6,
                 "padding-inline-start": 0,

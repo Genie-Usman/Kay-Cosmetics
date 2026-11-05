@@ -35,8 +35,8 @@
     <img
       src="{{ fallback_asset | asset_url }}"
       alt="{{ shop.name }}"
-      width="594"
-      height="340"
+      width="567"
+      height="313"
       loading="lazy"
       class="logo-block__image logo-block__image--brand-asset"
     >
@@ -55,7 +55,7 @@
       {% if image %}
         --logo-width: {{ image.width | times: 1.00 | divided_by: image.height | times: block_settings.pixel_height }}px;
       {% else %}
-        --logo-width: {{ 1.747 | times: block_settings.pixel_height }}px;
+        --logo-width: {{ 1.812 | times: block_settings.pixel_height }}px;
         --logo-height: {{ block_settings.pixel_height }}px;
       {% endif %}
     {% endif %}
@@ -68,7 +68,7 @@
         {% if image %}
           --logo-width-mobile: {{ image.width | times: 1.00 | divided_by: image.height | times: block_settings.pixel_height_mobile }}px;
           {% else %}
-            --logo-width-mobile: {{ 1.747 | times: block_settings.pixel_height_mobile }}px;
+            --logo-width-mobile: {{ 1.812 | times: block_settings.pixel_height_mobile }}px;
             --logo-height-mobile: {{ block_settings.pixel_height_mobile }}px;
         {% endif %}
       {% endif %}
