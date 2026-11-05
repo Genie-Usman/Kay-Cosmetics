@@ -57,10 +57,6 @@
       endif
     %}
 
-    {%- capture menu_theme_blocks_raw -%}
-      {% content_for 'blocks' %}
-    {%- endcapture -%}
-
     {% capture children %}
       {% for link in header_menu.links %}
         <li
@@ -163,60 +159,48 @@
                       -%}
 
                       {%- capture promo_cards_html -%}
-                        {%- comment -%} 1. Extract from Theme Blocks (Menu child blocks via content_for 'blocks') {%- endcomment -%}
-                        {%- if menu_theme_blocks_raw contains '<!-- PROMO_BLOCK_START:' -%}
-                          {%- assign raw_chunks = menu_theme_blocks_raw | split: '<!-- PROMO_BLOCK_START:' -%}
-                          {%- for chunk in raw_chunks -%}
-                            {%- if chunk contains '<!-- PROMO_BLOCK_END -->' -%}
-                              {%- liquid
-                                assign header_and_body = chunk | split: ' -->'
-                                assign meta_parts = header_and_body[0] | split: ':'
-                                assign card_target = meta_parts[0]
-                                assign card_id = meta_parts[1] | default: forloop.index
-
-                                assign is_match = false
-                                if card_target != blank
-                                  if card_target == link_handle or link_handle contains card_target or card_target contains link_handle
-                                    assign is_match = true
-                                  elsif card_target == 'all'
-                                    assign is_match = true
-                                  elsif link_handle contains 'skin' and card_target contains 'skin'
-                                    assign is_match = true
-                                  elsif link_handle contains 'hair' and card_target contains 'hair'
-                                    assign is_match = true
-                                  elsif link_handle contains 'fragran' and card_target contains 'fragran'
-                                    assign is_match = true
-                                  elsif link_handle contains 'makeup' and card_target contains 'makeup'
-                                    assign is_match = true
-                                  endif
+                        {%- comment -%} 1. Search block.blocks (attached directly to Menu block) {%- endcomment -%}
+                        {%- for b in block.blocks -%}
+                          {%- if b.type == 'mega-menu-promo' or b.type == 'promo_card' or b.type == 'mega_menu_promo' -%}
+                            {%- liquid
+                              assign target = b.settings.menu_item | default: b.settings.title | downcase | replace: ' ', '-' | replace: '&', '' | strip
+                              assign is_match = false
+                              if target != blank
+                                if target == link_handle or link_handle contains target or target contains link_handle
+                                  assign is_match = true
+                                elsif link_handle contains 'skin' and target contains 'skin'
+                                  assign is_match = true
+                                elsif link_handle contains 'hair' and target contains 'hair'
+                                  assign is_match = true
+                                elsif link_handle contains 'fragran' and target contains 'fragran'
+                                  assign is_match = true
+                                elsif link_handle contains 'makeup' and target contains 'makeup'
+                                  assign is_match = true
                                 endif
-                              -%}
-                              {%- if is_match -%}
-                                {%- assign card_id_token = card_id | prepend: '|' | append: '|' -%}
-                                {%- unless processed_block_ids contains card_id_token -%}
-                                  {%- liquid
-                                    assign processed_block_ids = processed_block_ids | append: card_id_token
-                                    assign promo_count = promo_count | plus: 1
-                                    assign card_html = header_and_body[1] | split: '<!-- PROMO_BLOCK_END -->' | first
-                                  -%}
-                                  {{ card_html }}
-                                {%- endunless -%}
-                              {%- endif -%}
+                              endif
+                            -%}
+                            {%- if is_match -%}
+                              {%- assign b_id_token = b.id | prepend: '|' | append: '|' -%}
+                              {%- unless processed_block_ids contains b_id_token -%}
+                                {%- liquid
+                                  assign processed_block_ids = processed_block_ids | append: b_id_token
+                                  assign promo_count = promo_count | plus: 1
+                                  render 'mega-menu-promo-card', block: b, link_url: link.url
+                                -%}
+                              {%- endunless -%}
                             {%- endif -%}
-                          {%- endfor -%}
-                        {%- endif -%}
+                          {%- endif -%}
+                        {%- endfor -%}
 
-                        {%- comment -%} 2. Check section.blocks (Header section blocks) {%- endcomment -%}
+                        {%- comment -%} 2. Search section.blocks (attached to Header section) {%- endcomment -%}
                         {%- if section.blocks != blank -%}
                           {%- for b in section.blocks -%}
-                            {%- if b.type == 'mega-menu-promo' or b.type == 'promo_card' or b.type == 'mega_menu_promo' or b.settings.menu_item != blank -%}
+                            {%- if b.type == 'mega-menu-promo' or b.type == 'promo_card' or b.type == 'mega_menu_promo' -%}
                               {%- liquid
                                 assign target = b.settings.menu_item | default: b.settings.title | downcase | replace: ' ', '-' | replace: '&', '' | strip
                                 assign is_match = false
                                 if target != blank
                                   if target == link_handle or link_handle contains target or target contains link_handle
-                                    assign is_match = true
-                                  elsif target == 'all'
                                     assign is_match = true
                                   elsif link_handle contains 'skin' and target contains 'skin'
                                     assign is_match = true
@@ -243,7 +227,7 @@
                           {%- endfor -%}
                         {%- endif -%}
 
-                        {%- comment -%} 3. Default Curated Fallback if NO custom blocks were added for this category {%- endcomment -%}
+                        {%- comment -%} 4. Default Curated Fallback if NO custom blocks were added for this category {%- endcomment -%}
                         {%- if promo_count == 0 -%}
                           {%- if link_handle contains 'skin' -%}
                             {%- assign promo_count = 1 -%}
@@ -281,7 +265,7 @@
 
                       {%- assign promo_cards_trimmed = promo_cards_html | strip -%}
                       {%- if promo_cards_trimmed != blank -%}
-                        <div class="mega-menu__promos mega-menu__promos--count-{{ promo_count | at_most: 3 | at_least: 1 }}">
+                        <div class="mega-menu__promos mega-menu__promos--count-{{ promo_count | at_least: 1 }}">
                           {{ promo_cards_trimmed }}
                         </div>
                       {%- endif -%}
