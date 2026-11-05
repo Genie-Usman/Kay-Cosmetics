@@ -2,7 +2,12 @@
   Renders an editorial promo card inside a mega menu dropdown.
 {%- enddoc -%}
 
+{%- liquid
+  assign block_target = block.settings.menu_item | default: block.settings.title | default: 'all' | downcase | replace: ' ', '-' | replace: '&', '' | strip
+-%}
+<!-- PROMO_BLOCK_START:{{ block_target }}:{{ block.id }} -->
 {% render 'mega-menu-promo-card', block: block %}
+<!-- PROMO_BLOCK_END -->
 
 {% schema %}
 {
@@ -26,7 +31,8 @@
       "type": "text",
       "id": "image_asset",
       "label": "Fallback image asset",
-      "info": "Asset filename e.g. cat-haircare.jpg, cat-shampoo.jpg, cat-skincare.jpg, cat-fragrance.jpg"
+      "info": "Asset filename e.g. cat-haircare.jpg, cat-shampoo.jpg, cat-skincare.jpg, brand-banner-fragrances.jpg",
+      "default": "cat-haircare.jpg"
     },
     {
       "type": "text",

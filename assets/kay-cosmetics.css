@@ -1119,17 +1119,19 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
 .mega-menu__promos {
   display: flex !important;
   flex-direction: row !important;
+  flex-wrap: wrap !important;
   align-items: stretch !important;
-  gap: 20px !important;
+  gap: 16px !important;
   margin-left: auto !important;
   flex-shrink: 0 !important;
+  max-width: 620px !important;
 }
 
 /* Elevated Luxury Editorial Promo Card */
 .mega-menu__promo-card {
-  flex: 0 0 290px !important;
-  max-width: 310px !important;
-  width: 290px !important;
+  flex: 0 1 260px !important;
+  max-width: 280px !important;
+  width: 260px !important;
   border-radius: 12px !important;
   overflow: hidden !important;
   background: #FFFFFF !important;
@@ -1149,15 +1151,15 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
 }
 
 .mega-menu__promos--count-2 .mega-menu__promo-card {
-  flex: 0 0 270px !important;
-  max-width: 285px !important;
-  width: 270px !important;
+  flex: 0 0 260px !important;
+  max-width: 275px !important;
+  width: 260px !important;
 }
 
 .mega-menu__promos--count-3 .mega-menu__promo-card {
-  flex: 0 0 230px !important;
-  max-width: 245px !important;
-  width: 230px !important;
+  flex: 0 0 215px !important;
+  max-width: 230px !important;
+  width: 215px !important;
 }
 
 .mega-menu__promo-card:hover {
