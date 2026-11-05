@@ -45,29 +45,14 @@
               "settings": {
                 "inverse": true,
                 "unit": "pixel",
-                "pixel_height": 52,
+                "pixel_height": 48,
                 "custom_mobile_size": true,
                 "unit_mobile": "pixel",
-                "pixel_height_mobile": 42,
+                "pixel_height_mobile": 40,
                 "padding-block-start": 0,
                 "padding-block-end": 6,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
-              }
-            },
-            "about_heading": {
-              "type": "text",
-              "settings": {
-                "text": "<h3>KAY COSMETICS</h3>",
-                "width": "100%",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "h5",
-                "font": "var(--font-heading--family)",
-                "letter_spacing": "loose",
-                "case": "uppercase",
-                "wrap": "pretty",
-                "background": false
               }
             },
             "about_text": {
