@@ -485,6 +485,50 @@
   type="module"
 ></script>
 
+{% style %}
+  {% if section.settings.search_bar_radius != blank %}
+    #header-component .header-search-bar__pill {
+      border-radius: {{ section.settings.search_bar_radius }}px !important;
+    }
+  {% endif %}
+  {% if section.settings.menu_active_color != blank %}
+    #header-component .menu-list__link--active .menu-list__link-title,
+    #header-component .menu-list__link[aria-expanded='true'] .menu-list__link-title {
+      color: {{ section.settings.menu_active_color }} !important;
+    }
+  {% endif %}
+  {% if section.settings.menu_hover_color != blank %}
+    #header-component .menu-list__link:hover .menu-list__link-title {
+      color: {{ section.settings.menu_hover_color }} !important;
+    }
+  {% endif %}
+  {% if section.settings.menu_font_size != blank %}
+    #header-component .menu-list__link {
+      font-size: {{ section.settings.menu_font_size }} !important;
+    }
+  {% endif %}
+  {% if section.settings.menu_font_family == 'heading' %}
+    #header-component .menu-list__link {
+      font-family: var(--font-heading--family), Georgia, serif !important;
+    }
+  {% endif %}
+  {% if section.settings.menu_text_case != blank %}
+    #header-component .menu-list__link {
+      text-transform: {{ section.settings.menu_text_case }} !important;
+    }
+  {% endif %}
+  {% if section.settings.mega_menu_bg != blank %}
+    #header-component .mega-menu__list {
+      background-color: {{ section.settings.mega_menu_bg }} !important;
+    }
+  {% endif %}
+  {% if section.settings.mega_menu_heading_font == 'sans' %}
+    #header-component .mega-menu__category-title-link {
+      font-family: var(--font-body--family), sans-serif !important;
+    }
+  {% endif %}
+{% endstyle %}
+
 {% stylesheet %}
   body {
     --header-height: 60px;
@@ -1313,6 +1357,56 @@
       "default": "top"
     },
     {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Main navigation menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "select",
+      "id": "menu_font_family",
+      "label": "Menu font family",
+      "options": [
+        { "value": "body", "label": "Figtree Sans (Clean & Modern)" },
+        { "value": "heading", "label": "Besley Serif (Luxury Editorial)" }
+      ],
+      "default": "body"
+    },
+    {
+      "type": "select",
+      "id": "menu_font_size",
+      "label": "Menu font size",
+      "options": [
+        { "value": "0.75rem", "label": "12px" },
+        { "value": "0.8125rem", "label": "13px (Recommended)" },
+        { "value": "0.875rem", "label": "14px" },
+        { "value": "1rem", "label": "16px" }
+      ],
+      "default": "0.8125rem"
+    },
+    {
+      "type": "select",
+      "id": "menu_text_case",
+      "label": "Menu text case",
+      "options": [
+        { "value": "uppercase", "label": "Uppercase (ALL CAPS)" },
+        { "value": "none", "label": "Natural (As typed)" }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "color",
+      "id": "menu_active_color",
+      "label": "Active menu link color",
+      "default": "#BD7385"
+    },
+    {
+      "type": "color",
+      "id": "menu_hover_color",
+      "label": "Menu link hover color",
+      "default": "#A75D6F"
+    },
+    {
       "type": "header",
       "content": "t:content.customer_account"
     },
@@ -1373,6 +1467,301 @@
       ],
       "default": "top",
       "visible_if": "{{ section.settings.show_search }}"
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search input placeholder",
+      "default": "Search for makeup, skincare, fragrances, brands..."
+    },
+    {
+      "type": "range",
+      "id": "search_bar_radius",
+      "label": "Search bar corner roundness",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Mega Menu General Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_editorial_promos",
+      "label": "Enable editorial promo cards",
+      "default": true,
+      "info": "Displays editorial promo cards inside category dropdowns."
+    },
+    {
+      "type": "range",
+      "id": "flat_links_per_column",
+      "label": "Links per column",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "color",
+      "id": "mega_menu_bg",
+      "label": "Mega menu dropdown background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "mega_menu_heading_font",
+      "label": "Category title font",
+      "options": [
+        { "value": "serif", "label": "Besley Serif (Luxury Editorial)" },
+        { "value": "sans", "label": "Figtree Sans (Clean & Modern)" }
+      ],
+      "default": "serif"
+    },
+    {
+      "type": "color",
+      "id": "promo_card_bg",
+      "label": "Promo card background color",
+      "default": "#FAF5F2"
+    },
+    {
+      "type": "color",
+      "id": "promo_badge_color",
+      "label": "Promo card badge text color",
+      "default": "#BD7385"
+    },
+    {
+      "type": "header",
+      "content": "Skin Care Mega Menu Promo"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_skincare_promo",
+      "label": "Show Skin Care promo card",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "skincare_promo_image",
+      "label": "Skin Care promo image",
+      "info": "Falls back to curated brand asset if empty."
+    },
+    {
+      "type": "text",
+      "id": "skincare_promo_badge",
+      "label": "Skin Care badge text",
+      "default": "The Skincare Edit"
+    },
+    {
+      "type": "text",
+      "id": "skincare_promo_title",
+      "label": "Skin Care headline",
+      "default": "Personalized Daily Rituals"
+    },
+    {
+      "type": "textarea",
+      "id": "skincare_promo_desc",
+      "label": "Skin Care description",
+      "default": "Targeted serums, barrier creams, and clarifying cleansers."
+    },
+    {
+      "type": "url",
+      "id": "skincare_promo_url",
+      "label": "Skin Care promo link"
+    },
+    {
+      "type": "text",
+      "id": "skincare_promo_cta",
+      "label": "Skin Care button text",
+      "default": "Explore Routines"
+    },
+    {
+      "type": "header",
+      "content": "Hair Care Mega Menu Promo"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_haircare_promo",
+      "label": "Show Hair Care promo card",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "haircare_promo_image",
+      "label": "Hair Care promo image",
+      "info": "Falls back to curated brand asset if empty."
+    },
+    {
+      "type": "text",
+      "id": "haircare_promo_badge",
+      "label": "Hair Care badge text",
+      "default": "Hair Wellness"
+    },
+    {
+      "type": "text",
+      "id": "haircare_promo_title",
+      "label": "Hair Care headline",
+      "default": "Salon-Quality Hair Rituals"
+    },
+    {
+      "type": "textarea",
+      "id": "haircare_promo_desc",
+      "label": "Hair Care description",
+      "default": "Restorative masks, treatment oils, and everyday styling."
+    },
+    {
+      "type": "url",
+      "id": "haircare_promo_url",
+      "label": "Hair Care promo link"
+    },
+    {
+      "type": "text",
+      "id": "haircare_promo_cta",
+      "label": "Hair Care button text",
+      "default": "Shop Hair Care"
+    },
+    {
+      "type": "header",
+      "content": "Fragrances Mega Menu Promo"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_fragrance_promo",
+      "label": "Show Fragrances promo card",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "fragrance_promo_image",
+      "label": "Fragrances promo image",
+      "info": "Falls back to curated brand asset if empty."
+    },
+    {
+      "type": "text",
+      "id": "fragrance_promo_badge",
+      "label": "Fragrances badge text",
+      "default": "Signature Scents"
+    },
+    {
+      "type": "text",
+      "id": "fragrance_promo_title",
+      "label": "Fragrances headline",
+      "default": "Luxury & Niche Fragrances"
+    },
+    {
+      "type": "textarea",
+      "id": "fragrance_promo_desc",
+      "label": "Fragrances description",
+      "default": "Authentic Eau de Parfum and body mists from premier perfumers."
+    },
+    {
+      "type": "url",
+      "id": "fragrance_promo_url",
+      "label": "Fragrances promo link"
+    },
+    {
+      "type": "text",
+      "id": "fragrance_promo_cta",
+      "label": "Fragrances button text",
+      "default": "Explore Scents"
+    },
+    {
+      "type": "header",
+      "content": "Makeup Mega Menu Promo"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_makeup_promo",
+      "label": "Show Makeup promo card",
+      "default": false,
+      "info": "Disabled by default as Makeup has 5 full columns."
+    },
+    {
+      "type": "image_picker",
+      "id": "makeup_promo_image",
+      "label": "Makeup promo image"
+    },
+    {
+      "type": "text",
+      "id": "makeup_promo_badge",
+      "label": "Makeup badge text",
+      "default": "The Makeup Studio"
+    },
+    {
+      "type": "text",
+      "id": "makeup_promo_title",
+      "label": "Makeup headline",
+      "default": "Cult-Favorite Beauty"
+    },
+    {
+      "type": "textarea",
+      "id": "makeup_promo_desc",
+      "label": "Makeup description",
+      "default": "Explore radiant foundations, lip oils, and iconic palettes."
+    },
+    {
+      "type": "url",
+      "id": "makeup_promo_url",
+      "label": "Makeup promo link"
+    },
+    {
+      "type": "text",
+      "id": "makeup_promo_cta",
+      "label": "Makeup button text",
+      "default": "Shop Makeup"
+    },
+    {
+      "type": "header",
+      "content": "Custom Category Mega Menu Promo"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_custom_promo",
+      "label": "Show custom promo card",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "custom_promo_target",
+      "label": "Target menu handle (lowercase)",
+      "default": "brands",
+      "info": "e.g. brands, wellness, bath"
+    },
+    {
+      "type": "image_picker",
+      "id": "custom_promo_image",
+      "label": "Custom promo image"
+    },
+    {
+      "type": "text",
+      "id": "custom_promo_badge",
+      "label": "Custom badge text",
+      "default": "Curated Selection"
+    },
+    {
+      "type": "text",
+      "id": "custom_promo_title",
+      "label": "Custom headline",
+      "default": "Discover What's New"
+    },
+    {
+      "type": "textarea",
+      "id": "custom_promo_desc",
+      "label": "Custom description",
+      "default": "Curated beauty favorites fresh from our brand partners."
+    },
+    {
+      "type": "url",
+      "id": "custom_promo_url",
+      "label": "Custom promo link"
+    },
+    {
+      "type": "text",
+      "id": "custom_promo_cta",
+      "label": "Custom button text",
+      "default": "Shop Now"
     },
     {
       "type": "header",

@@ -41,6 +41,7 @@
           on:keydown="/onSearchKeyDown"
         >
           <div class="header-search-bar__pill">
+            {%- assign search_placeholder_text = section.settings.search_placeholder | default: 'Search for makeup, skincare, fragrances, brands...' -%}
             <input
               id="HeaderSearchInput-Desktop"
               class="search-input header-search-bar__input"
@@ -57,7 +58,7 @@
               autocorrect="off"
               autocapitalize="off"
               spellcheck="false"
-              placeholder="Search for makeup, skincare, fragrances, brands..."
+              placeholder="{{ search_placeholder_text }}"
               ref="searchInput"
               on:input="/search"
               on:keydown="/onSearchKeyDown"

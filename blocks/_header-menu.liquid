@@ -8,7 +8,8 @@
 
 {% liquid
   assign block_settings = block.settings
-  assign effective_submenu_color = block_settings.background_color | default: settings.page_background_color
+  assign header_menu = section.settings.menu | default: block_settings.menu
+  assign effective_submenu_color = section.settings.mega_menu_bg | default: block_settings.background_color | default: settings.page_background_color
 %}
 
 {% case variant %}
@@ -20,7 +21,7 @@
       {{ block.shopify_attributes }}
     >
       {% render 'header-drawer',
-        linklist: block_settings.menu,
+        linklist: header_menu,
         data_header_drawer_type: 'mobile-drawer',
         block: block,
         section: section
@@ -45,7 +46,7 @@
             class="menu-list__list list-unstyled"
             role="list"
           >
-            {% for link in block_settings.menu.links %}
+            {% for link in header_menu.links %}
               <li>
                 <a
                   href="{{ link.url }}"
@@ -93,7 +94,7 @@
     %}
 
     {% capture children %}
-      {% for link in block_settings.menu.links %}
+      {% for link in header_menu.links %}
         <li
           class="menu-list__list-item"
           on:blur="/deactivate"
@@ -160,7 +161,7 @@
                       data-menu-grid-id="{{ list_id }}"
                     >
                       {% liquid
-                        assign flat_links_limit = block_settings.flat_links_per_column | default: 5
+                        assign flat_links_limit = section.settings.flat_links_per_column | default: block_settings.flat_links_per_column | default: 5
                       %}
                       {% render 'mega-menu-list',
                         parent_link: link,
@@ -187,49 +188,89 @@
                       assign promo_url = link.url
                       assign promo_cta = 'Explore Collection'
 
-                      if block_settings.enable_editorial_promos != false
+                      assign enable_promos = section.settings.enable_editorial_promos
+                      if enable_promos == nil
+                        assign enable_promos = block_settings.enable_editorial_promos
+                      endif
+                      if enable_promos == nil
+                        assign enable_promos = true
+                      endif
+
+                      if enable_promos
                         if link_handle contains 'skin'
-                          assign show_promo = block_settings.show_skincare_promo | default: true
-                          assign promo_img = block_settings.skincare_promo_image
+                          assign show_promo = section.settings.show_skincare_promo
+                          if show_promo == nil
+                            assign show_promo = block_settings.show_skincare_promo
+                          endif
+                          if show_promo == nil
+                            assign show_promo = true
+                          endif
+                          assign promo_img = section.settings.skincare_promo_image | default: block_settings.skincare_promo_image
                           assign promo_fallback = 'cat-skincare.jpg'
-                          assign promo_badge = block_settings.skincare_promo_badge | default: 'The Skincare Edit'
-                          assign promo_title = block_settings.skincare_promo_title | default: 'Personalized Daily Rituals'
-                          assign promo_desc = block_settings.skincare_promo_desc | default: 'Targeted serums, barrier creams, and clarifying cleansers.'
-                          assign promo_url = block_settings.skincare_promo_url | default: link.url
-                          assign promo_cta = block_settings.skincare_promo_cta | default: 'Explore Routines'
+                          assign promo_badge = section.settings.skincare_promo_badge | default: block_settings.skincare_promo_badge | default: 'The Skincare Edit'
+                          assign promo_title = section.settings.skincare_promo_title | default: block_settings.skincare_promo_title | default: 'Personalized Daily Rituals'
+                          assign promo_desc = section.settings.skincare_promo_desc | default: block_settings.skincare_promo_desc | default: 'Targeted serums, barrier creams, and clarifying cleansers.'
+                          assign promo_url = section.settings.skincare_promo_url | default: block_settings.skincare_promo_url | default: link.url
+                          assign promo_cta = section.settings.skincare_promo_cta | default: block_settings.skincare_promo_cta | default: 'Explore Routines'
                         elsif link_handle contains 'hair'
-                          assign show_promo = block_settings.show_haircare_promo | default: true
-                          assign promo_img = block_settings.haircare_promo_image
+                          assign show_promo = section.settings.show_haircare_promo
+                          if show_promo == nil
+                            assign show_promo = block_settings.show_haircare_promo
+                          endif
+                          if show_promo == nil
+                            assign show_promo = true
+                          endif
+                          assign promo_img = section.settings.haircare_promo_image | default: block_settings.haircare_promo_image
                           assign promo_fallback = 'cat-haircare.jpg'
-                          assign promo_badge = block_settings.haircare_promo_badge | default: 'Hair Wellness'
-                          assign promo_title = block_settings.haircare_promo_title | default: 'Salon-Quality Hair Rituals'
-                          assign promo_desc = block_settings.haircare_promo_desc | default: 'Restorative masks, treatment oils, and everyday styling.'
-                          assign promo_url = block_settings.haircare_promo_url | default: link.url
-                          assign promo_cta = block_settings.haircare_promo_cta | default: 'Shop Hair Care'
+                          assign promo_badge = section.settings.haircare_promo_badge | default: block_settings.haircare_promo_badge | default: 'Hair Wellness'
+                          assign promo_title = section.settings.haircare_promo_title | default: block_settings.haircare_promo_title | default: 'Salon-Quality Hair Rituals'
+                          assign promo_desc = section.settings.haircare_promo_desc | default: block_settings.haircare_promo_desc | default: 'Restorative masks, treatment oils, and everyday styling.'
+                          assign promo_url = section.settings.haircare_promo_url | default: block_settings.haircare_promo_url | default: link.url
+                          assign promo_cta = section.settings.haircare_promo_cta | default: block_settings.haircare_promo_cta | default: 'Shop Hair Care'
                         elsif link_handle contains 'fragrance'
-                          assign show_promo = block_settings.show_fragrance_promo | default: true
-                          assign promo_img = block_settings.fragrance_promo_image
+                          assign show_promo = section.settings.show_fragrance_promo
+                          if show_promo == nil
+                            assign show_promo = block_settings.show_fragrance_promo
+                          endif
+                          if show_promo == nil
+                            assign show_promo = true
+                          endif
+                          assign promo_img = section.settings.fragrance_promo_image | default: block_settings.fragrance_promo_image
                           assign promo_fallback = 'brand-banner-fragrances.jpg'
-                          assign promo_badge = block_settings.fragrance_promo_badge | default: 'Signature Scents'
-                          assign promo_title = block_settings.fragrance_promo_title | default: 'Luxury & Niche Fragrances'
-                          assign promo_desc = block_settings.fragrance_promo_desc | default: 'Authentic Eau de Parfum and body mists from premier perfumers.'
-                          assign promo_url = block_settings.fragrance_promo_url | default: link.url
-                          assign promo_cta = block_settings.fragrance_promo_cta | default: 'Explore Scents'
+                          assign promo_badge = section.settings.fragrance_promo_badge | default: block_settings.fragrance_promo_badge | default: 'Signature Scents'
+                          assign promo_title = section.settings.fragrance_promo_title | default: block_settings.fragrance_promo_title | default: 'Luxury & Niche Fragrances'
+                          assign promo_desc = section.settings.fragrance_promo_desc | default: block_settings.fragrance_promo_desc | default: 'Authentic Eau de Parfum and body mists from premier perfumers.'
+                          assign promo_url = section.settings.fragrance_promo_url | default: block_settings.fragrance_promo_url | default: link.url
+                          assign promo_cta = section.settings.fragrance_promo_cta | default: block_settings.fragrance_promo_cta | default: 'Explore Scents'
                         elsif link_handle contains 'makeup'
-                          assign show_promo = block_settings.show_makeup_promo | default: false
-                          assign promo_img = block_settings.makeup_promo_image
+                          assign show_promo = section.settings.show_makeup_promo
+                          if show_promo == nil
+                            assign show_promo = block_settings.show_makeup_promo
+                          endif
+                          if show_promo == nil
+                            assign show_promo = false
+                          endif
+                          assign promo_img = section.settings.makeup_promo_image | default: block_settings.makeup_promo_image
                           assign promo_fallback = 'cat-makeup.jpg'
-                          assign promo_badge = block_settings.makeup_promo_badge | default: 'The Makeup Studio'
-                          assign promo_title = block_settings.makeup_promo_title | default: 'Cult-Favorite Beauty'
-                          assign promo_desc = block_settings.makeup_promo_desc | default: 'Explore radiant foundations, lip oils, and iconic palettes.'
-                          assign promo_url = block_settings.makeup_promo_url | default: link.url
-                          assign promo_cta = block_settings.makeup_promo_cta | default: 'Shop Makeup'
+                          assign promo_badge = section.settings.makeup_promo_badge | default: block_settings.makeup_promo_badge | default: 'The Makeup Studio'
+                          assign promo_title = section.settings.makeup_promo_title | default: block_settings.makeup_promo_title | default: 'Cult-Favorite Beauty'
+                          assign promo_desc = section.settings.makeup_promo_desc | default: block_settings.makeup_promo_desc | default: 'Explore radiant foundations, lip oils, and iconic palettes.'
+                          assign promo_url = section.settings.makeup_promo_url | default: block_settings.makeup_promo_url | default: link.url
+                          assign promo_cta = section.settings.makeup_promo_cta | default: block_settings.makeup_promo_cta | default: 'Shop Makeup'
+                        elsif section.settings.custom_promo_target != blank and link_handle contains section.settings.custom_promo_target
+                          assign show_promo = section.settings.show_custom_promo
+                          assign promo_img = section.settings.custom_promo_image
+                          assign promo_badge = section.settings.custom_promo_badge | default: "Curated Selection"
+                          assign promo_title = section.settings.custom_promo_title | default: "Discover What's New"
+                          assign promo_desc = section.settings.custom_promo_desc | default: "Curated beauty favorites fresh from our brand partners."
+                          assign promo_url = section.settings.custom_promo_url | default: link.url
+                          assign promo_cta = section.settings.custom_promo_cta | default: "Shop Now"
                         endif
                       endif
                     -%}
 
                     {%- if show_promo -%}
-                      <div class="mega-menu__promo-card">
+                      <div class="mega-menu__promo-card" style="{% if section.settings.promo_card_bg != blank %}background: {{ section.settings.promo_card_bg }} !important;{% endif %}">
                         <a href="{{ promo_url }}" class="mega-menu__promo-link">
                           <div class="mega-menu__promo-media">
                             {%- if promo_img != blank -%}
@@ -240,7 +281,7 @@
                           </div>
                           <div class="mega-menu__promo-content">
                             {%- if promo_badge != blank -%}
-                              <span class="mega-menu__promo-badge">{{ promo_badge }}</span>
+                              <span class="mega-menu__promo-badge" style="{% if section.settings.promo_badge_color != blank %}color: {{ section.settings.promo_badge_color }} !important;{% endif %}">{{ promo_badge }}</span>
                             {%- endif -%}
                             <h4 class="mega-menu__promo-title">{{ promo_title }}</h4>
                             {%- if promo_desc != blank -%}
