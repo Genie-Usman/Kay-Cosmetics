@@ -34,6 +34,21 @@
     assign promo_fallback = fallback_asset
     assign card_attrs = ''
   endif
+
+  if promo_img == blank and promo_fallback == blank
+    assign target_hint = b_set.menu_item | default: promo_title | default: promo_badge | downcase
+    if target_hint contains 'hair'
+      assign promo_fallback = 'cat-haircare.jpg'
+    elsif target_hint contains 'skin'
+      assign promo_fallback = 'cat-skincare.jpg'
+    elsif target_hint contains 'fragran' or target_hint contains 'scent'
+      assign promo_fallback = 'brand-banner-fragrances.jpg'
+    elsif target_hint contains 'makeup'
+      assign promo_fallback = 'cat-makeup.jpg'
+    else
+      assign promo_fallback = 'cat-haircare.jpg'
+    endif
+  endif
 -%}
 
 <div

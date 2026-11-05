@@ -161,7 +161,7 @@
                       {%- capture promo_cards_html -%}
                         {%- comment -%} 1. Search block.blocks (attached directly to Menu block) {%- endcomment -%}
                         {%- for b in block.blocks -%}
-                          {%- if b.type == 'mega-menu-promo' or b.type == 'promo_card' or b.type == 'mega_menu_promo' -%}
+                          {%- if b.settings.menu_item != blank or b.settings.title != blank or b.type contains 'promo' -%}
                             {%- liquid
                               assign target = b.settings.menu_item | default: b.settings.title | downcase | replace: ' ', '-' | replace: '&', '' | strip
                               assign is_match = false
@@ -180,7 +180,8 @@
                               endif
                             -%}
                             {%- if is_match -%}
-                              {%- assign b_id_token = b.id | prepend: '|' | append: '|' -%}
+                              {%- assign b_key = b.id | default: b.settings.title | default: 'card' | append: '-' | append: forloop.index -%}
+                              {%- assign b_id_token = b_key | prepend: '|' | append: '|' -%}
                               {%- unless processed_block_ids contains b_id_token -%}
                                 {%- liquid
                                   assign processed_block_ids = processed_block_ids | append: b_id_token
@@ -192,10 +193,10 @@
                           {%- endif -%}
                         {%- endfor -%}
 
-                        {%- comment -%} 2. Search section.blocks (attached to Header section) {%- endcomment -%}
-                        {%- if section.blocks != blank -%}
+                        {%- comment -%} 2. Search section.blocks (attached to Header section) if no blocks in block.blocks matched {%- endcomment -%}
+                        {%- if promo_count == 0 and section.blocks != blank -%}
                           {%- for b in section.blocks -%}
-                            {%- if b.type == 'mega-menu-promo' or b.type == 'promo_card' or b.type == 'mega_menu_promo' -%}
+                            {%- if b.settings.menu_item != blank or b.settings.title != blank or b.type contains 'promo' -%}
                               {%- liquid
                                 assign target = b.settings.menu_item | default: b.settings.title | downcase | replace: ' ', '-' | replace: '&', '' | strip
                                 assign is_match = false
@@ -214,7 +215,8 @@
                                 endif
                               -%}
                               {%- if is_match -%}
-                                {%- assign b_id_token = b.id | prepend: '|' | append: '|' -%}
+                                {%- assign b_key = b.id | default: b.settings.title | default: 'sec-card' | append: '-' | append: forloop.index -%}
+                                {%- assign b_id_token = b_key | prepend: '|' | append: '|' -%}
                                 {%- unless processed_block_ids contains b_id_token -%}
                                   {%- liquid
                                     assign processed_block_ids = processed_block_ids | append: b_id_token
