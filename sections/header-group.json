@@ -95,14 +95,61 @@
             "featured_products_aspect_ratio": "4 / 5",
             "featured_collections_aspect_ratio": "16 / 9",
             "image_border_radius": 4,
-            "navigation_bar": false,
             "drawer_accordion": true,
             "drawer_accordion_expand_first": false,
             "drawer_dividers": true,
             "enable_editorial_promos": true,
             "flat_links_per_column": 5
           },
-          "blocks": {}
+          "blocks": {
+            "promo_skincare": {
+              "type": "mega-menu-promo",
+              "settings": {
+                "menu_item": "Skin Care",
+                "image_asset": "cat-skincare.jpg",
+                "badge": "The Skincare Edit",
+                "title": "Personalized Daily Rituals",
+                "description": "Targeted serums, barrier creams, and clarifying cleansers.",
+                "link": "shopify://collections/all",
+                "button_label": "Explore Routines",
+                "card_bg": "#FAF5F2",
+                "badge_color": "#BD7385"
+              }
+            },
+            "promo_haircare": {
+              "type": "mega-menu-promo",
+              "settings": {
+                "menu_item": "Hair Care",
+                "image_asset": "cat-haircare.jpg",
+                "badge": "Hair Wellness",
+                "title": "Salon-Quality Hair Rituals",
+                "description": "Restorative masks, treatment oils, and everyday styling.",
+                "link": "shopify://collections/all",
+                "button_label": "Shop Hair Care",
+                "card_bg": "#FAF5F2",
+                "badge_color": "#BD7385"
+              }
+            },
+            "promo_fragrance": {
+              "type": "mega-menu-promo",
+              "settings": {
+                "menu_item": "Fragrances",
+                "image_asset": "brand-banner-fragrances.jpg",
+                "badge": "Signature Scents",
+                "title": "Luxury & Niche Fragrances",
+                "description": "Authentic Eau de Parfum and body mists from premier perfumers.",
+                "link": "shopify://collections/all",
+                "button_label": "Explore Scents",
+                "card_bg": "#FAF5F2",
+                "badge_color": "#BD7385"
+              }
+            }
+          },
+          "block_order": [
+            "promo_skincare",
+            "promo_haircare",
+            "promo_fragrance"
+          ]
         },
         "promo_skincare": {
           "type": "mega-menu-promo",

@@ -84,21 +84,12 @@
   endcapture
 
   capture menu
-    content_for 'block', type: '_header-menu', id: 'header-menu'
+    content_for 'block', type: '_header-menu', id: 'header-menu', section_blocks: section.blocks
   endcapture
 
   capture drawer_menu
     content_for 'block', type: '_header-menu', id: 'header-menu', variant: 'mobile'
   endcapture
-
-  capture navigation_bar
-    content_for 'block', type: '_header-menu', id: 'header-menu', variant: 'navigation_bar', transparent: transparent
-  endcapture
-
-  assign has_navigation_bar = false
-  if navigation_bar contains 'data-navigation-bar-enabled'
-    assign has_navigation_bar = true
-  endif
 
   capture actions
     render 'header-actions', customer_account_menu: section.settings.customer_account_menu, display_style: section.settings.actions_display_style, section: section
@@ -472,12 +463,6 @@
       </div>
     {% endif %}
   {% endfor %}
-
-  {% if has_navigation_bar %}
-    <div class="header__row header__navigation-bar-row">
-      {{ navigation_bar }}
-    </div>
-  {% endif %}
 </header-component>
 
 <script

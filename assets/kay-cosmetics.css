@@ -1219,13 +1219,34 @@ html[data-drawer-style="push"] .page-wrapper--drawer-open {
 
 @media screen and (max-width: 1250px) {
   .mega-menu__promo-card {
-    flex: 0 0 290px !important;
-    width: 290px !important;
+    flex: 0 0 280px !important;
+    max-width: 280px !important;
+    width: 280px !important;
+  }
+  .mega-menu__promo-media {
+    height: 140px !important;
   }
 }
 
 @media screen and (max-width: 989px) {
   .mega-menu__promo-card {
+    flex: 0 0 240px !important;
+    max-width: 240px !important;
+    width: 240px !important;
+  }
+  .mega-menu__promo-media {
+    height: 120px !important;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .mega-menu__promo-card {
+    display: none !important;
+  }
+  /* Prevent duplicate on-screen header navigation on mobile */
+  #header-component .menu-list,
+  #header-component .header__navigation-bar-row,
+  #header-component .header__row--bottom {
     display: none !important;
   }
 }

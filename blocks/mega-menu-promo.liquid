@@ -25,7 +25,7 @@
       {%- if promo_img != blank -%}
         {{ promo_img | image_url: width: 600 | image_tag: class: 'mega-menu__promo-img', loading: 'lazy' }}
       {%- elsif promo_fallback != blank -%}
-        <img src="{{ promo_fallback | asset_url }}" alt="{{ promo_title }}" class="mega-menu__promo-img" loading="lazy">
+        <img src="{{ promo_fallback | asset_url }}" alt="{{ promo_title }}" class="mega-menu__promo-img" loading="lazy" width="350" height="155">
       {%- endif -%}
     </div>
     <div class="mega-menu__promo-content">
